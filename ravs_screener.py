@@ -12,10 +12,10 @@ from datetime import datetime
 import os
 
 # Ravs Criteria
-MIN_PRICE = 5
+MIN_PRICE = 3
 MIN_MARKET_CAP = 300_000_000
 MIN_VOLUME = 500_000
-MIN_RVOL = 2.0
+MIN_RVOL = 1.5
 MAX_STOCKS = 50
 
 RAVS_UNIVERSE = [
