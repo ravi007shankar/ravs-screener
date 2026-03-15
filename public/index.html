@@ -3,280 +3,818 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RavsTrades Momentum Screener</title>
+    <title>RavsTrades | Institutional-Grade Momentum Screener</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #111118;
+            --bg-tertiary: #1a1a24;
+            --bg-hover: #22222e;
+            --border: #2a2a3a;
+            --border-hover: #3a3a50;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --text-muted: #606070;
+            --accent: #6366f1;
+            --accent-hover: #818cf8;
+            --success: #22c55e;
+            --success-dim: rgba(34, 197, 94, 0.1);
+            --danger: #ef4444;
+            --danger-dim: rgba(239, 68, 68, 0.1);
+            --warning: #f59e0b;
+            --warning-dim: rgba(245, 158, 11, 0.1);
+            --drone: #06b6d4;
+            --space: #8b5cf6;
+            --datacenter: #ec4899;
+            --aichip: #f97316;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0a0a0a;
-            color: #fff;
-            line-height: 1.6;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            font-size: 13px;
+            min-height: 100vh;
         }
-        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+        /* Header */
         header {
-            text-align: center;
-            padding: 40px 0;
-            border-bottom: 2px solid #ff6b35;
-            margin-bottom: 30px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        h1 {
-            font-size: 2.5rem;
-            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-        }
-        .tagline { color: #888; font-size: 1.1rem; }
-        .timestamp { color: #666; font-size: 0.9rem; margin-top: 10px; }
-        
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        .stat-card {
-            background: #1a1a1a;
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid #333;
-            text-align: center;
-        }
-        .stat-value { font-size: 2rem; font-weight: bold; color: #ff6b35; }
-        .stat-label { color: #888; font-size: 0.85rem; margin-top: 5px; }
-        
-        .filters {
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 16px 24px;
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--accent) 0%, #a855f7 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            color: white;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-text h1 {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            color: var(--text-primary);
+        }
+
+        .brand-text span {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .header-meta {
+            text-align: right;
+        }
+
+        .timestamp {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .market-status {
+            font-size: 11px;
+            color: var(--success);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            justify-content: flex-end;
+            margin-top: 2px;
+        }
+
+        .market-status::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px 20px;
+            transition: all 0.2s;
+        }
+
+        .stat-card:hover {
+            border-color: var(--border-hover);
+            background: var(--bg-tertiary);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-value.accent { color: var(--accent); }
+        .stat-value.success { color: var(--success); }
+        .stat-value.warning { color: var(--warning); }
+
+        /* Filters */
+        .filters-bar {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
             flex-wrap: wrap;
         }
+
         .filter-btn {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            color: #fff;
-            padding: 10px 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .filter-btn:hover, .filter-btn.active {
-            background: #ff6b35;
-            border-color: #ff6b35;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            background: #1a1a1a;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid #333;
-        }
-        th {
-            background: #252525;
-            padding: 15px 12px;
-            text-align: left;
-            color: #ff6b35;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-        }
-        td { padding: 15px 12px; border-bottom: 1px solid #333; }
-        tr:hover { background: #252525; }
-        
-        .ticker { font-weight: bold; font-size: 1.1rem; }
-        .price { font-family: monospace; font-size: 1.1rem; }
-        .positive { color: #00ff88; }
-        .negative { color: #ff4757; }
-        
-        .rvol {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            background: rgba(255, 107, 53, 0.2);
-            color: #ff6b35;
-            border: 1px solid #ff6b35;
-        }
-        
-        .setup {
-            display: inline-block;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-secondary);
             padding: 6px 14px;
             border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
-        .setup-breakout { background: rgba(255, 107, 53, 0.15); color: #ff6b35; border: 1px solid #ff6b35; }
-        .setup-pullback { background: rgba(0, 204, 255, 0.15); color: #00ccff; border: 1px solid #00ccff; }
-        .setup-ema { background: rgba(255, 193, 7, 0.15); color: #ffc107; border: 1px solid #ffc107; }
-        .setup-range { background: rgba(138, 43, 226, 0.15); color: #8a2be2; border: 1px solid #8a2be2; }
-        
-        .conviction-bar {
-            width: 100%;
-            height: 6px;
-            background: #333;
-            border-radius: 3px;
+
+        .filter-btn:hover {
+            color: var(--text-primary);
+            background: var(--bg-tertiary);
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .filter-btn.sector-drone:hover,
+        .filter-btn.sector-drone.active {
+            background: var(--drone);
+            border-color: var(--drone);
+            color: white;
+        }
+
+        .filter-btn.sector-space:hover,
+        .filter-btn.sector-space.active {
+            background: var(--space);
+            border-color: var(--space);
+            color: white;
+        }
+
+        .filter-btn.sector-datacenter:hover,
+        .filter-btn.sector-datacenter.active {
+            background: var(--datacenter);
+            border-color: var(--datacenter);
+            color: white;
+        }
+
+        .filter-btn.sector-aichip:hover,
+        .filter-btn.sector-aichip.active {
+            background: var(--aichip);
+            border-color: var(--aichip);
+            color: white;
+        }
+
+        /* Table */
+        .table-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
             overflow: hidden;
-            margin-top: 5px;
         }
-        .conviction-fill { height: 100%; border-radius: 3px; background: #ff6b35; }
-        
-        .loading { text-align: center; padding: 60px; color: #666; }
-        .error { text-align: center; padding: 60px; color: #ff4757; }
-        
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        thead {
+            background: var(--bg-tertiary);
+        }
+
+        th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 10px;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        th.sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        th.sortable:hover {
+            color: var(--text-secondary);
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+            vertical-align: middle;
+        }
+
+        tbody tr {
+            transition: all 0.15s;
+        }
+
+        tbody tr:hover {
+            background: var(--bg-hover);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Cell Styles */
+        .cell-rank {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-muted);
+            font-size: 11px;
+            width: 40px;
+        }
+
+        .cell-ticker {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 13px;
+        }
+
+        .cell-price {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .cell-change {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+        }
+
+        .cell-change.positive { color: var(--success); }
+        .cell-change.negative { color: var(--danger); }
+
+        .cell-rvol {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .rvol-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .rvol-high {
+            background: var(--success-dim);
+            color: var(--success);
+        }
+
+        .rvol-medium {
+            background: var(--warning-dim);
+            color: var(--warning);
+        }
+
+        .cell-setup {
+            font-weight: 500;
+        }
+
+        .setup-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .setup-breakout {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(168, 85, 247, 0.15) 100%);
+            color: var(--accent-hover);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .setup-momentum {
+            background: var(--success-dim);
+            color: var(--success);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .setup-drone {
+            background: rgba(6, 182, 212, 0.1);
+            color: var(--drone);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+        }
+
+        .setup-space {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--space);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .setup-datacenter {
+            background: rgba(236, 72, 153, 0.1);
+            color: var(--datacenter);
+            border: 1px solid rgba(236, 72, 153, 0.3);
+        }
+
+        .setup-aichip {
+            background: rgba(249, 115, 22, 0.1);
+            color: var(--aichip);
+            border: 1px solid rgba(249, 115, 22, 0.3);
+        }
+
+        .cell-levels {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+        }
+
+        .level-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 2px 0;
+        }
+
+        .level-label {
+            color: var(--text-muted);
+            font-size: 10px;
+            width: 40px;
+        }
+
+        .level-value {
+            color: var(--text-secondary);
+        }
+
+        .level-value.entry { color: var(--accent-hover); }
+        .level-value.stop { color: var(--danger); }
+        .level-value.target { color: var(--success); }
+
+        .cell-conviction {
+            width: 100px;
+        }
+
+        .conviction-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .conviction-bar {
+            height: 4px;
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .conviction-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .conviction-fill.high { background: var(--success); }
+        .conviction-fill.medium { background: var(--warning); }
+        .conviction-fill.low { background: var(--danger); }
+
+        .rr-ratio {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            padding: 80px 40px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 24px;
+        }
+
+        .empty-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .empty-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Loading */
+        .loading-state {
+            padding: 80px 40px;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 40px;
+            padding: 24px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-text {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .footer-brand {
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .hide-tablet {
+                display: none;
+            }
+        }
+
         @media (max-width: 768px) {
-            .hide-mobile { display: none; }
-            h1 { font-size: 1.8rem; }
+            .header-content {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+
+            .header-meta {
+                text-align: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-bar {
+                justify-content: center;
+            }
+
+            .container {
+                padding: 16px;
+            }
+
+            th, td {
+                padding: 10px 12px;
+            }
+
+            .hide-mobile {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
+    <header>
+        <div class="header-content">
+            <div class="brand">
+                <div class="logo">R</div>
+                <div class="brand-text">
+                    <h1>RavsTrades</h1>
+                    <span>Institutional Momentum Screener</span>
+                </div>
+            </div>
+            <div class="header-meta">
+                <div class="timestamp" id="timestamp">Loading...</div>
+                <div class="market-status" id="market-status">Market Open</div>
+            </div>
+        </div>
+    </header>
+
     <div class="container">
-        <header>
-            <h1>🔥 RavsTrades Screener</h1>
-            <p class="tagline">High Conviction Momentum Setups | RVOL 2.0x+ | 500+ Stocks Scanned</p>
-            <p class="timestamp" id="timestamp">Loading...</p>
-        </header>
-        
-        <div class="stats" id="stats">
+        <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-value" id="total-stocks">-</div>
-                <div class="stat-label">Setups Today</div>
+                <div class="stat-label">Active Setups</div>
+                <div class="stat-value accent" id="total-stocks">-</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value" id="avg-rvol">-</div>
                 <div class="stat-label">Avg RVOL</div>
+                <div class="stat-value" id="avg-rvol">-</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value" id="breakouts">-</div>
+                <div class="stat-label">High Conviction</div>
+                <div class="stat-value success" id="high-conviction">-</div>
+            </div>
+            <div class="stat-card">
                 <div class="stat-label">Breakouts</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="high-conv">-</div>
-                <div class="stat-label">80+ Conviction</div>
+                <div class="stat-value warning" id="breakout-count">-</div>
             </div>
         </div>
-        
-        <div class="filters">
-            <button class="filter-btn active" onclick="filter('all')">All</button>
-            <button class="filter-btn" onclick="filter('Ravs Breakout')">Breakouts</button>
-            <button class="filter-btn" onclick="filter('Ravs Pullback')">Pullbacks</button>
-            <button class="filter-btn" onclick="filter('Ravs EMA Bounce')">EMA</button>
-            <button class="filter-btn" onclick="filterHighConviction()">🔥 80+ Conviction</button>
+
+        <div class="filters-bar">
+            <button class="filter-btn active" onclick="filter('all')">All Setups</button>
+            <button class="filter-btn sector-drone" onclick="filterSector('Drone')">🚁 Drones</button>
+            <button class="filter-btn sector-space" onclick="filterSector('Space')">🚀 Space</button>
+            <button class="filter-btn sector-datacenter" onclick="filterSector('Data Center')">🏢 Data Center</button>
+            <button class="filter-btn sector-aichip" onclick="filterSector('AI Chip')">🤖 AI Chip</button>
+            <button class="filter-btn" onclick="filterBreakouts()">🔥 Breakouts</button>
+            <button class="filter-btn" onclick="filterHighConviction()">85+ Conviction</button>
         </div>
-        
-        <div id="loading" class="loading">Scanning markets with Ravs Criteria...</div>
-        <div id="error" class="error" style="display: none;"></div>
-        
-        <table id="screener-table" style="display: none;">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Ticker</th>
-                    <th>Price</th>
-                    <th>Change</th>
-                    <th>RVOL</th>
-                    <th>Setup</th>
-                    <th>Entry / Stop / Target</th>
-                    <th class="hide-mobile">Conviction</th>
-                </tr>
-            </thead>
-            <tbody id="screener-body"></tbody>
-        </table>
+
+        <div class="table-container">
+            <div id="loading" class="loading-state">
+                <div class="spinner"></div>
+                <div style="color: var(--text-secondary); font-size: 13px;">Scanning markets...</div>
+            </div>
+
+            <div id="empty" class="empty-state" style="display: none;">
+                <div class="empty-icon">📊</div>
+                <div class="empty-title">No setups found</div>
+                <div class="empty-text">Try relaxing filters or check back during market hours</div>
+            </div>
+
+            <table id="screener-table" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Ticker</th>
+                        <th>Price</th>
+                        <th>Change</th>
+                        <th>RVOL</th>
+                        <th>Setup</th>
+                        <th class="hide-tablet">Entry / Stop / Target</th>
+                        <th class="hide-mobile">Conviction</th>
+                    </tr>
+                </thead>
+                <tbody id="screener-body"></tbody>
+            </table>
+        </div>
+
+        <footer>
+            <div class="footer-text">
+                Powered by <span class="footer-brand">RavsTrades</span> • Data delayed 15-20 min • For educational purposes only
+            </div>
+        </footer>
     </div>
-    
+
     <script>
         let allStocks = [];
-        
+
         async function loadScreener() {
             try {
                 const response = await fetch('data/ravs_screener.json');
                 const data = await response.json();
                 allStocks = data.stocks || [];
-                
+
+                // Update timestamp
+                const date = new Date(data.timestamp);
                 document.getElementById('timestamp').textContent = 
-                    `Last scan: ${new Date(data.timestamp).toLocaleString('en-US', {timeZone: 'America/New_York'})} ET`;
-                
+                    date.toLocaleString('en-US', { 
+                        timeZone: 'America/New_York',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    }) + ' ET';
+
+                // Update stats
                 document.getElementById('total-stocks').textContent = allStocks.length;
                 
                 const avgRvol = allStocks.reduce((s, x) => s + (x.rvol || 0), 0) / (allStocks.length || 1);
                 document.getElementById('avg-rvol').textContent = avgRvol.toFixed(1) + 'x';
                 
-                document.getElementById('breakouts').textContent = 
-                    allStocks.filter(s => s.setup_type === 'Ravs Breakout').length;
+                const highConv = allStocks.filter(s => s.conviction >= 85).length;
+                document.getElementById('high-conviction').textContent = highConv;
                 
-                document.getElementById('high-conv').textContent = 
-                    allStocks.filter(s => s.conviction >= 80).length;
-                
-                renderTable(allStocks);
-                
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('screener-table').style.display = 'table';
-                
+                const breakouts = allStocks.filter(s => s.is_breakout).length;
+                document.getElementById('breakout-count').textContent = breakouts;
+
+                // Show table or empty
+                if (allStocks.length === 0) {
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('empty').style.display = 'block';
+                } else {
+                    renderTable(allStocks);
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('screener-table').style.display = 'table';
+                }
+
             } catch (err) {
                 document.getElementById('loading').style.display = 'none';
-                document.getElementById('error').style.display = 'block';
-                document.getElementById('error').textContent = 'Error: ' + err.message;
+                document.getElementById('empty').style.display = 'block';
+                console.error('Error:', err);
             }
         }
-        
+
         function renderTable(stocks) {
             const tbody = document.getElementById('screener-body');
             tbody.innerHTML = '';
-            
+
             stocks.forEach((stock, i) => {
                 const row = document.createElement('tr');
+                
                 const changeClass = stock.change_pct >= 0 ? 'positive' : 'negative';
                 const changeSign = stock.change_pct >= 0 ? '+' : '';
                 
-                let setupClass = '';
-                if (stock.setup_type === 'Ravs Breakout') setupClass = 'setup-breakout';
-                else if (stock.setup_type === 'Ravs Pullback') setupClass = 'setup-pullback';
-                else if (stock.setup_type === 'Ravs EMA Bounce') setupClass = 'setup-ema';
-                else if (stock.setup_type === 'Ravs Range Break') setupClass = 'setup-range';
+                // RVOL badge
+                let rvolClass = 'rvol-medium';
+                if (stock.rvol >= 3) rvolClass = 'rvol-high';
+                
+                // Setup badge class
+                let setupClass = 'setup-momentum';
+                if (stock.is_breakout) setupClass = 'setup-breakout';
+                else if (stock.setup_type.includes('Drone')) setupClass = 'setup-drone';
+                else if (stock.setup_type.includes('Space')) setupClass = 'setup-space';
+                else if (stock.setup_type.includes('Data Center')) setupClass = 'setup-datacenter';
+                else if (stock.setup_type.includes('AI Chip')) setupClass = 'setup-aichip';
+                
+                // Conviction bar
+                let convClass = 'low';
+                if (stock.conviction >= 85) convClass = 'high';
+                else if (stock.conviction >= 75) convClass = 'medium';
                 
                 row.innerHTML = `
-                    <td>${i + 1}</td>
-                    <td class="ticker">${stock.ticker}</td>
-                    <td class="price">$${stock.price}</td>
-                    <td class="${changeClass}">${changeSign}${stock.change_pct}%</td>
-                    <td><span class="rvol">${stock.rvol}x</span></td>
-                    <td><span class="setup ${setupClass}">${stock.setup_type.replace('Ravs ', '')}</span></td>
-                    <td>
-                        <div style="font-size: 0.9rem;">
-                            <div style="color: #ff6b35;">Entry: ${stock.entry}</div>
-                            <div style="color: #ff4757;">Stop: ${stock.stop}</div>
-                            <div style="color: #00ff88;">Target: ${stock.target}</div>
+                    <td class="cell-rank">${i + 1}</td>
+                    <td class="cell-ticker">${stock.ticker}</td>
+                    <td class="cell-price">$${stock.price}</td>
+                    <td class="cell-change ${changeClass}">${changeSign}${stock.change_pct}%</td>
+                    <td class="cell-rvol">
+                        <span class="rvol-badge ${rvolClass}">${stock.rvol}x</span>
+                    </td>
+                    <td class="cell-setup">
+                        <span class="setup-badge ${setupClass}">${stock.setup_type}</span>
+                    </td>
+                    <td class="cell-levels hide-tablet">
+                        <div class="level-row">
+                            <span class="level-label">Entry</span>
+                            <span class="level-value entry">${stock.entry}</span>
+                        </div>
+                        <div class="level-row">
+                            <span class="level-label">Stop</span>
+                            <span class="level-value stop">${stock.stop}</span>
+                        </div>
+                        <div class="level-row">
+                            <span class="level-label">Target</span>
+                            <span class="level-value target">${stock.target}</span>
                         </div>
                     </td>
-                    <td class="hide-mobile">
-                        <div style="font-weight: bold; color: #ff6b35;">${stock.conviction}/100</div>
+                    <td class="cell-conviction hide-mobile">
+                        <div class="conviction-value">${stock.conviction}</div>
                         <div class="conviction-bar">
-                            <div class="conviction-fill" style="width: ${stock.conviction}%"></div>
+                            <div class="conviction-fill ${convClass}" style="width: ${stock.conviction}%"></div>
                         </div>
+                        <div class="rr-ratio">${stock.risk_reward}:1 R/R</div>
                     </td>
                 `;
+                
                 tbody.appendChild(row);
             });
         }
-        
+
         function filter(type) {
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
             
-            if (type === 'all') renderTable(allStocks);
-            else renderTable(allStocks.filter(s => s.setup_type === type));
+            if (type === 'all') {
+                renderTable(allStocks);
+            }
         }
-        
+
+        function filterSector(sector) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const filtered = allStocks.filter(s => s.sector === sector);
+            renderTable(filtered);
+        }
+
+        function filterBreakouts() {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const filtered = allStocks.filter(s => s.is_breakout);
+            renderTable(filtered);
+        }
+
         function filterHighConviction() {
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
-            renderTable(allStocks.filter(s => s.conviction >= 80));
+            
+            const filtered = allStocks.filter(s => s.conviction >= 85);
+            renderTable(filtered);
         }
-        
+
         loadScreener();
     </script>
 </body>
