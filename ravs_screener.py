@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-RavsTrades Screener - TradingView Style
+RavsTrades Screener - TradingView Style (Fixed)
 """
 
 import yfinance as yf
@@ -33,7 +33,7 @@ def calculate_emas(prices, periods=[21, 50]):
     for period in periods:
         if len(prices) >= period:
             ema = prices.ewm(span=period, adjust=False).mean().iloc[-1]
-            emas[period] = ema
+            emas[period] = float(ema)  # Convert to native Python float
     return emas
 
 
@@ -55,11 +55,15 @@ def get_data(ticker):
         
         # Volume analysis (10-day average)
         avg_volume_10d = float(hist['Volume'].tail(10).mean())
-        current_volume = float(hist['Volume'].iloc[-1])
+        current_volume = int(hist['Volume'].iloc[-1])  # Convert to native int
         rvol = current_volume / avg_volume_10d if avg_volume_10d > 0 else 0
         
-        # Market cap check
+        # Market cap check - convert numpy types to native Python types
         market_cap = info.get('marketCap', 0)
+        if hasattr(market_cap, 'item'):  # Handle numpy types
+            market_cap = int(market_cap.item())
+        else:
+            market_cap = int(market_cap)
         
         # Apply TradingView-style filters
         if price < MIN_PRICE:
@@ -153,7 +157,7 @@ def get_data(ticker):
             'price': round(price, 2),
             'change_pct': round(change_pct, 2),
             'rvol': round(rvol, 2),
-            'volume': int(current_volume),
+            'volume': current_volume,
             'avg_volume_10d': int(avg_volume_10d),
             'market_cap': market_cap,
             'ema21': round(ema21, 2),
