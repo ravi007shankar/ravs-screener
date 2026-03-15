@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RavsTrades Momentum Screener</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            line-height: 1.6;
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 2px solid #ff6b35;
+            margin-bottom: 30px;
+        }
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .tagline { color: #888; font-size: 1.1rem; }
+        .timestamp { color: #666; font-size: 0.9rem; margin-top: 10px; }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            text-align: center;
+        }
+        .stat-value { font-size: 2rem; font-weight: bold; color: #ff6b35; }
+        .stat-label { color: #888; font-size: 0.85rem; margin-top: 5px; }
+        
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: #ff6b35;
+            border-color: #ff6b35;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: #1a1a1a;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+        th {
+            background: #252525;
+            padding: 15px 12px;
+            text-align: left;
+            color: #ff6b35;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+        td { padding: 15px 12px; border-bottom: 1px solid #333; }
+        tr:hover { background: #252525; }
+        
+        .ticker { font-weight: bold; font-size: 1.1rem; }
+        .price { font-family: monospace; font-size: 1.1rem; }
+        .positive { color: #00ff88; }
+        .negative { color: #ff4757; }
+        
+        .rvol {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: rgba(255, 107, 53, 0.2);
+            color: #ff6b35;
+            border: 1px solid #ff6b35;
+        }
+        
+        .setup {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .setup-breakout { background: rgba(255, 107, 53, 0.15); color: #ff6b35; border: 1px solid #ff6b35; }
+        .setup-pullback { background: rgba(0, 204, 255, 0.15); color: #00ccff; border: 1px solid #00ccff; }
+        .setup-ema { background: rgba(255, 193, 7, 0.15); color: #ffc107; border: 1px solid #ffc107; }
+        .setup-range { background: rgba(138, 43, 226, 0.15); color: #8a2be2; border: 1px solid #8a2be2; }
+        
+        .conviction-bar {
+            width: 100%;
+            height: 6px;
+            background: #333;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        .conviction-fill { height: 100%; border-radius: 3px; background: #ff6b35; }
+        
+        .loading { text-align: center; padding: 60px; color: #666; }
+        .error { text-align: center; padding: 60px; color: #ff4757; }
+        
+        @media (max-width: 768px) {
+            .hide-mobile { display: none; }
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔥 RavsTrades Screener</h1>
+            <p class="tagline">High Conviction Momentum Setups | RVOL 2.0x+ | 500+ Stocks Scanned</p>
+            <p class="timestamp" id="timestamp">Loading...</p>
+        </header>
+        
+        <div class="stats" id="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="total-stocks">-</div>
+                <div class="stat-label">Setups Today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="avg-rvol">-</div>
+                <div class="stat-label">Avg RVOL</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="breakouts">-</div>
+                <div class="stat-label">Breakouts</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="high-conv">-</div>
+                <div class="stat-label">80+ Conviction</div>
+            </div>
+        </div>
+        
+        <div class="filters">
+            <button class="filter-btn active" onclick="filter('all')">All</button>
+            <button class="filter-btn" onclick="filter('Ravs Breakout')">Breakouts</button>
+            <button class="filter-btn" onclick="filter('Ravs Pullback')">Pullbacks</button>
+            <button class="filter-btn" onclick="filter('Ravs EMA Bounce')">EMA</button>
+            <button class="filter-btn" onclick="filterHighConviction()">🔥 80+ Conviction</button>
+        </div>
+        
+        <div id="loading" class="loading">Scanning markets with Ravs Criteria...</div>
+        <div id="error" class="error" style="display: none;"></div>
+        
+        <table id="screener-table" style="display: none;">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Ticker</th>
+                    <th>Price</th>
+                    <th>Change</th>
+                    <th>RVOL</th>
+                    <th>Setup</th>
+                    <th>Entry / Stop / Target</th>
+                    <th class="hide-mobile">Conviction</th>
+                </tr>
+            </thead>
+            <tbody id="screener-body"></tbody>
+        </table>
+    </div>
+    
+    <script>
+        let allStocks = [];
+        
+        async function loadScreener() {
+            try {
+                const response = await fetch('data/ravs_screener.json');
+                const data = await response.json();
+                allStocks = data.stocks || [];
+                
+                document.getElementById('timestamp').textContent = 
+                    `Last scan: ${new Date(data.timestamp).toLocaleString('en-US', {timeZone: 'America/New_York'})} ET`;
+                
+                document.getElementById('total-stocks').textContent = allStocks.length;
+                
+                const avgRvol = allStocks.reduce((s, x) => s + (x.rvol || 0), 0) / (allStocks.length || 1);
+                document.getElementById('avg-rvol').textContent = avgRvol.toFixed(1) + 'x';
+                
+                document.getElementById('breakouts').textContent = 
+                    allStocks.filter(s => s.setup_type === 'Ravs Breakout').length;
+                
+                document.getElementById('high-conv').textContent = 
+                    allStocks.filter(s => s.conviction >= 80).length;
+                
+                renderTable(allStocks);
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('screener-table').style.display = 'table';
+                
+            } catch (err) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').textContent = 'Error: ' + err.message;
+            }
+        }
+        
+        function renderTable(stocks) {
+            const tbody = document.getElementById('screener-body');
+            tbody.innerHTML = '';
+            
+            stocks.forEach((stock, i) => {
+                const row = document.createElement('tr');
+                const changeClass = stock.change_pct >= 0 ? 'positive' : 'negative';
+                const changeSign = stock.change_pct >= 0 ? '+' : '';
+                
+                let setupClass = '';
+                if (stock.setup_type === 'Ravs Breakout') setupClass = 'setup-breakout';
+                else if (stock.setup_type === 'Ravs Pullback') setupClass = 'setup-pullback';
+                else if (stock.setup_type === 'Ravs EMA Bounce') setupClass = 'setup-ema';
+                else if (stock.setup_type === 'Ravs Range Break') setupClass = 'setup-range';
+                
+                row.innerHTML = `
+                    <td>${i + 1}</td>
+                    <td class="ticker">${stock.ticker}</td>
+                    <td class="price">$${stock.price}</td>
+                    <td class="${changeClass}">${changeSign}${stock.change_pct}%</td>
+                    <td><span class="rvol">${stock.rvol}x</span></td>
+                    <td><span class="setup ${setupClass}">${stock.setup_type.replace('Ravs ', '')}</span></td>
+                    <td>
+                        <div style="font-size: 0.9rem;">
+                            <div style="color: #ff6b35;">Entry: ${stock.entry}</div>
+                            <div style="color: #ff4757;">Stop: ${stock.stop}</div>
+                            <div style="color: #00ff88;">Target: ${stock.target}</div>
+                        </div>
+                    </td>
+                    <td class="hide-mobile">
+                        <div style="font-weight: bold; color: #ff6b35;">${stock.conviction}/100</div>
+                        <div class="conviction-bar">
+                            <div class="conviction-fill" style="width: ${stock.conviction}%"></div>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        function filter(type) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (type === 'all') renderTable(allStocks);
+            else renderTable(allStocks.filter(s => s.setup_type === type));
+        }
+        
+        function filterHighConviction() {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            renderTable(allStocks.filter(s => s.conviction >= 80));
+        }
+        
+        loadScreener();
+    </script>
+</body>
+</html>
