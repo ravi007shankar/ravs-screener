@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RavsTrades Screener - Sectors + Stocks</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0e1a;
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1a1f2e 0%, #2d3748 100%);
+            padding: 20px 40px;
+            border-bottom: 1px solid #2d3748;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .header-stats {
+            display: flex;
+            gap: 30px;
+            font-size: 14px;
+            color: #8892b0;
+        }
+        
+        .stat {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .stat-value {
+            color: #00d4ff;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 40px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #ccd6f6;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .hot-sectors {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .hot-sector-tag {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 14px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .panel {
+            background: #1a1f2e;
+            border-radius: 12px;
+            border: 1px solid #2d3748;
+            overflow: hidden;
+        }
+        
+        .panel-header {
+            padding: 20px 25px;
+            background: #0a0e1a;
+            border-bottom: 1px solid #2d3748;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            text-align: left;
+            padding: 15px 20px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #8892b0;
+            font-weight: 600;
+            border-bottom: 1px solid #2d3748;
+        }
+        
+        td {
+            padding: 16px 20px;
+            border-bottom: 1px solid #2d3748;
+            font-size: 14px;
+        }
+        
+        tr:hover {
+            background: rgba(0, 212, 255, 0.05);
+        }
+        
+        .ticker {
+            font-weight: bold;
+            color: #00d4ff;
+            font-size: 16px;
+        }
+        
+        .name {
+            color: #8892b0;
+            font-size: 12px;
+        }
+        
+        .change-pos {
+            color: #48bb78;
+            font-weight: bold;
+        }
+        
+        .change-neg {
+            color: #e53e3e;
+            font-weight: bold;
+        }
+        
+        .conviction-high {
+            background: rgba(72, 187, 120, 0.2);
+            color: #48bb78;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .conviction-med {
+            background: rgba(236, 201, 75, 0.2);
+            color: #ecc94b;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .conviction-low {
+            background: rgba(229, 62, 62, 0.2);
+            color: #e53e3e;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .setup-strong {
+            color: #ff6b35;
+            font-weight: bold;
+        }
+        
+        .setup-bullish {
+            color: #48bb78;
+        }
+        
+        .hot-indicator {
+            color: #ff6b35;
+            font-size: 16px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        input, select, button {
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid #2d3748;
+            background: #0a0e1a;
+            color: #fff;
+            font-size: 14px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            color: #0a0e1a;
+        }
+        
+        button:hover {
+            opacity: 0.9;
+        }
+        
+        .refresh-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #2d3748;
+            border-top-color: #00d4ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 1000px) {
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔥 RavsTrades Screener</h1>
+        <div class="header-stats">
+            <div class="stat">
+                <span>Sectors Tracked</span>
+                <span class="stat-value" id="sectorCount">-</span>
+            </div>
+            <div class="stat">
+                <span>Stocks Scanned</span>
+                <span class="stat-value" id="stockCount">-</span>
+            </div>
+            <div class="stat">
+                <span>Hot Sectors</span>
+                <span class="stat-value" id="hotSectorCount">-</span>
+            </div>
+            <div class="stat">
+                <span>Last Update</span>
+                <span class="stat-value" id="lastUpdate" style="font-size: 14px;">-</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- Hot Sectors -->
+        <div class="section">
+            <h2 class="section-title">🎯 Money Flow - Hot Sectors Today</h2>
+            <div class="hot-sectors" id="hotSectors">
+                <div class="loading"></div>
+            </div>
+        </div>
+        
+        <div class="two-col">
+            <!-- Sector ETFs -->
+            <div class="section">
+                <h2 class="section-title">📊 All Sector ETFs</h2>
+                <div class="panel">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Sector</th>
+                                <th>Change</th>
+                                <th>RVOL</th>
+                                <th>Setup</th>
+                                <th>Conviction</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sectorTable">
+                            <tr><td colspan="5" style="text-align:center;padding:40px;">
+                                <div class="loading"></div>
+                            </td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Top Stocks -->
+            <div class="section">
+                <h2 class="section-title">📈 Top Stocks in Hot Sectors</h2>
+                <div class="panel">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Stock</th>
+                                <th>Sector</th>
+                                <th>Change</th>
+                                <th>Conviction</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stockTable">
+                            <tr><td colspan="4" style="text-align:center;padding:40px;">
+                                <div class="loading"></div>
+                            </td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- All Passing Stocks -->
+        <div class="section">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                <h2 class="section-title">🚀 All Passing Stocks (Top 25)</h2>
+                <button class="refresh-btn" onclick="refreshData()">
+                    <span>🔄</span> Refresh Now
+                </button>
+            </div>
+            <div class="panel">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ticker</th>
+                            <th>Sector</th>
+                            <th>Price</th>
+                            <th>Change %</th>
+                            <th>RVOL</th>
+                            <th>Setup</th>
+                            <th>Conviction</th>
+                        </tr>
+                    </thead>
+                    <tbody id="allStocksTable">
+                        <tr><td colspan="7" style="text-align:center;padding:40px;">
+                            <div class="loading"></div>
+                        </td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let refreshInterval;
+        
+        async function loadData() {
+            try {
+                const res = await fetch('/api/data');
+                const data = await res.json();
+                renderData(data);
+            } catch (err) {
+                console.error('Failed to load:', err);
+            }
+        }
+        
+        function renderData(data) {
+            // Stats
+            document.getElementById('sectorCount').textContent = data.sector_etfs?.length || 0;
+            document.getElementById('stockCount').textContent = data.stocks?.total_scanned || 0;
+            document.getElementById('hotSectorCount').textContent = data.hot_sectors?.length || 0;
+            document.getElementById('lastUpdate').textContent = data.timestamp 
+                ? new Date(data.timestamp).toLocaleTimeString() 
+                : '-';
+            
+            // Hot sectors
+            const hotContainer = document.getElementById('hotSectors');
+            if (data.hot_sectors && data.hot_sectors.length > 0) {
+                hotContainer.innerHTML = data.hot_sectors.map(s => 
+                    `<span class="hot-sector-tag">${s}</span>`
+                ).join('');
+            } else {
+                hotContainer.innerHTML = '<span style="color:#8892b0;">No hot sectors detected</span>';
+            }
+            
+            // Sector ETFs table
+            const sectorTable = document.getElementById('sectorTable');
+            if (data.sector_etfs) {
+                sectorTable.innerHTML = data.sector_etfs.map(s => {
+                    const changeClass = s.change_pct >= 0 ? 'change-pos' : 'change-neg';
+                    const changeSign = s.change_pct >= 0 ? '+' : '';
+                    const convClass = s.conviction >= 70 ? 'conviction-high' : s.conviction >= 40 ? 'conviction-med' : 'conviction-low';
+                    const setupClass = s.setup.includes('Strong') ? 'setup-strong' : 'setup-bullish';
+                    return `
+                        <tr>
+                            <td>
+                                <div class="ticker">${s.ticker}</div>
+                                <div class="name">${s.name}</div>
+                            </td>
+                            <td class="${changeClass}">${changeSign}${s.change_pct}%</td>
+                            <td>${s.rvol}x</td>
+                            <td class="${setupClass}">${s.setup}</td>
+                            <td><span class="${convClass}">${s.conviction}/100</span></td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+            
+            // Hot sector stocks
+            const stockTable = document.getElementById('stockTable');
+            const hotStocks = data.stocks?.top_25?.filter(s => s.hot_sector).slice(0, 10) || [];
+            if (hotStocks.length > 0) {
+                stockTable.innerHTML = hotStocks.map(s => {
+                    const changeClass = s.change_pct >= 0 ? 'change-pos' : 'change-neg';
+                    const changeSign = s.change_pct >= 0 ? '+' : '';
+                    const convClass = s.conviction >= 70 ? 'conviction-high' : s.conviction >= 40 ? 'conviction-med' : 'conviction-low';
+                    return `
+                        <tr>
+                            <td>
+                                <span class="hot-indicator">🔥</span>
+                                <span class="ticker">${s.ticker}</span>
+                            </td>
+                            <td>${s.sector}</td>
+                            <td class="${changeClass}">${changeSign}${s.change_pct}%</td>
+                            <td><span class="${convClass}">${s.conviction}/100</span></td>
+                        </tr>
+                    `;
+                }).join('');
+            } else {
+                stockTable.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#8892b0;padding:20px;">No stocks in hot sectors</td></tr>';
+            }
+            
+            // All stocks table
+            const allTable = document.getElementById('allStocksTable');
+            if (data.stocks?.top_25) {
+                allTable.innerHTML = data.stocks.top_25.map(s => {
+                    const changeClass = s.change_pct >= 0 ? 'change-pos' : 'change-neg';
+                    const changeSign = s.change_pct >= 0 ? '+' : '';
+                    const convClass = s.conviction >= 70 ? 'conviction-high' : s.conviction >= 40 ? 'conviction-med' : 'conviction-low';
+                    const hotIcon = s.hot_sector ? '🔥 ' : '';
+                    const setupClass = s.setup.includes('Strong') ? 'setup-strong' : '';
+                    return `
+                        <tr>
+                            <td class="ticker">${hotIcon}${s.ticker}</td>
+                            <td>${s.sector}</td>
+                            <td>$${s.price}</td>
+                            <td class="${changeClass}">${changeSign}${s.change_pct}%</td>
+                            <td>${s.rvol}x</td>
+                            <td class="${setupClass}">${s.setup}</td>
+                            <td><span class="${convClass}">${s.conviction}/100</span></td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+        }
+        
+        async function refreshData() {
+            const btn = document.querySelector('.refresh-btn');
+            btn.innerHTML = '<span class="loading"></span> Running...';
+            btn.disabled = true;
+            
+            try {
+                await fetch('/api/run', {method: 'POST'});
+                setTimeout(async () => {
+                    await loadData();
+                    btn.innerHTML = '<span>🔄</span> Refresh Now';
+                    btn.disabled = false;
+                }, 3000);
+            } catch (err) {
+                console.error('Refresh failed:', err);
+                btn.innerHTML = '<span>🔄</span> Refresh Now';
+                btn.disabled = false;
+            }
+        }
+        
+        // Auto refresh every 30 seconds
+        function startAutoRefresh() {
+            refreshInterval = setInterval(loadData, 30000);
+        }
+        
+        // Init
+        loadData();
+        startAutoRefresh();
+    </script>
+</body>
+</html>
