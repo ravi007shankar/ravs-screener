@@ -14,7 +14,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
+          fetch-depth: 0
       
       - uses: actions/setup-python@v4
         with:
@@ -24,9 +25,8 @@ jobs:
       
       - run: python ravs_screener.py
       
-      - run: |
-          git config user.name "RavsBot"
-          git config user.email "bot@ravstrades.com"
-          git add public/data/
-          git commit -m "🔥 Ravs Scan $(date)" || echo "No changes"
-          git push || echo "Push failed"
+      - name: Commit and push results
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "🔥 Ravs Scan $(date)"
+          file_pattern: public/data/*.json
