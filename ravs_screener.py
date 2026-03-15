@@ -109,19 +109,19 @@ def get_stock_data(ticker):
         low_20d = hist['Low'].min()
         
         return {
-            'ticker': ticker,
-            'price': round(current_price, 2),
-            'change_pct': round(change_pct, 2),
-            'rvol': round(rvol, 2),
-            'volume': int(current_volume),
-            'avg_volume': int(avg_volume),
-            'market_cap': market_cap,
-            'ema_9': round(ema_9, 2),
-            'ema_20': round(ema_20, 2),
-            'high_20d': round(high_20d, 2),
-            'low_20d': round(low_20d, 2),
-            'above_ema20': current_price > ema_20,
-        }
+    'ticker': ticker,
+    'price': float(price),              # Convert numpy types
+    'change_pct': float(change_pct),
+    'rvol': float(rvol),
+    'volume': int(current_volume),
+    'avg_volume': int(avg_volume),
+    'market_cap': int(market_cap),
+    'ema_9': float(ema_9),
+    'ema_20': float(ema_20),
+    'high_20d': float(high_20d),
+    'low_20d': float(low_20d),
+    'above_ema20': bool(current_price > ema_20),  # Convert to Python bool
+}
         
     except Exception as e:
         return None
@@ -199,19 +199,19 @@ def classify_setup(data):
     reward = price * 0.06
     rr_ratio = round(reward / risk, 1) if risk > 0 else 1.2
     
-    return {
-        **data,
-        'setup_type': setup_type,
-        'sector': sector_name,
-        'sector_emoji': sector_emoji,
-        'is_breakout': is_breakout,
-        'is_priority': is_priority,
-        'entry': entry,
-        'stop': stop,
-        'target': target,
-        'conviction': conviction,
-        'risk_reward': rr_ratio
-    }
+ return {
+    **data,
+    'setup_type': setup_type,
+    'sector': sector_name,
+    'sector_emoji': sector_emoji,
+    'is_breakout': bool(is_breakout),  # Convert to Python bool
+    'is_priority': bool(is_priority),   # Convert to Python bool
+    'entry': entry,
+    'stop': stop,
+    'target': target,
+    'conviction': int(conviction),      # Ensure int
+    'risk_reward': float(rr_ratio)      # Ensure float
+}
 
 def run_ravs_screener():
     """Main screener - relaxed for testing"""
