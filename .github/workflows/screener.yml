@@ -6,7 +6,7 @@ permissions:
 on:
   schedule:
     - cron: '30 11 * * 1-5'
-workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   scan:
@@ -28,5 +28,5 @@ jobs:
           git config user.name "RavsBot"
           git config user.email "bot@ravstrades.com"
           git add public/data/
-          git commit -m "🔥 Ravs Scan $(date)" || echo "No changes to commit"
-          git push || echo "Push failed or no changes"
+          git commit -m "🔥 Ravs Scan $(date)" || echo "No changes"
+          git push || echo "Push failed"
