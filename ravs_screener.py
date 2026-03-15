@@ -1,102 +1,74 @@
 #!/usr/bin/env python3
 """
-RavsTrades Screener - TradingView Style (Fixed)
+RavsTrades Screener - Sector ETFs + Stocks
 """
 
 import yfinance as yf
 import json
 from datetime import datetime
 import os
+from tickers import TICKERS
 
-# TradingView-style thresholds (from your screenshot)
-MIN_PRICE = 3.0           # Price > 3 USD
-MIN_CHANGE_PCT = 0.01     # Change > 0.01%
-MIN_AVG_VOLUME = 500000   # Avg Volume 10D > 500K
-MIN_MARKET_CAP = 300000000  # Market cap > 300M USD
-
-TICKERS = [
-    'AAPL', 'MSFT', 'NVDA', 'TSLA', 'AMZN', 'GOOGL', 'META', 'AMD', 'COIN', 'GME',
-    'EH', 'UAVS', 'DPRO', 'SPCE', 'RKLB', 'ASTS', 'VST', 'CEG', 'SMR', 'OKLO',
-    'ENPH', 'SEDG', 'FSLR', 'NIO', 'RIVN', 'LCID', 'PLTR', 'CRWD', 'SNOW', 'ROKU',
-    'ASML', 'LRCX', 'KLAC', 'AMAT', 'QCOM', 'MU', 'MRVL', 'NXPI', 'SWKS', 'ON',
-    'MRNA', 'VRTX', 'REGN', 'GILD', 'AMGN', 'MSTR', 'RIOT', 'MARA', 'HUT', 'BITF'
-]
-
-DRONE_STOCKS = ['EH', 'UAVS', 'DPRO']
-SPACE_STOCKS = ['SPCE', 'RKLB', 'ASTS']
-DATACENTER_STOCKS = ['VST', 'CEG', 'SMR', 'OKLO']
+MIN_PRICE = 3.0
+MIN_CHANGE_PCT = 0.01
+MIN_AVG_VOLUME = 500000
+MIN_MARKET_CAP = 300000000
 
 
 def calculate_emas(prices, periods=[21, 50]):
-    """Calculate EMAs for trend analysis"""
     emas = {}
     for period in periods:
         if len(prices) >= period:
             ema = prices.ewm(span=period, adjust=False).mean().iloc[-1]
-            emas[period] = float(ema)  # Convert to native Python float
+            emas[period] = float(ema)
     return emas
 
 
-def get_data(ticker):
+def scan_ticker(ticker, name=None, is_etf=False):
+    """Scan any ticker (ETF or Stock)"""
     try:
         stock = yf.Ticker(ticker)
-        
-        # Get 60 days for proper EMA calculation
         hist = stock.history(period="60d")
         info = stock.info
         
-        if len(hist) < 50:  # Need at least 50 days for EMA50
+        if len(hist) < 50:
             return None
             
-        # Current price and change
         price = float(hist['Close'].iloc[-1])
         prev_close = float(hist['Close'].iloc[-2])
         change_pct = ((price - prev_close) / prev_close) * 100
         
-        # Volume analysis (10-day average)
         avg_volume_10d = float(hist['Volume'].tail(10).mean())
-        current_volume = int(hist['Volume'].iloc[-1])  # Convert to native int
+        current_volume = int(hist['Volume'].iloc[-1])
         rvol = current_volume / avg_volume_10d if avg_volume_10d > 0 else 0
         
-        # Market cap check - convert numpy types to native Python types
-        market_cap = info.get('marketCap', 0)
-        if hasattr(market_cap, 'item'):  # Handle numpy types
+        market_cap = info.get('marketCap', 0) or info.get('totalAssets', 0)
+        if hasattr(market_cap, 'item'):
             market_cap = int(market_cap.item())
         else:
             market_cap = int(market_cap)
         
-        # Apply TradingView-style filters
-        if price < MIN_PRICE:
-            return None
-        if abs(change_pct) < MIN_CHANGE_PCT:
-            return None
-        if avg_volume_10d < MIN_AVG_VOLUME:
-            return None
-        if market_cap < MIN_MARKET_CAP:
-            return None
+        # Skip filters for ETFs (they're benchmarks)
+        if not is_etf:
+            if price < MIN_PRICE:
+                return None
+            if abs(change_pct) < MIN_CHANGE_PCT:
+                return None
+            if avg_volume_10d < MIN_AVG_VOLUME:
+                return None
+            if market_cap < MIN_MARKET_CAP:
+                return None
             
-        # Calculate EMAs for trend alignment
         emas = calculate_emas(hist['Close'])
         ema21 = emas.get(21, 0)
         ema50 = emas.get(50, 0)
         
-        # TradingView logic: EMA(50) < Price AND EMA(21) < Price (bullish trend)
         trend_bullish = (price > ema21) and (price > ema50)
-        ema_aligned = ema21 > ema50  # Golden cross alignment
+        ema_aligned = ema21 > ema50
         
-        # Sector tagging
-        sector = ""
-        if ticker in DRONE_STOCKS:
-            sector = "🚁 Drone"
-        elif ticker in SPACE_STOCKS:
-            sector = "🚀 Space"
-        elif ticker in DATACENTER_STOCKS:
-            sector = "🏢 Data Center"
-            
-        # Enhanced conviction scoring (0-100)
+        # Conviction score
         conviction = 0
         
-        # Trend score (0-30)
         if trend_bullish and ema_aligned:
             conviction += 30
         elif trend_bullish:
@@ -104,7 +76,6 @@ def get_data(ticker):
         elif ema_aligned:
             conviction += 10
             
-        # Volume score (0-25)
         if rvol > 3.0:
             conviction += 25
         elif rvol > 2.0:
@@ -114,63 +85,46 @@ def get_data(ticker):
         elif rvol > 1.0:
             conviction += 10
             
-        # Price action score (0-25)
-        if change_pct > 5:
+        if abs(change_pct) > 5:
             conviction += 25
-        elif change_pct > 3:
+        elif abs(change_pct) > 3:
             conviction += 20
-        elif change_pct > 1:
+        elif abs(change_pct) > 1:
             conviction += 15
-        elif change_pct > 0:
+        else:
             conviction += 10
             
-        # Market cap liquidity bonus (0-10)
-        if market_cap > 10_000_000_000:  # >10B
+        if market_cap > 10_000_000_000:
             conviction += 10
-        elif market_cap > 1_000_000_000:  # >1B
+        elif market_cap > 1_000_000_000:
             conviction += 5
-            
-        # Sector momentum bonus (0-10)
-        if sector and change_pct > 2:
-            conviction += 10
             
         conviction = min(conviction, 100)
         
         # Setup classification
-        if change_pct > 5 and trend_bullish and rvol > 2:
-            setup_type = f"{sector} Breakout" if sector else "🔥 High Conviction Breakout"
+        if abs(change_pct) > 5 and trend_bullish and rvol > 2:
+            setup = "🔥 Strong"
         elif trend_bullish and rvol > 1.5:
-            setup_type = f"{sector} Momentum" if sector else "📈 Trend Momentum"
+            setup = "📈 Bullish"
         elif rvol > 2.0:
-            setup_type = f"{sector} Volume Spike" if sector else "⚡ Volume Spike"
+            setup = "⚡ Volume"
+        elif trend_bullish:
+            setup = "👍 Trend"
         else:
-            setup_type = f"{sector} Watch" if sector else "👀 Watch List"
+            setup = "⚠️ Weak"
             
-        # Risk management levels
-        atr = float(hist['High'].tail(14).max() - hist['Low'].tail(14).min()) / 14
-        stop_loss = round(price - (2 * atr), 2)
-        target = round(price + (3 * atr), 2)
-        risk_reward = round((target - price) / (price - stop_loss), 2) if (price - stop_loss) > 0 else 0
-        
         return {
             'ticker': ticker,
+            'name': name or info.get('shortName', ticker),
             'price': round(price, 2),
             'change_pct': round(change_pct, 2),
             'rvol': round(rvol, 2),
             'volume': current_volume,
-            'avg_volume_10d': int(avg_volume_10d),
-            'market_cap': market_cap,
-            'ema21': round(ema21, 2),
-            'ema50': round(ema50, 2),
             'trend_bullish': trend_bullish,
-            'setup_type': setup_type,
-            'sector': sector,
-            'entry': f"${round(price, 2)}",
-            'stop': f"${stop_loss}",
-            'target': f"${target}",
+            'ema_aligned': ema_aligned,
+            'setup': setup,
             'conviction': conviction,
-            'risk_reward': risk_reward,
-            'is_breakout': bool(change_pct > 5 and rvol > 2)
+            'is_etf': is_etf
         }
         
     except Exception as e:
@@ -178,50 +132,85 @@ def get_data(ticker):
         return None
 
 
-def main():
-    print("🔥 RavsTrades Screener (TradingView Style)")
-    print("=" * 50)
-    print(f"Filters: Price>${MIN_PRICE} | Change>{MIN_CHANGE_PCT}% | AvgVol>{MIN_AVG_VOLUME:,} | MarketCap>${MIN_MARKET_CAP/1e6:.0f}M")
-    print("=" * 50)
+def run_screener():
+    """Run full screener and return results"""
+    print("=" * 70)
+    print("🔥 RavsTrades Screener - Sector ETFs + Stocks")
+    print("=" * 70)
     
-    results = []
-    filtered_count = 0
+    # === LAYER 1: SECTOR ETFs ===
+    print("\n📊 SCANNING SECTOR ETFs (Money Flow)")
+    print("-" * 70)
     
-    for t in TICKERS:
-        d = get_data(t)
-        if d:
-            results.append(d)
-            trend_icon = "🟢" if d['trend_bullish'] else "🔴"
-            print(f"{trend_icon} {d['ticker']:5} | {d['setup_type']:25} | {d['change_pct']:+6.2f}% | RVOL:{d['rvol']:4.1f}x | Conviction:{d['conviction']:3}/100")
-        else:
-            filtered_count += 1
-
-    # Sort by conviction, then by change %
-    results.sort(key=lambda x: (x['conviction'], x['change_pct']), reverse=True)
+    sector_results = []
+    for sector_name, etf_ticker in TICKERS["ETFS"].items():
+        result = scan_ticker(etf_ticker, name=sector_name, is_etf=True)
+        if result:
+            result['sector_name'] = sector_name
+            sector_results.append(result)
+            trend_icon = "🟢" if result['trend_bullish'] else "🔴"
+            print(f"{trend_icon} {sector_name:25} | {result['change_pct']:+6.2f}% | RVOL:{result['rvol']:4.1f}x | {result['setup']}")
     
+    sector_results.sort(key=lambda x: (x['conviction'], abs(x['change_pct'])), reverse=True)
+    hot_sectors = [s['sector_name'] for s in sector_results[:5]]
+    
+    print(f"\n🎯 HOT SECTORS: {', '.join(hot_sectors) if hot_sectors else 'None'}")
+    
+    # === LAYER 2: STOCKS ===
+    print("\n" + "=" * 70)
+    print("📈 SCANNING STOCKS")
+    print("-" * 70)
+    
+    stock_results = []
+    sector_map = {}
+    for sector, tickers in TICKERS["BY_SECTOR"].items():
+        for t in tickers:
+            sector_map[t] = sector
+    
+    for ticker in TICKERS["STOCKS"]:
+        result = scan_ticker(ticker)
+        if result:
+            sector = sector_map.get(ticker, "General")
+            result['sector'] = sector
+            
+            # Boost if in hot sector
+            if sector in hot_sectors:
+                result['conviction'] = min(result['conviction'] + 15, 100)
+                result['hot_sector'] = True
+            else:
+                result['hot_sector'] = False
+                
+            stock_results.append(result)
+    
+    stock_results.sort(key=lambda x: x['conviction'], reverse=True)
+    
+    # Display
+    for s in stock_results[:25]:
+        trend_icon = "🟢" if s['trend_bullish'] else "🔴"
+        hot_icon = "🔥" if s.get('hot_sector') else "  "
+        print(f"{hot_icon}{trend_icon} {s['ticker']:6} | {s['sector']:18} | {s['change_pct']:+6.2f}% | Conv:{s['conviction']:3}/100 | {s['setup']}")
+    
+    # Save
     output = {
         'timestamp': datetime.now().isoformat(),
-        'filters': {
-            'min_price': MIN_PRICE,
-            'min_change_pct': MIN_CHANGE_PCT,
-            'min_avg_volume': MIN_AVG_VOLUME,
-            'min_market_cap': MIN_MARKET_CAP
-        },
-        'count': len(results),
-        'stocks': results[:25]
+        'hot_sectors': hot_sectors,
+        'sector_etfs': sector_results,
+        'stocks': {
+            'total_scanned': len(TICKERS["STOCKS"]),
+            'passed_filters': len(stock_results),
+            'top_25': stock_results[:25]
+        }
     }
-
+    
     os.makedirs('public/data', exist_ok=True)
     with open('public/data/ravs_screener.json', 'w') as f:
         json.dump(output, f, indent=2)
-
-    print("=" * 50)
-    print(f"🎯 Found {len(results)} high-conviction stocks (filtered out {filtered_count})")
-    print(f"💾 Saved to public/data/ravs_screener.json")
     
-    if results:
-        print(f"\n🏆 Top Pick: {results[0]['ticker']} - Conviction {results[0]['conviction']}/100")
+    print("=" * 70)
+    print(f"💾 Saved | {len(sector_results)} sectors | {len(stock_results)} stocks")
+    
+    return output
 
 
 if __name__ == "__main__":
-    main()
+    run_screener()
