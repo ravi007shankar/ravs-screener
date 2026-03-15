@@ -230,7 +230,7 @@ def run_ravs_screener():
             
         enriched = find_ravs_levels(data)
         
-        if enriched['conviction'] >= 50 and enriched['setup_type'] != "None":
+        if enriched['conviction'] >= 40 and enriched['setup_type'] != "None":
             results.append(enriched)
             print(f"✅ {ticker}: {enriched['setup_type']} | {enriched['conviction']}/100")
     
