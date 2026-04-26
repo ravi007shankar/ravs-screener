@@ -137,17 +137,42 @@
         .btn-danger:hover { background: rgba(229, 62, 62, 0.1); }
 
         /* Summary Cards */
+        .summary-section {
+            margin-bottom: 20px;
+        }
+        .summary-label-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding-left: 4px;
+        }
+        .summary-label-row h3 {
+            font-size: 0.875rem;
+            color: #8892b0;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+        }
+        .summary-label-row .badge {
+            background: #2d3748;
+            color: #ccd6f6;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
         .summary-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
         }
         .summary-card {
             background: #1a1f2e;
             border: 1px solid #2d3748;
             border-radius: 12px;
-            padding: 20px;
+            padding: 18px;
             position: relative;
             overflow: hidden;
             transition: transform 0.2s;
@@ -166,15 +191,18 @@
         .summary-card.negative::after { background: #e53e3e; }
         .summary-card.accent::after { background: #00d4ff; }
         .summary-card.neutral::after { background: #ecc94b; }
-        .summary-label {
+        .summary-card-header {
             font-size: 0.6875rem;
             text-transform: uppercase;
             letter-spacing: 0.08em;
             color: #8892b0;
             margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         .summary-value {
-            font-size: 1.75rem;
+            font-size: 1.625rem;
             font-weight: 700;
             font-variant-numeric: tabular-nums;
             color: #ccd6f6;
@@ -442,16 +470,16 @@
                 <span class="stat-value" id="headerPnl">-</span>
             </div>
             <div class="stat">
-                <span>Win Rate</span>
+                <span>Trade Win Rate</span>
                 <span class="stat-value" id="headerWinRate">-</span>
             </div>
             <div class="stat">
-                <span>Trades Closed</span>
+                <span>Trades</span>
                 <span class="stat-value" id="headerTrades">-</span>
             </div>
             <div class="stat">
-                <span>R-Multiple</span>
-                <span class="stat-value" id="headerRMultiple" style="font-size: 14px;">-</span>
+                <span>Transactions</span>
+                <span class="stat-value" id="headerTxns">-</span>
             </div>
         </div>
     </div>
@@ -479,8 +507,23 @@
             </div>
         </div>
 
-        <!-- Summary Cards -->
-        <div class="summary-grid" id="summaryGrid"></div>
+        <!-- TRANSACTION LEVEL SUMMARY -->
+        <div class="summary-section" id="txnSummarySection" style="display:none">
+            <div class="summary-label-row">
+                <h3>📋 Transaction Level</h3>
+                <span class="badge">Individual contract closes</span>
+            </div>
+            <div class="summary-grid" id="txnSummaryGrid"></div>
+        </div>
+
+        <!-- TRADE IDEA LEVEL SUMMARY -->
+        <div class="summary-section" id="tradeSummarySection" style="display:none">
+            <div class="summary-label-row">
+                <h3>🎯 Trade Level</h3>
+                <span class="badge">Grouped by trade idea (symbol + strike + expiration + type)</span>
+            </div>
+            <div class="summary-grid" id="tradeSummaryGrid"></div>
+        </div>
 
         <!-- Charts -->
         <div class="chart-section" id="chartSection" style="display:none">
@@ -558,6 +601,7 @@
         // STATE
         // ============================================================
         let allTrades = [];
+        let tradeIdeas = {};
         let currentView = 'trades';
         let sortField = 'date';
         let sortDesc = true;
@@ -569,7 +613,6 @@
             const lines = csvText.split('\n').filter(l => l.trim());
             if (lines.length < 2) throw new Error('CSV appears empty');
 
-            // Find the Cash Balance section header
             let headerIdx = -1;
             for (let i = 0; i < Math.min(10, lines.length); i++) {
                 if (lines[i].includes('DATE,TIME,TYPE,REF')) {
@@ -582,11 +625,9 @@
 
             const headers = parseCSVLine(lines[headerIdx]);
             const descIdx = headers.findIndex(h => h.toLowerCase().includes('description'));
-            const amountIdx = headers.findIndex(h => h.toLowerCase().includes('amount'));
+            const amountIdx = headers.findIndex(h => h.toLowerCase() === 'amount');
             const feesIdx = headers.findIndex(h => h.toLowerCase().includes('misc fees'));
             const commIdx = headers.findIndex(h => h.toLowerCase().includes('commissions'));
-            const dateIdx = 0; // DATE is first column
-            const timeIdx = 1; // TIME is second
 
             const rawTrades = [];
 
@@ -601,22 +642,19 @@
                 if (cols.length < 5) continue;
 
                 const type = (cols[2] || '').trim();
-                if (type !== 'TRD') continue; // Only trade lines
+                if (type !== 'TRD') continue;
 
                 const desc = cols[descIdx] || '';
                 if (!desc || desc.includes('Cash balance')) continue;
 
-                // Parse description: "BOT +1 MU 100 20 MAR 26 320 PUT @5.19 CBOE"
-                // or: "SOLD -4 MU 100 20 MAR 26 320 PUT @5.40 CBOE"
                 const tradeInfo = parseTradeDescription(desc);
                 if (!tradeInfo) continue;
 
-                const amount = parseFloat((cols[amountIdx] || '0').replace(/[$,"]/g, '')) || 0;
-                const fees = parseFloat((cols[feesIdx] || '0').replace(/[$,"]/g, '')) || 0;
-                const commission = parseFloat((cols[commIdx] || '0').replace(/[$,"]/g, '')) || 0;
+                const amount = safeFloat(cols[amountIdx]);
+                const fees = safeFloat(cols[feesIdx]);
+                const commission = safeFloat(cols[commIdx]);
 
-                // Parse date
-                const dateStr = cols[dateIdx] || '';
+                const dateStr = cols[0] || '';
                 let tradeDate = null;
                 const dateMatch = dateStr.match(/(\d{1,2})\/(\d{1,2})\/(\d{2})/);
                 if (dateMatch) {
@@ -667,39 +705,34 @@
             return result;
         }
 
-        function parseTradeDescription(desc) {
-            // Patterns:
-            // BOT +1 MU 100 20 MAR 26 320 PUT @5.19 CBOE
-            // SOLD -4 MU 100 20 MAR 26 320 PUT @5.40 CBOE
-            // BOT +100 BYND @1.33 (stock)
-            // SOLD -1 MU 100 (Weeklys) 10 APR 26 400 CALL @3.95 CBOE
+        function safeFloat(val) {
+            if (!val || val.trim() === '') return 0;
+            try {
+                return parseFloat(val.replace(/[$,"]/g, '').trim());
+            } catch { return 0; }
+        }
 
+        function parseTradeDescription(desc) {
             const clean = desc.replace(/=/g, '').trim();
 
-            // Determine side
             let side = '';
             if (clean.startsWith('BOT')) side = 'BUY';
             else if (clean.startsWith('SOLD')) side = 'SELL';
             else return null;
 
-            // Remove BOT/SOLD prefix
             let rest = clean.replace(/^(BOT|SOLD)\s+/, '');
 
-            // Extract quantity (with + or - sign)
             const qtyMatch = rest.match(/^([+-]?\d+)/);
             if (!qtyMatch) return null;
             const quantity = Math.abs(parseInt(qtyMatch[1]));
             rest = rest.substring(qtyMatch[0].length).trim();
 
-            // Extract symbol (first word after qty)
             const words = rest.split(/\s+/);
             if (!words.length) return null;
             const symbol = words[0].toUpperCase();
             rest = rest.substring(symbol.length).trim();
 
-            // Check if stock (no option details)
             if (rest.includes('@') && !rest.match(/\d+\s+(CALL|PUT)/i)) {
-                // Stock trade: "BYND @1.33"
                 const priceMatch = rest.match(/@([\d.]+)/);
                 return {
                     symbol,
@@ -712,14 +745,10 @@
                 };
             }
 
-            // Option trade - remove "100" multiplier
-            rest = rest.replace(/^100\s+/, '');
-
-            // Handle "(Weeklys)" or similar annotations
+            rest = rest.replace(/^100\s*/, '');
             rest = rest.replace(/\(Weeklys\)\s*/, '');
             rest = rest.replace(/\(Weeklys\)/, '');
 
-            // Extract expiration: "20 MAR 26" or "10 APR 26"
             let expiration = '';
             const expMatch = rest.match(/(\d{1,2}\s+[A-Z]{3}\s+\d{2,4})/i);
             if (expMatch) {
@@ -727,7 +756,6 @@
                 rest = rest.replace(expMatch[1], '').trim();
             }
 
-            // Extract strike and type
             let strike = 0;
             let optionType = '';
 
@@ -738,31 +766,19 @@
                 rest = rest.replace(strikeTypeMatch[0], '').trim();
             }
 
-            // Extract price after @
             const priceMatch = rest.match(/@([\d.]+)/);
             const price = priceMatch ? parseFloat(priceMatch[1]) : 0;
 
-            return {
-                symbol,
-                optionType,
-                expiration,
-                strike,
-                side,
-                quantity,
-                price
-            };
+            return { symbol, optionType, expiration, strike, side, quantity, price };
         }
 
         function matchTradesToClosedBatches(trades) {
-            // Group by symbol + option details
             const groups = {};
 
             trades.forEach(t => {
                 const key = `${t.symbol}_${t.optionType}_${t.strike}_${t.expiration}`;
                 if (!groups[key]) groups[key] = { opens: [], closes: [] };
 
-                // For options: BUY is open, SELL is close
-                // For stocks: BUY is open, SELL is close
                 if (t.side === 'BUY') {
                     groups[key].opens.push(t);
                 } else {
@@ -773,11 +789,9 @@
             const closedBatches = [];
 
             Object.entries(groups).forEach(([key, group]) => {
-                // Sort by date
                 group.opens.sort((a, b) => a.date - b.date);
                 group.closes.sort((a, b) => a.date - b.date);
 
-                // Match FIFO
                 let openIdx = 0;
                 let closeIdx = 0;
 
@@ -788,12 +802,8 @@
                     const qty = Math.min(open.quantity, close.quantity);
                     const multiplier = open.optionType === 'STOCK' ? 1 : 100;
 
-                    // Entry cost = price * qty * multiplier + fees + commission
                     const entryCost = (open.price * qty * multiplier) + open.fees + open.commission;
-                    // Exit proceeds = price * qty * multiplier - fees - commission
                     const exitProceeds = (close.price * qty * multiplier) - close.fees - close.commission;
-
-                    // P&L = exit proceeds - entry cost
                     const pnl = exitProceeds - entryCost;
 
                     closedBatches.push({
@@ -811,7 +821,7 @@
                         returnPct: ((close.price - open.price) / open.price * 100),
                         commission: open.commission + close.commission,
                         fees: open.fees + close.fees,
-                        notes: ''
+                        tradeIdea: key
                     });
 
                     open.quantity -= qty;
@@ -826,12 +836,48 @@
         }
 
         // ============================================================
+        // COMPUTE TRADE IDEAS (grouped by symbol+type+strike+exp)
+        // ============================================================
+        function computeTradeIdeas(batches) {
+            const ideas = {};
+
+            batches.forEach(b => {
+                const key = b.tradeIdea;
+                if (!ideas[key]) {
+                    ideas[key] = {
+                        symbol: b.symbol,
+                        optionType: b.optionType,
+                        expiration: b.expiration,
+                        strike: b.strike,
+                        pnl: 0,
+                        transactions: 0,
+                        totalQty: 0,
+                        dates: [],
+                        entryPrices: [],
+                        exitPrices: []
+                    };
+                }
+
+                ideas[key].pnl += b.pnl;
+                ideas[key].transactions += 1;
+                ideas[key].totalQty += b.quantity;
+                ideas[key].dates.push(b.date);
+                ideas[key].entryPrices.push(b.entryPrice);
+                ideas[key].exitPrices.push(b.exitPrice);
+            });
+
+            return ideas;
+        }
+
+        // ============================================================
         // RENDERERS
         // ============================================================
         function renderDashboard() {
             if (!allTrades.length) {
                 document.getElementById('controlsBar').style.display = 'none';
                 document.getElementById('chartSection').style.display = 'none';
+                document.getElementById('txnSummarySection').style.display = 'none';
+                document.getElementById('tradeSummarySection').style.display = 'none';
                 document.getElementById('summaryGrid').innerHTML = '';
                 document.getElementById('tradesBody').innerHTML = `
                     <tr>
@@ -848,8 +894,14 @@
 
             document.getElementById('controlsBar').style.display = 'flex';
             document.getElementById('chartSection').style.display = 'grid';
+            document.getElementById('txnSummarySection').style.display = 'block';
+            document.getElementById('tradeSummarySection').style.display = 'block';
 
-            renderSummary();
+            // Compute trade ideas
+            tradeIdeas = computeTradeIdeas(allTrades);
+
+            renderTxnSummary();
+            renderTradeSummary();
             renderTrades();
             renderDistribution();
             drawEquityChart();
@@ -863,25 +915,26 @@
                 document.getElementById('headerPnl').textContent = '-';
                 document.getElementById('headerWinRate').textContent = '-';
                 document.getElementById('headerTrades').textContent = '-';
-                document.getElementById('headerRMultiple').textContent = '-';
+                document.getElementById('headerTxns').textContent = '-';
                 return;
             }
 
             const totalPnL = allTrades.reduce((s, t) => s + t.pnl, 0);
-            const winners = allTrades.filter(t => t.pnl > 0);
-            const losers = allTrades.filter(t => t.pnl < 0);
-            const winRate = allTrades.length ? (winners.length / allTrades.length * 100).toFixed(0) : 0;
-            const avgWin = winners.length ? (winners.reduce((s, t) => s + t.pnl, 0) / winners.length) : 0;
-            const avgLoss = losers.length ? (losers.reduce((s, t) => s + t.pnl, 0) / losers.length) : 0;
+
+            // Trade-level win rate
+            const tradeWinners = Object.values(tradeIdeas).filter(t => t.pnl > 0);
+            const tradeLosers = Object.values(tradeIdeas).filter(t => t.pnl < 0);
+            const tradeWinRate = Object.keys(tradeIdeas).length ? 
+                (tradeWinners.length / Object.keys(tradeIdeas).length * 100).toFixed(0) : 0;
 
             document.getElementById('headerPnl').textContent = (totalPnL >= 0 ? '+' : '') + '$' + totalPnL.toFixed(0);
             document.getElementById('headerPnl').style.color = totalPnL >= 0 ? '#48bb78' : '#e53e3e';
-            document.getElementById('headerWinRate').textContent = winRate + '%';
-            document.getElementById('headerTrades').textContent = allTrades.length;
-            document.getElementById('headerRMultiple').textContent = avgLoss !== 0 ? (Math.abs(avgWin / avgLoss)).toFixed(2) : '∞';
+            document.getElementById('headerWinRate').textContent = tradeWinRate + '%';
+            document.getElementById('headerTrades').textContent = Object.keys(tradeIdeas).length;
+            document.getElementById('headerTxns').textContent = allTrades.length;
         }
 
-        function renderSummary() {
+        function renderTxnSummary() {
             const totalPnL = allTrades.reduce((s, t) => s + t.pnl, 0);
             const winners = allTrades.filter(t => t.pnl > 0);
             const losers = allTrades.filter(t => t.pnl < 0);
@@ -893,17 +946,48 @@
             const totalCommissions = allTrades.reduce((s, t) => s + t.commission, 0);
 
             const stats = [
-                { label: 'Net P&L', value: (totalPnL >= 0 ? '+' : '') + '$' + totalPnL.toFixed(2), sub: allTrades.length + ' closed trades', cls: totalPnL >= 0 ? 'positive' : 'negative', card: totalPnL >= 0 ? 'positive' : 'negative' },
+                { label: 'Net P&L', value: (totalPnL >= 0 ? '+' : '') + '$' + totalPnL.toFixed(2), sub: allTrades.length + ' transactions', cls: totalPnL >= 0 ? 'positive' : 'negative', card: totalPnL >= 0 ? 'positive' : 'negative' },
                 { label: 'Win Rate', value: winRate + '%', sub: winners.length + 'W / ' + losers.length + 'L', cls: '', card: winRate >= 50 ? 'positive' : 'negative' },
                 { label: 'Avg Winner', value: '+$' + avgWin.toFixed(2), sub: 'Best: +$' + bestTrade.toFixed(2), cls: 'positive', card: 'positive' },
                 { label: 'Avg Loser', value: '$' + avgLoss.toFixed(2), sub: 'Worst: $' + worstTrade.toFixed(2), cls: 'negative', card: 'negative' },
                 { label: 'R-Multiple', value: avgLoss !== 0 ? (Math.abs(avgWin / avgLoss)).toFixed(2) : '∞', sub: 'Reward/Risk', cls: '', card: 'accent' },
-                { label: 'Commissions', value: '$' + totalCommissions.toFixed(2), sub: 'Total fees paid', cls: 'negative', card: 'neutral' }
+                { label: 'Commissions', value: '$' + totalCommissions.toFixed(2), sub: 'Total fees', cls: 'negative', card: 'neutral' }
             ];
 
-            document.getElementById('summaryGrid').innerHTML = stats.map(s => `
+            document.getElementById('txnSummaryGrid').innerHTML = stats.map(s => `
                 <div class="summary-card ${s.card}">
-                    <div class="summary-label">${s.label}</div>
+                    <div class="summary-card-header">${s.label}</div>
+                    <div class="summary-value ${s.cls}">${s.value}</div>
+                    <div class="summary-sub">${s.sub}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderTradeSummary() {
+            const ideas = Object.values(tradeIdeas);
+            const totalPnL = ideas.reduce((s, t) => s + t.pnl, 0);
+            const winners = ideas.filter(t => t.pnl > 0);
+            const losers = ideas.filter(t => t.pnl < 0);
+            const winRate = ideas.length ? (winners.length / ideas.length * 100).toFixed(1) : 0;
+            const avgWin = winners.length ? (winners.reduce((s, t) => s + t.pnl, 0) / winners.length) : 0;
+            const avgLoss = losers.length ? (losers.reduce((s, t) => s + t.pnl, 0) / losers.length) : 0;
+            const bestTrade = ideas.length ? Math.max(...ideas.map(t => t.pnl)) : 0;
+            const worstTrade = ideas.length ? Math.min(...ideas.map(t => t.pnl)) : 0;
+            const avgTxnsPerTrade = ideas.length ? 
+                (ideas.reduce((s, t) => s + t.transactions, 0) / ideas.length).toFixed(1) : 0;
+
+            const stats = [
+                { label: 'Net P&L', value: (totalPnL >= 0 ? '+' : '') + '$' + totalPnL.toFixed(2), sub: ideas.length + ' trade ideas', cls: totalPnL >= 0 ? 'positive' : 'negative', card: totalPnL >= 0 ? 'positive' : 'negative' },
+                { label: 'Win Rate', value: winRate + '%', sub: winners.length + 'W / ' + losers.length + 'L', cls: '', card: winRate >= 50 ? 'positive' : 'negative' },
+                { label: 'Avg Winner', value: '+$' + avgWin.toFixed(2), sub: 'Best: +$' + bestTrade.toFixed(2), cls: 'positive', card: 'positive' },
+                { label: 'Avg Loser', value: '$' + avgLoss.toFixed(2), sub: 'Worst: $' + worstTrade.toFixed(2), cls: 'negative', card: 'negative' },
+                { label: 'R-Multiple', value: avgLoss !== 0 ? (Math.abs(avgWin / avgLoss)).toFixed(2) : '∞', sub: 'Reward/Risk', cls: '', card: 'accent' },
+                { label: 'Avg Txns/Trade', value: avgTxnsPerTrade, sub: 'Transactions per idea', cls: '', card: 'neutral' }
+            ];
+
+            document.getElementById('tradeSummaryGrid').innerHTML = stats.map(s => `
+                <div class="summary-card ${s.card}">
+                    <div class="summary-card-header">${s.label}</div>
                     <div class="summary-value ${s.cls}">${s.value}</div>
                     <div class="summary-sub">${s.sub}</div>
                 </div>
@@ -920,7 +1004,7 @@
                 return sortDesc ? -cmp : cmp;
             });
 
-            document.getElementById('tradeCount').textContent = sorted.length + ' trade' + (sorted.length !== 1 ? 's' : '');
+            document.getElementById('tradeCount').textContent = sorted.length + ' transaction' + (sorted.length !== 1 ? 's' : '');
 
             document.getElementById('tradesBody').innerHTML = sorted.map(t => {
                 const isWin = t.pnl > 0;
@@ -948,11 +1032,12 @@
         }
 
         function renderDistribution() {
-            const winners = allTrades.filter(t => t.pnl > 0);
-            const losers = allTrades.filter(t => t.pnl < 0);
-            const breakeven = allTrades.filter(t => t.pnl === 0);
+            const ideas = Object.values(tradeIdeas);
+            const winners = ideas.filter(t => t.pnl > 0);
+            const losers = ideas.filter(t => t.pnl < 0);
+            const breakeven = ideas.filter(t => t.pnl === 0);
 
-            const total = allTrades.length || 1;
+            const total = ideas.length || 1;
             const winPct = (winners.length / total * 100).toFixed(1);
             const lossPct = (losers.length / total * 100).toFixed(1);
             const bePct = (breakeven.length / total * 100).toFixed(1);
@@ -1010,7 +1095,7 @@
                         </div>
                         <div class="daily-stats">
                             <div class="daily-stat">
-                                <div class="daily-stat-label">Trades</div>
+                                <div class="daily-stat-label">Txns</div>
                                 <div class="daily-stat-value">${trades.length}</div>
                             </div>
                             <div class="daily-stat">
@@ -1056,7 +1141,7 @@
                         </div>
                         <div class="daily-stats">
                             <div class="daily-stat">
-                                <div class="daily-stat-label">Trades</div>
+                                <div class="daily-stat-label">Txns</div>
                                 <div class="daily-stat-value">${trades.length}</div>
                             </div>
                             <div class="daily-stat">
@@ -1064,7 +1149,7 @@
                                 <div class="daily-stat-value">${trades.length ? (wins/trades.length*100).toFixed(0) : 0}%</div>
                             </div>
                             <div class="daily-stat">
-                                <div class="daily-stat-label">Avg Trade</div>
+                                <div class="daily-stat-label">Avg Txn</div>
                                 <div class="daily-stat-value" style="color:${pnl/trades.length >= 0 ? '#48bb78' : '#e53e3e'}">$${(pnl/trades.length).toFixed(0)}</div>
                             </div>
                         </div>
@@ -1118,7 +1203,6 @@
 
             ctx.clearRect(0, 0, width, height);
 
-            // Grid
             ctx.strokeStyle = '#21262d';
             ctx.lineWidth = 1;
             for (let i = 0; i <= 4; i++) {
@@ -1129,7 +1213,6 @@
                 ctx.stroke();
             }
 
-            // Zero line
             const zeroY = getY(0);
             ctx.strokeStyle = '#2d3748';
             ctx.setLineDash([5, 5]);
@@ -1139,7 +1222,6 @@
             ctx.stroke();
             ctx.setLineDash([]);
 
-            // Area
             ctx.beginPath();
             ctx.moveTo(getX(0), zeroY);
             points.forEach((p, i) => ctx.lineTo(getX(i), getY(p.pnl)));
@@ -1152,7 +1234,6 @@
             ctx.fillStyle = gradient;
             ctx.fill();
 
-            // Line
             ctx.beginPath();
             ctx.strokeStyle = '#48bb78';
             ctx.lineWidth = 2.5;
@@ -1163,7 +1244,6 @@
             });
             ctx.stroke();
 
-            // Points
             points.forEach((p, i) => {
                 ctx.beginPath();
                 ctx.fillStyle = p.pnl >= 0 ? '#48bb78' : '#e53e3e';
@@ -1171,7 +1251,6 @@
                 ctx.fill();
             });
 
-            // Labels
             ctx.fillStyle = '#8892b0';
             ctx.font = '10px sans-serif';
             ctx.textAlign = 'right';
@@ -1209,7 +1288,7 @@
 
                     localStorage.setItem('ravs_trades', JSON.stringify(allTrades));
 
-                    showToast(`Loaded ${allTrades.length} closed trades`, 'success');
+                    showToast(`Loaded ${allTrades.length} transactions, ${Object.keys(computeTradeIdeas(allTrades)).length} trade ideas`, 'success');
                     renderDashboard();
                 } catch (err) {
                     showToast('Error parsing CSV: ' + err.message, 'error');
@@ -1219,7 +1298,6 @@
             reader.readAsText(file);
         }
 
-        // Drag & drop
         const uploadZone = document.getElementById('uploadZone');
         uploadZone.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -1268,11 +1346,11 @@
                 return;
             }
 
-            const headers = ['Date', 'Symbol', 'Type', 'Expiration', 'Strike', 'Quantity', 'Entry', 'Exit', 'P&L', 'Return%', 'Commission', 'Fees'];
+            const headers = ['Date', 'Symbol', 'Type', 'Expiration', 'Strike', 'Quantity', 'Entry', 'Exit', 'P&L', 'Return%', 'Commission', 'Fees', 'TradeIdea'];
             const rows = allTrades.map(t => [
                 t.date, t.symbol, t.optionType, t.expiration, t.strike, t.quantity,
                 t.entryPrice.toFixed(2), t.exitPrice.toFixed(2), t.pnl.toFixed(2),
-                t.returnPct.toFixed(2), t.commission.toFixed(2), t.fees.toFixed(2)
+                t.returnPct.toFixed(2), t.commission.toFixed(2), t.fees.toFixed(2), t.tradeIdea
             ]);
 
             const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
@@ -1290,6 +1368,7 @@
         function clearData() {
             if (!confirm('Clear all trade data? This cannot be undone.')) return;
             allTrades = [];
+            tradeIdeas = {};
             localStorage.removeItem('ravs_trades');
             document.getElementById('fileName').textContent = '';
             renderDashboard();
@@ -1316,8 +1395,9 @@
                 try {
                     allTrades = JSON.parse(saved);
                     if (allTrades.length) {
+                        tradeIdeas = computeTradeIdeas(allTrades);
                         renderDashboard();
-                        showToast(`Restored ${allTrades.length} trades from previous session`, 'success');
+                        showToast(`Restored ${allTrades.length} transactions, ${Object.keys(tradeIdeas).length} trade ideas`, 'success');
                     }
                 } catch (e) {
                     console.error('Failed to restore trades', e);
