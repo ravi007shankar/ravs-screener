@@ -2,14 +2,13 @@
 <html lang="en">
 <head>
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-SWNC2HKKW7"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-SWNC2HKKW7');
-</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SWNC2HKKW7"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-SWNC2HKKW7');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RavsTrades - P&L Dashboard</title>
@@ -57,8 +56,6 @@
             border: 1px solid #2d3748;
             overflow: hidden;
         }
-
-        /* Upload Zone */
         .upload-zone {
             border: 2px dashed #2d3748;
             border-radius: 12px;
@@ -87,8 +84,6 @@
         .upload-zone h3 { color: #ccd6f6; font-size: 1.25rem; margin-bottom: 8px; }
         .upload-zone p { color: #8892b0; font-size: 0.9375rem; }
         .upload-zone .file-name { color: #00d4ff; font-weight: 700; margin-top: 12px; font-size: 1rem; }
-
-        /* Controls */
         .controls-bar {
             display: flex;
             justify-content: space-between;
@@ -144,11 +139,7 @@
         .btn-primary:hover { opacity: 0.9; color: #0a0e1a; }
         .btn-danger { color: #e53e3e; border-color: #e53e3e; }
         .btn-danger:hover { background: rgba(229, 62, 62, 0.1); }
-
-        /* Summary Cards */
-        .summary-section {
-            margin-bottom: 20px;
-        }
+        .summary-section { margin-bottom: 20px; }
         .summary-label-row {
             display: flex;
             align-items: center;
@@ -223,8 +214,172 @@
             color: #8892b0;
             margin-top: 6px;
         }
-
-        /* Charts */
+        /* STOP DOING THIS */
+        .stop-section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 30px 0 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #2d3748;
+        }
+        .stop-section-header h2 {
+            font-size: 1.3rem;
+            color: #fff;
+        }
+        .stop-badge {
+            background: #e53e3e;
+            color: #fff;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .stop-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stop-card {
+            background: #1a1f2e;
+            border: 1px solid #2d3748;
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .stop-card:hover {
+            transform: translateY(-2px);
+            border-color: #e53e3e;
+        }
+        .stop-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #e53e3e;
+        }
+        .stop-card.severe::before {
+            background: #ff2e43;
+            width: 6px;
+        }
+        .stop-card .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .stop-card .card-header .icon {
+            font-size: 28px;
+        }
+        .stop-card .card-header h3 {
+            font-size: 1.15rem;
+            color: #fff;
+        }
+        .stop-card .severity-tag {
+            margin-left: auto;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .stop-card .severity-tag.high {
+            background: rgba(229, 62, 62, 0.2);
+            color: #e53e3e;
+        }
+        .stop-card .severity-tag.medium {
+            background: rgba(255, 165, 2, 0.2);
+            color: #ffa502;
+        }
+        .stop-card .severity-tag.low {
+            background: rgba(0, 212, 170, 0.2);
+            color: #00d4aa;
+        }
+        .stop-card .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px 0;
+            border-bottom: 1px solid #2d3748;
+        }
+        .stop-card .metric:last-child {
+            border-bottom: none;
+        }
+        .stop-card .metric .key {
+            color: #8892b0;
+            font-size: 0.9rem;
+        }
+        .stop-card .metric .val {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        .stop-card .metric .val.bad {
+            color: #e53e3e;
+        }
+        .stop-card .metric .val.warning {
+            color: #ffa502;
+        }
+        .stop-card .metric .val.good {
+            color: #48bb78;
+        }
+        .stop-card .action {
+            margin-top: 15px;
+            padding: 14px;
+            background: rgba(229, 62, 62, 0.08);
+            border: 1px solid rgba(229, 62, 62, 0.2);
+            border-radius: 10px;
+            font-size: 0.92rem;
+            color: #ff8a9a;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+        .stop-card .action strong {
+            color: #e53e3e;
+        }
+        .stop-summary-banner {
+            background: linear-gradient(135deg, #1a1f2e, #16213e);
+            border: 1px solid #2d3748;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .stop-summary-item {
+            text-align: center;
+        }
+        .stop-summary-item .key {
+            font-size: 0.8rem;
+            color: #8892b0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        .stop-summary-item .val {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #e53e3e;
+        }
+        .stop-empty {
+            text-align: center;
+            padding: 40px;
+            color: #8892b0;
+            grid-column: 1 / -1;
+        }
+        .stop-empty .icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        /* CHARTS */
         .chart-section {
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -248,8 +403,7 @@
         }
         .chart-container { position: relative; height: 260px; }
         canvas { width: 100%; height: 100%; }
-
-        /* Distribution */
+        /* DISTRIBUTION */
         .distribution { display: flex; flex-direction: column; gap: 12px; }
         .dist-row { display: flex; align-items: center; gap: 12px; }
         .dist-label {
@@ -288,8 +442,7 @@
             text-align: right;
             font-variant-numeric: tabular-nums;
         }
-
-        /* Table */
+        /* TABLE */
         table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
         th {
             text-align: left;
@@ -351,8 +504,7 @@
             white-space: nowrap;
         }
         .notes-cell:hover { white-space: normal; overflow: visible; }
-
-        /* Empty State */
+        /* EMPTY STATE */
         .empty-state {
             text-align: center;
             padding: 60px 40px;
@@ -360,8 +512,7 @@
         }
         .empty-state .icon { font-size: 3rem; margin-bottom: 15px; opacity: 0.5; }
         .empty-state h3 { color: #ccd6f6; margin-bottom: 8px; }
-
-        /* Daily/Weekly Cards */
+        /* DAILY/WEEKLY */
         .daily-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -405,8 +556,6 @@
             margin-bottom: 4px;
         }
         .daily-stat-value { font-weight: 700; color: #ccd6f6; }
-
-        /* Section Header */
         .section-header {
             display: flex;
             justify-content: space-between;
@@ -422,8 +571,7 @@
             color: #8892b0;
             font-weight: 600;
         }
-
-        /* Toast */
+        /* TOAST */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -444,20 +592,7 @@
         .toast.show { transform: translateY(0); opacity: 1; }
         .toast.success { border-left: 3px solid #48bb78; }
         .toast.error { border-left: 3px solid #e53e3e; }
-
-        /* Loading */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #2d3748;
-            border-top-color: #00d4ff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* Mobile */
+        /* MOBILE */
         @media (max-width: 768px) {
             .container { padding: 20px; }
             .summary-grid { grid-template-columns: repeat(2, 1fr); }
@@ -466,8 +601,10 @@
             table { min-width: 900px; }
             .controls-bar { flex-direction: column; align-items: stretch; }
             .header-stats { flex-wrap: wrap; gap: 15px; }
+            .stop-cards { grid-template-columns: 1fr; }
         }
     </style>
+<base target="_blank">
 <base target="_blank">
 </head>
 <body>
@@ -516,6 +653,29 @@
             </div>
         </div>
 
+        <!-- STOP DOING THIS SECTION -->
+        <div id="stopSection" style="display:none">
+            <div class="stop-summary-banner" id="stopSummaryBanner">
+                <div class="stop-summary-item">
+                    <div class="key">Bad Habits Found</div>
+                    <div class="val" id="badHabitCount">-</div>
+                </div>
+                <div class="stop-summary-item">
+                    <div class="key">Total Damage</div>
+                    <div class="val" id="totalDamage">-</div>
+                </div>
+                <div class="stop-summary-item">
+                    <div class="key">Potential Recovery</div>
+                    <div class="val" id="potentialRecovery">-</div>
+                </div>
+            </div>
+            <div class="stop-section-header">
+                <h2>🚨 Stop Doing This</h2>
+                <span class="stop-badge">LIVE</span>
+            </div>
+            <div class="stop-cards" id="stopCards"></div>
+        </div>
+
         <!-- TRANSACTION LEVEL SUMMARY -->
         <div class="summary-section" id="txnSummarySection" style="display:none">
             <div class="summary-label-row">
@@ -529,7 +689,7 @@
         <div class="summary-section" id="tradeSummarySection" style="display:none">
             <div class="summary-label-row">
                 <h3>🎯 Trade Level</h3>
-                <span class="badge">Grouped by trade idea (symbol + strike + expiration + type)</span>
+                <span class="badge">Grouped by trade idea</span>
             </div>
             <div class="summary-grid" id="tradeSummaryGrid"></div>
         </div>
@@ -606,20 +766,18 @@
     </div>
 
     <script>
-        // ============================================================
         // STATE
-        // ============================================================
         let allTrades = [];
+        let rawTransactions = [];
         let tradeIdeas = {};
         let currentView = 'trades';
         let sortField = 'date';
         let sortDesc = true;
 
-        // ============================================================
-        // CSV PARSER - Handles TOS Account Statement Format
-        // ============================================================
+        // CSV PARSER
         function parseTOSCSV(csvText) {
-            const lines = csvText.split('\n').filter(l => l.trim());
+            const lines = csvText.split('
+').filter(l => l.trim());
             if (lines.length < 2) throw new Error('CSV appears empty');
 
             let headerIdx = -1;
@@ -637,8 +795,11 @@
             const amountIdx = headers.findIndex(h => h.toLowerCase() === 'amount');
             const feesIdx = headers.findIndex(h => h.toLowerCase().includes('misc fees'));
             const commIdx = headers.findIndex(h => h.toLowerCase().includes('commissions'));
+            const dateIdx = headers.findIndex(h => h.toLowerCase().includes('date'));
+            const timeIdx = headers.findIndex(h => h.toLowerCase().includes('time') && !h.toLowerCase().includes('date'));
 
             const rawTrades = [];
+            rawTransactions = [];
 
             for (let i = headerIdx + 1; i < lines.length; i++) {
                 const line = lines[i].trim();
@@ -663,18 +824,33 @@
                 const fees = safeFloat(cols[feesIdx]);
                 const commission = safeFloat(cols[commIdx]);
 
-                const dateStr = cols[0] || '';
+                const dateStr = cols[dateIdx] || '';
+                const timeStr = cols[timeIdx] || '';
                 let tradeDate = null;
+                let parsedTime = null;
+
                 const dateMatch = dateStr.match(/(\d{1,2})\/(\d{1,2})\/(\d{2})/);
                 if (dateMatch) {
                     const y = parseInt(dateMatch[3]) + 2000;
                     tradeDate = new Date(y, parseInt(dateMatch[1]) - 1, parseInt(dateMatch[2]));
+
+                    const timeMatch = timeStr.match(/(\d{1,2}):(\d{2}):(\d{2})\s*(AM|PM)?/i);
+                    if (timeMatch) {
+                        let hour = parseInt(timeMatch[1]);
+                        const minute = parseInt(timeMatch[2]);
+                        const ampm = timeMatch[4];
+                        if (ampm && ampm.toUpperCase() === 'PM' && hour !== 12) hour += 12;
+                        if (ampm && ampm.toUpperCase() === 'AM' && hour === 12) hour = 0;
+                        parsedTime = new Date(y, parseInt(dateMatch[1]) - 1, parseInt(dateMatch[2]), hour, minute);
+                    }
                 }
                 if (!tradeDate || isNaN(tradeDate.getTime())) continue;
 
-                rawTrades.push({
+                const txn = {
                     date: tradeDate,
                     dateStr: tradeDate.toISOString().split('T')[0],
+                    timeStr: timeStr,
+                    parsedTime: parsedTime,
                     symbol: tradeInfo.symbol,
                     optionType: tradeInfo.optionType,
                     expiration: tradeInfo.expiration,
@@ -685,12 +861,16 @@
                     amount: amount,
                     fees: Math.abs(fees),
                     commission: Math.abs(commission),
-                    desc: desc
-                });
+                    desc: desc,
+                    pl: 0,
+                    isClose: false
+                };
+
+                rawTrades.push(txn);
+                rawTransactions.push(txn);
             }
 
             if (!rawTrades.length) throw new Error('No trade transactions found in CSV');
-
             return matchTradesToClosedBatches(rawTrades);
         }
 
@@ -717,20 +897,18 @@
         function safeFloat(val) {
             if (!val || val.trim() === '') return 0;
             try {
-                return parseFloat(val.replace(/[$,"]/g, '').trim());
+                return parseFloat(val.replace(/[$,"/]/g, '').trim());
             } catch { return 0; }
         }
 
         function parseTradeDescription(desc) {
             const clean = desc.replace(/=/g, '').trim();
-
             let side = '';
             if (clean.startsWith('BOT')) side = 'BUY';
             else if (clean.startsWith('SOLD')) side = 'SELL';
             else return null;
 
             let rest = clean.replace(/^(BOT|SOLD)\s+/, '');
-
             const qtyMatch = rest.match(/^([+-]?\d+)/);
             if (!qtyMatch) return null;
             const quantity = Math.abs(parseInt(qtyMatch[1]));
@@ -744,19 +922,12 @@
             if (rest.includes('@') && !rest.match(/\d+\s+(CALL|PUT)/i)) {
                 const priceMatch = rest.match(/@([\d.]+)/);
                 return {
-                    symbol,
-                    optionType: 'STOCK',
-                    expiration: '',
-                    strike: 0,
-                    side,
-                    quantity,
-                    price: priceMatch ? parseFloat(priceMatch[1]) : 0
+                    symbol, optionType: 'STOCK', expiration: '', strike: 0,
+                    side, quantity, price: priceMatch ? parseFloat(priceMatch[1]) : 0
                 };
             }
 
-            rest = rest.replace(/^100\s*/, '');
-            rest = rest.replace(/\(Weeklys\)\s*/, '');
-            rest = rest.replace(/\(Weeklys\)/, '');
+            rest = rest.replace(/^100\s*/, '').replace(/\(Weeklys\)\s*/, '').replace(/\(Weeklys\)/, '');
 
             let expiration = '';
             const expMatch = rest.match(/(\d{1,2}\s+[A-Z]{3}\s+\d{2,4})/i);
@@ -767,7 +938,6 @@
 
             let strike = 0;
             let optionType = '';
-
             const strikeTypeMatch = rest.match(/(\d+(?:\.\d+)?)\s*(CALL|PUT)/i);
             if (strikeTypeMatch) {
                 strike = parseFloat(strikeTypeMatch[1]);
@@ -783,39 +953,30 @@
 
         function matchTradesToClosedBatches(trades) {
             const groups = {};
-
             trades.forEach(t => {
                 const key = `${t.symbol}_${t.optionType}_${t.strike}_${t.expiration}`;
                 if (!groups[key]) groups[key] = { opens: [], closes: [] };
-
-                if (t.side === 'BUY') {
-                    groups[key].opens.push(t);
-                } else {
-                    groups[key].closes.push(t);
-                }
+                if (t.side === 'BUY') groups[key].opens.push(t);
+                else groups[key].closes.push(t);
             });
 
             const closedBatches = [];
-
             Object.entries(groups).forEach(([key, group]) => {
                 group.opens.sort((a, b) => a.date - b.date);
                 group.closes.sort((a, b) => a.date - b.date);
 
                 let openIdx = 0;
                 let closeIdx = 0;
-
                 while (openIdx < group.opens.length && closeIdx < group.closes.length) {
                     const open = group.opens[openIdx];
                     const close = group.closes[closeIdx];
-
                     const qty = Math.min(open.quantity, close.quantity);
                     const multiplier = open.optionType === 'STOCK' ? 1 : 100;
-
                     const entryCost = (open.price * qty * multiplier) + open.fees + open.commission;
                     const exitProceeds = (close.price * qty * multiplier) - close.fees - close.commission;
                     const pnl = exitProceeds - entryCost;
 
-                    closedBatches.push({
+                    const batch = {
                         id: crypto.randomUUID(),
                         date: close.dateStr,
                         closeDate: close.date,
@@ -830,43 +991,50 @@
                         returnPct: ((close.price - open.price) / open.price * 100),
                         commission: open.commission + close.commission,
                         fees: open.fees + close.fees,
-                        tradeIdea: key
-                    });
+                        tradeIdea: key,
+                        parsedTime: close.parsedTime,
+                        timeStr: close.timeStr
+                    };
+                    closedBatches.push(batch);
 
                     open.quantity -= qty;
                     close.quantity -= qty;
-
                     if (open.quantity <= 0) openIdx++;
                     if (close.quantity <= 0) closeIdx++;
+                }
+            });
+
+            // Link P/L back to raw transactions
+            closedBatches.forEach(batch => {
+                const matchingTxn = rawTransactions.find(t => 
+                    t.symbol === batch.symbol && 
+                    t.optionType === batch.optionType &&
+                    t.strike === batch.strike &&
+                    t.expiration === batch.expiration &&
+                    t.side === 'SELL' &&
+                    Math.abs(t.price - batch.exitPrice) < 0.01
+                );
+                if (matchingTxn) {
+                    matchingTxn.pl = batch.pnl;
+                    matchingTxn.isClose = true;
                 }
             });
 
             return closedBatches.sort((a, b) => b.closeDate - a.closeDate);
         }
 
-        // ============================================================
-        // COMPUTE TRADE IDEAS (grouped by symbol+type+strike+exp)
-        // ============================================================
         function computeTradeIdeas(batches) {
             const ideas = {};
-
             batches.forEach(b => {
                 const key = b.tradeIdea;
                 if (!ideas[key]) {
                     ideas[key] = {
-                        symbol: b.symbol,
-                        optionType: b.optionType,
-                        expiration: b.expiration,
-                        strike: b.strike,
-                        pnl: 0,
-                        transactions: 0,
-                        totalQty: 0,
-                        dates: [],
-                        entryPrices: [],
-                        exitPrices: []
+                        symbol: b.symbol, optionType: b.optionType,
+                        expiration: b.expiration, strike: b.strike,
+                        pnl: 0, transactions: 0, totalQty: 0,
+                        dates: [], entryPrices: [], exitPrices: []
                     };
                 }
-
                 ideas[key].pnl += b.pnl;
                 ideas[key].transactions += 1;
                 ideas[key].totalQty += b.quantity;
@@ -874,20 +1042,450 @@
                 ideas[key].entryPrices.push(b.entryPrice);
                 ideas[key].exitPrices.push(b.exitPrice);
             });
-
             return ideas;
         }
 
-        // ============================================================
+        // STOP DOING THIS - BAD HABIT DETECTORS
+        function generateStopDoingThis() {
+            const container = document.getElementById('stopCards');
+            container.innerHTML = '';
+
+            const insights = [];
+            let totalDamage = 0;
+
+            // 1. Revenge Trading
+            const revengeData = detectRevengeTrading();
+            if (revengeData.count > 0) {
+                const damage = revengeData.totalLoss;
+                totalDamage += Math.abs(damage);
+                insights.push({
+                    title: 'Revenge Trading',
+                    icon: '😤',
+                    severity: revengeData.count >= 5 ? 'high' : revengeData.count >= 2 ? 'medium' : 'low',
+                    metrics: [
+                        { key: 'Instances Detected', val: revengeData.count + ' times', cls: 'bad' },
+                        { key: 'Trades in Revenge Mode', val: revengeData.tradesInRevenge, cls: 'bad' },
+                        { key: 'Win Rate in Revenge', val: revengeData.winRate + '%', cls: revengeData.winRate < 40 ? 'bad' : 'warning' },
+                        { key: 'Avg Loss per Revenge Trade', val: formatPL(revengeData.avgLoss), cls: 'bad' },
+                        { key: 'Total Damage', val: formatPL(damage), cls: 'bad' }
+                    ],
+                    action: `After a losing trade, you take ${revengeData.avgTradesAfterLoss.toFixed(1)} follow-up trades within 20 minutes. Your win rate drops to <strong>${revengeData.winRate}%</strong> during these periods. <strong>Rule: Wait 30 minutes minimum after any loss before the next trade.</strong>`
+                });
+            }
+
+            // 2. Overtrading
+            const overtradeData = detectOvertrading();
+            if (overtradeData.highFreqDays > 0) {
+                const damage = overtradeData.highFreqPL * overtradeData.highFreqDays;
+                totalDamage += Math.abs(Math.min(0, damage));
+                insights.push({
+                    title: 'Overtrading',
+                    icon: '🎰',
+                    severity: overtradeData.highFreqPL < -500 ? 'high' : 'medium',
+                    metrics: [
+                        { key: 'High-Freq Days (8+ trades)', val: overtradeData.highFreqDays, cls: 'bad' },
+                        { key: 'Avg P/L on High-Freq Days', val: formatPL(overtradeData.highFreqPL), cls: overtradeData.highFreqPL < 0 ? 'bad' : 'good' },
+                        { key: 'Avg P/L on Normal Days (2-4 trades)', val: formatPL(overtradeData.lowFreqPL), cls: overtradeData.lowFreqPL >= 0 ? 'good' : 'warning' },
+                        { key: 'Per-Trade Efficiency (High)', val: formatPL(overtradeData.highFreqPerTrade), cls: overtradeData.highFreqPerTrade < 0 ? 'bad' : 'warning' },
+                        { key: 'Per-Trade Efficiency (Normal)', val: formatPL(overtradeData.lowFreqPerTrade), cls: overtradeData.lowFreqPerTrade >= 0 ? 'good' : 'warning' }
+                    ],
+                    action: `Days with 8+ trades average <strong>${formatPL(overtradeData.highFreqPL)}</strong> vs <strong>${formatPL(overtradeData.lowFreqPL)}</strong> on normal days. You make ${Math.abs(overtradeData.highFreqPerTrade).toFixed(0)}% less per trade when overtrading. <strong>Cap yourself at 5 trades/day.</strong>`
+                });
+            }
+
+            // 3. Worst Day of Week
+            const dayData = detectWorstDay();
+            if (dayData.worstDay && dayData.pl < -500) {
+                totalDamage += Math.abs(dayData.pl);
+                insights.push({
+                    title: dayData.worstDay + ' Meltdown',
+                    icon: '📅',
+                    severity: dayData.pl < -2000 ? 'high' : dayData.pl < -1000 ? 'medium' : 'low',
+                    metrics: [
+                        { key: 'Trades on ' + dayData.worstDay, val: dayData.trades, cls: 'neutral' },
+                        { key: 'Win Rate', val: dayData.winRate + '%', cls: dayData.winRate < 40 ? 'bad' : 'warning' },
+                        { key: 'Avg P/L per Trade', val: formatPL(dayData.avgPL), cls: dayData.avgPL < 0 ? 'bad' : 'good' },
+                        { key: 'Net P/L on ' + dayData.worstDay, val: formatPL(dayData.pl), cls: 'bad' },
+                        { key: 'vs Best Day (' + dayData.bestDay + ')', val: formatPL(dayData.bestDayPL), cls: 'good' }
+                    ],
+                    action: `${dayData.worstDay} is your kryptonite — <strong>${dayData.winRate}% WR</strong> and <strong>${formatPL(dayData.pl)}</strong> lost. Your best day is ${dayData.bestDay} at <strong>${formatPL(dayData.bestDayPL)}</strong>. <strong>Consider no-trade ${dayData.worstDay}s or paper trade only.</strong>`
+                });
+            }
+
+            // 4. Pre-market / Early entries
+            const premarketData = detectPremarket();
+            if (premarketData.count >= 3) {
+                totalDamage += Math.abs(Math.min(0, premarketData.pl));
+                insights.push({
+                    title: 'Pre-Market / Early Entries',
+                    icon: '🌙',
+                    severity: premarketData.winRate < 35 ? 'high' : premarketData.winRate < 50 ? 'medium' : 'low',
+                    metrics: [
+                        { key: 'Trades Before 9:45 AM', val: premarketData.count, cls: 'neutral' },
+                        { key: 'Win Rate', val: premarketData.winRate + '%', cls: premarketData.winRate < 40 ? 'bad' : 'warning' },
+                        { key: 'Avg P/L', val: formatPL(premarketData.avgPL), cls: premarketData.avgPL < 0 ? 'bad' : 'good' },
+                        { key: 'Net P/L', val: formatPL(premarketData.pl), cls: premarketData.pl < 0 ? 'bad' : 'good' },
+                        { key: 'vs Post-9:45 AM WR', val: premarketData.postWR + '%', cls: premarketData.postWR > 55 ? 'good' : 'warning' }
+                    ],
+                    action: `You take trades before the market finds direction. WR: <strong>${premarketData.winRate}%</strong> pre-9:45 vs <strong>${premarketData.postWR}%</strong> after. <strong>First trade at 9:45 AM earliest. Let the opening range establish.</strong>`
+                });
+            }
+
+            // 5. Oversizing losers
+            const sizeData = detectOversizing();
+            if (sizeData.count >= 3 && sizeData.winRate < 50) {
+                totalDamage += Math.abs(sizeData.totalLoss);
+                insights.push({
+                    title: 'Oversizing on Weak Setups',
+                    icon: '📏',
+                    severity: sizeData.winRate < 35 ? 'high' : 'medium',
+                    metrics: [
+                        { key: 'Large Size Trades (>$' + sizeData.threshold.toLocaleString() + ')', val: sizeData.count, cls: 'neutral' },
+                        { key: 'Win Rate on Large Size', val: sizeData.winRate + '%', cls: sizeData.winRate < 40 ? 'bad' : 'warning' },
+                        { key: 'Win Rate on Normal Size', val: sizeData.normalWR + '%', cls: sizeData.normalWR > 55 ? 'good' : 'warning' },
+                        { key: 'Avg Loss on Large Size', val: formatPL(sizeData.avgLoss), cls: 'bad' },
+                        { key: 'Total Lost to Oversizing', val: formatPL(sizeData.totalLoss), cls: 'bad' }
+                    ],
+                    action: `When you size big, your edge disappears. Large size WR: <strong>${sizeData.winRate}%</strong> vs normal <strong>${sizeData.normalWR}%</strong>. Your avg loss balloons to <strong>${formatPL(sizeData.avgLoss)}</strong>. <strong>Cap risk at 2% of account per trade. Size down, not up.</strong>`
+                });
+            }
+
+            // 6. Holding losers too long
+            const holdData = detectHoldTime();
+            if (holdData.count >= 3 && holdData.avgLossHoldTime > holdData.avgWinHoldTime * 1.5) {
+                insights.push({
+                    title: 'Letting Losers Run',
+                    icon: '⏳',
+                    severity: holdData.lossHoldRatio > 2.5 ? 'high' : 'medium',
+                    metrics: [
+                        { key: 'Avg Hold Time (Winners)', val: holdData.avgWinHoldTime + ' min', cls: 'good' },
+                        { key: 'Avg Hold Time (Losers)', val: holdData.avgLossHoldTime + ' min', cls: 'bad' },
+                        { key: 'Loss/Win Hold Ratio', val: holdData.lossHoldRatio.toFixed(1) + 'x', cls: holdData.lossHoldRatio > 2 ? 'bad' : 'warning' },
+                        { key: 'Trades Held >30 Min (Losers)', val: holdData.longLosses, cls: 'bad' },
+                        { key: 'Extra Loss from Holding', val: formatPL(holdData.extraLoss), cls: 'bad' }
+                    ],
+                    action: `You hold losers <strong>${holdData.lossHoldRatio.toFixed(1)}x longer</strong> than winners. Winners: ${holdData.avgWinHoldTime} min. Losers: ${holdData.avgLossHoldTime} min. <strong>Set a 10-minute max hold on any trade going against you. Cut it.</strong>`
+                });
+            }
+
+            // 7. Chasing / FOMO entries
+            const chaseData = detectChasing();
+            if (chaseData.count >= 3) {
+                totalDamage += Math.abs(chaseData.totalLoss);
+                insights.push({
+                    title: 'Chasing / FOMO Entries',
+                    icon: '🏃',
+                    severity: chaseData.winRate < 30 ? 'high' : 'medium',
+                    metrics: [
+                        { key: 'Chase Trades Detected', val: chaseData.count, cls: 'neutral' },
+                        { key: 'Win Rate', val: chaseData.winRate + '%', cls: chaseData.winRate < 40 ? 'bad' : 'warning' },
+                        { key: 'Avg P/L on Chases', val: formatPL(chaseData.avgPL), cls: chaseData.avgPL < 0 ? 'bad' : 'good' },
+                        { key: 'Total Lost to Chasing', val: formatPL(chaseData.totalLoss), cls: 'bad' },
+                        { key: 'vs Planned Entries WR', val: chaseData.plannedWR + '%', cls: chaseData.plannedWR > 55 ? 'good' : 'warning' }
+                    ],
+                    action: `You chase moves after they've already started. Chase WR: <strong>${chaseData.winRate}%</strong> vs planned <strong>${chaseData.plannedWR}%</strong>. <strong>If you didn't plan the entry before the move started, don't take it. Next trade is planned or skipped.</strong>`
+                });
+            }
+
+            // Update summary banner
+            document.getElementById('badHabitCount').textContent = insights.length;
+            document.getElementById('totalDamage').textContent = formatPL(-totalDamage);
+            document.getElementById('potentialRecovery').textContent = formatPL(totalDamage * 0.7);
+
+            // Render cards sorted by severity
+            const severityOrder = { high: 0, medium: 1, low: 2 };
+            insights.sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity]);
+
+            if (insights.length === 0) {
+                container.innerHTML = `
+                    <div class="stop-empty">
+                        <div class="icon">🎉</div>
+                        <h3>No major bad habits detected!</h3>
+                        <p>Your trading discipline looks solid. Keep it up.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            insights.forEach(insight => {
+                const card = document.createElement('div');
+                card.className = 'stop-card ' + (insight.severity === 'high' ? 'severe' : '');
+                card.innerHTML = `
+                    <div class="card-header">
+                        <span class="icon">${insight.icon}</span>
+                        <h3>${insight.title}</h3>
+                        <span class="severity-tag ${insight.severity}">${insight.severity}</span>
+                    </div>
+                    ${insight.metrics.map(m => `
+                        <div class="metric">
+                            <span class="key">${m.key}</span>
+                            <span class="val ${m.cls}">${m.val}</span>
+                        </div>
+                    `).join('')}
+                    <div class="action">${insight.action}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Detection algorithms
+        function detectRevengeTrading() {
+            let count = 0;
+            let totalLoss = 0;
+            let tradesInRevenge = 0;
+            let wins = 0;
+            let totalTradesAfterLoss = 0;
+
+            const sorted = [...rawTransactions].sort((a, b) => {
+                if (!a.parsedTime || !b.parsedTime) return 0;
+                return a.parsedTime - b.parsedTime;
+            });
+
+            for (let i = 0; i < sorted.length - 1; i++) {
+                if (sorted[i].pl < 0 && sorted[i].isClose) {
+                    const lossTime = sorted[i].parsedTime;
+                    if (!lossTime) continue;
+
+                    let j = i + 1;
+                    let revengeCount = 0;
+                    while (j < sorted.length) {
+                        const nextTime = sorted[j].parsedTime;
+                        if (!nextTime) { j++; continue; }
+
+                        const diff = (nextTime - lossTime) / 60000;
+                        if (diff <= 20 && diff >= 0) {
+                            revengeCount++;
+                            totalLoss += sorted[j].pl;
+                            if (sorted[j].pl > 0) wins++;
+                            tradesInRevenge++;
+                            totalTradesAfterLoss++;
+                        }
+                        j++;
+                    }
+                    if (revengeCount >= 2) count++;
+                }
+            }
+
+            return {
+                count,
+                avgLoss: tradesInRevenge > 0 ? totalLoss / tradesInRevenge : 0,
+                totalLoss,
+                winRate: tradesInRevenge > 0 ? (wins / tradesInRevenge * 100).toFixed(1) : 0,
+                tradesInRevenge,
+                avgTradesAfterLoss: count > 0 ? totalTradesAfterLoss / count : 0
+            };
+        }
+
+        function detectOvertrading() {
+            const dayTrades = {};
+            allTrades.forEach(t => {
+                const day = t.date;
+                if (!dayTrades[day]) dayTrades[day] = [];
+                dayTrades[day].push(t);
+            });
+
+            let highFreqDays = 0;
+            let highFreqPL = 0;
+            let highFreqTrades = 0;
+            let lowFreqDays = 0;
+            let lowFreqPL = 0;
+            let lowFreqTrades = 0;
+
+            Object.values(dayTrades).forEach(day => {
+                const pl = day.reduce((s, t) => s + t.pnl, 0);
+                if (day.length >= 8) {
+                    highFreqDays++;
+                    highFreqPL += pl;
+                    highFreqTrades += day.length;
+                } else if (day.length >= 2 && day.length <= 4) {
+                    lowFreqDays++;
+                    lowFreqPL += pl;
+                    lowFreqTrades += day.length;
+                }
+            });
+
+            return {
+                highFreqDays,
+                highFreqPL: highFreqDays > 0 ? highFreqPL / highFreqDays : 0,
+                highFreqPerTrade: highFreqTrades > 0 ? highFreqPL / highFreqTrades : 0,
+                lowFreqPL: lowFreqDays > 0 ? lowFreqPL / lowFreqDays : 0,
+                lowFreqPerTrade: lowFreqTrades > 0 ? lowFreqPL / lowFreqTrades : 0
+            };
+        }
+
+        function detectWorstDay() {
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const dayStats = {};
+
+            allTrades.forEach(t => {
+                const d = new Date(t.date);
+                const day = days[d.getDay()];
+                if (!dayStats[day]) dayStats[day] = { trades: 0, wins: 0, pl: 0 };
+                dayStats[day].trades++;
+                if (t.pnl > 0) dayStats[day].wins++;
+                dayStats[day].pl += t.pnl;
+            });
+
+            let worstDay = null;
+            let worstPL = 0;
+            let bestDay = null;
+            let bestPL = -Infinity;
+
+            Object.entries(dayStats).forEach(([day, stats]) => {
+                if (stats.pl < worstPL) {
+                    worstPL = stats.pl;
+                    worstDay = day;
+                }
+                if (stats.pl > bestPL) {
+                    bestPL = stats.pl;
+                    bestDay = day;
+                }
+            });
+
+            if (!worstDay) return {};
+
+            const stats = dayStats[worstDay];
+            return {
+                worstDay,
+                trades: stats.trades,
+                winRate: stats.trades > 0 ? (stats.wins / stats.trades * 100).toFixed(1) : 0,
+                avgPL: stats.trades > 0 ? stats.pl / stats.trades : 0,
+                pl: stats.pl,
+                bestDay,
+                bestDayPL: bestPL
+            };
+        }
+
+        function detectPremarket() {
+            const premarket = allTrades.filter(t => {
+                if (!t.parsedTime) return false;
+                const hour = t.parsedTime.getHours();
+                const minute = t.parsedTime.getMinutes();
+                return hour < 9 || (hour === 9 && minute < 45);
+            });
+
+            const postmarket = allTrades.filter(t => {
+                if (!t.parsedTime) return false;
+                const hour = t.parsedTime.getHours();
+                const minute = t.parsedTime.getMinutes();
+                return hour > 9 || (hour === 9 && minute >= 45);
+            });
+
+            const wins = premarket.filter(t => t.pnl > 0).length;
+            const postWins = postmarket.filter(t => t.pnl > 0).length;
+
+            return {
+                count: premarket.length,
+                winRate: premarket.length > 0 ? (wins / premarket.length * 100).toFixed(1) : 0,
+                avgPL: premarket.length > 0 ? premarket.reduce((s, t) => s + t.pnl, 0) / premarket.length : 0,
+                pl: premarket.reduce((s, t) => s + t.pnl, 0),
+                postWR: postmarket.length > 0 ? (postWins / postmarket.length * 100).toFixed(1) : 0
+            };
+        }
+
+        function detectOversizing() {
+            const positionSizes = allTrades.map(t => Math.abs(t.quantity * t.entryPrice * (t.optionType === 'STOCK' ? 1 : 100))).filter(s => s > 0);
+            const avgSize = positionSizes.length > 0 ? positionSizes.reduce((a, b) => a + b, 0) / positionSizes.length : 0;
+            const threshold = avgSize * 1.5;
+
+            const large = allTrades.filter(t => {
+                const size = Math.abs(t.quantity * t.entryPrice * (t.optionType === 'STOCK' ? 1 : 100));
+                return size > threshold;
+            });
+            const normal = allTrades.filter(t => {
+                const size = Math.abs(t.quantity * t.entryPrice * (t.optionType === 'STOCK' ? 1 : 100));
+                return size > 0 && size <= threshold;
+            });
+
+            const wins = large.filter(t => t.pnl > 0).length;
+            const normalWins = normal.filter(t => t.pnl > 0).length;
+            const losses = large.filter(t => t.pnl < 0);
+
+            return {
+                count: large.length,
+                threshold: Math.round(threshold),
+                winRate: large.length > 0 ? (wins / large.length * 100).toFixed(1) : 0,
+                normalWR: normal.length > 0 ? (normalWins / normal.length * 100).toFixed(1) : 0,
+                avgLoss: losses.length > 0 ? losses.reduce((s, t) => s + t.pl, 0) / losses.length : 0,
+                totalLoss: losses.reduce((s, t) => s + t.pl, 0)
+            };
+        }
+
+        function detectHoldTime() {
+            const tradePairs = [];
+            const dayGroups = {};
+
+            allTrades.forEach(t => {
+                const day = t.date;
+                if (!dayGroups[day]) dayGroups[day] = {};
+                if (!dayGroups[day][t.symbol]) dayGroups[day][t.symbol] = [];
+                dayGroups[day][t.symbol].push(t);
+            });
+
+            let winHoldTimes = [];
+            let lossHoldTimes = [];
+            let longLosses = 0;
+
+            Object.values(dayGroups).forEach(symbols => {
+                Object.values(symbols).forEach(symbolTrades => {
+                    for (let i = 0; i < symbolTrades.length - 1; i += 2) {
+                        if (symbolTrades[i + 1]) {
+                            const holdTime = (symbolTrades[i + 1].closeDate - symbolTrades[i].closeDate) / 60000;
+                            if (holdTime > 0) {
+                                if (symbolTrades[i].pnl + symbolTrades[i + 1].pnl > 0) {
+                                    winHoldTimes.push(holdTime);
+                                } else {
+                                    lossHoldTimes.push(holdTime);
+                                    if (holdTime > 30) longLosses++;
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+
+            const avgWin = winHoldTimes.length > 0 ? winHoldTimes.reduce((a, b) => a + b, 0) / winHoldTimes.length : 0;
+            const avgLoss = lossHoldTimes.length > 0 ? lossHoldTimes.reduce((a, b) => a + b, 0) / lossHoldTimes.length : 0;
+
+            return {
+                count: lossHoldTimes.length,
+                avgWinHoldTime: Math.round(avgWin),
+                avgLossHoldTime: Math.round(avgLoss),
+                lossHoldRatio: avgWin > 0 ? avgLoss / avgWin : 0,
+                longLosses,
+                extraLoss: lossHoldTimes.filter(t => t > avgWin * 2).length * (avgLoss - avgWin) * 10
+            };
+        }
+
+        function detectChasing() {
+            const chaseTrades = allTrades.filter((t, i) => {
+                if (i === 0) return false;
+                const prev = allTrades[i - 1];
+                return prev.symbol === t.symbol && prev.pnl > 500 && Math.abs(t.pnl) > 200;
+            });
+
+            const plannedTrades = allTrades.filter(t => !chaseTrades.includes(t));
+
+            const wins = chaseTrades.filter(t => t.pnl > 0).length;
+            const plannedWins = plannedTrades.filter(t => t.pnl > 0).length;
+
+            return {
+                count: chaseTrades.length,
+                winRate: chaseTrades.length > 0 ? (wins / chaseTrades.length * 100).toFixed(1) : 0,
+                avgPL: chaseTrades.length > 0 ? chaseTrades.reduce((s, t) => s + t.pl, 0) / chaseTrades.length : 0,
+                totalLoss: chaseTrades.filter(t => t.pl < 0).reduce((s, t) => s + t.pl, 0),
+                plannedWR: plannedTrades.length > 0 ? (plannedWins / plannedTrades.length * 100).toFixed(1) : 0
+            };
+        }
+
         // RENDERERS
-        // ============================================================
         function renderDashboard() {
             if (!allTrades.length) {
                 document.getElementById('controlsBar').style.display = 'none';
                 document.getElementById('chartSection').style.display = 'none';
                 document.getElementById('txnSummarySection').style.display = 'none';
                 document.getElementById('tradeSummarySection').style.display = 'none';
-                document.getElementById('summaryGrid').innerHTML = '';
+                document.getElementById('stopSection').style.display = 'none';
                 document.getElementById('tradesBody').innerHTML = `
                     <tr>
                         <td colspan="10" class="empty-state">
@@ -905,12 +1503,13 @@
             document.getElementById('chartSection').style.display = 'grid';
             document.getElementById('txnSummarySection').style.display = 'block';
             document.getElementById('tradeSummarySection').style.display = 'block';
+            document.getElementById('stopSection').style.display = 'block';
 
-            // Compute trade ideas
             tradeIdeas = computeTradeIdeas(allTrades);
 
             renderTxnSummary();
             renderTradeSummary();
+            generateStopDoingThis();
             renderTrades();
             renderDistribution();
             drawEquityChart();
@@ -929,8 +1528,6 @@
             }
 
             const totalPnL = allTrades.reduce((s, t) => s + t.pnl, 0);
-
-            // Trade-level win rate
             const tradeWinners = Object.values(tradeIdeas).filter(t => t.pnl > 0);
             const tradeLosers = Object.values(tradeIdeas).filter(t => t.pnl < 0);
             const tradeWinRate = Object.keys(tradeIdeas).length ? 
@@ -1167,9 +1764,7 @@
             }).join('');
         }
 
-        // ============================================================
         // CHART
-        // ============================================================
         function drawEquityChart() {
             const canvas = document.getElementById('equityChart');
             const ctx = canvas.getContext('2d');
@@ -1272,31 +1867,25 @@
             ctx.fillText(new Date(points[points.length-1].date).toLocaleDateString('en-US', {month:'short', day:'numeric'}), getX(points.length-1), height - 8);
         }
 
-        // ============================================================
         // FILE HANDLING
-        // ============================================================
         function handleFile(file) {
             if (!file) return;
-
             if (!file.name.endsWith('.csv')) {
                 showToast('Please upload a CSV file', 'error');
                 return;
             }
-
             document.getElementById('fileName').textContent = file.name;
 
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
                     allTrades = parseTOSCSV(e.target.result);
-
                     if (!allTrades.length) {
                         showToast('No closed trades found in CSV. Check format.', 'error');
                         return;
                     }
-
                     localStorage.setItem('ravs_trades', JSON.stringify(allTrades));
-
+                    localStorage.setItem('ravs_transactions', JSON.stringify(rawTransactions));
                     showToast(`Loaded ${allTrades.length} transactions, ${Object.keys(computeTradeIdeas(allTrades)).length} trade ideas`, 'success');
                     renderDashboard();
                 } catch (err) {
@@ -1325,9 +1914,7 @@
             }
         });
 
-        // ============================================================
         // VIEW SWITCHING
-        // ============================================================
         function setView(view) {
             currentView = view;
             document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
@@ -1346,9 +1933,7 @@
             renderTrades();
         }
 
-        // ============================================================
         // EXPORT & CLEAR
-        // ============================================================
         function exportCSV() {
             if (!allTrades.length) {
                 showToast('No trades to export', 'error');
@@ -1377,16 +1962,16 @@
         function clearData() {
             if (!confirm('Clear all trade data? This cannot be undone.')) return;
             allTrades = [];
+            rawTransactions = [];
             tradeIdeas = {};
             localStorage.removeItem('ravs_trades');
+            localStorage.removeItem('ravs_transactions');
             document.getElementById('fileName').textContent = '';
             renderDashboard();
             showToast('All data cleared', 'success');
         }
 
-        // ============================================================
         // UTILS
-        // ============================================================
         function showToast(msg, type) {
             const toast = document.getElementById('toast');
             document.getElementById('toastIcon').textContent = type === 'success' ? '✓' : '✕';
@@ -1395,14 +1980,19 @@
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // ============================================================
+        function formatPL(val) {
+            const prefix = val >= 0 ? '+$' : '-$';
+            return prefix + Math.abs(val).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+
         // INIT
-        // ============================================================
         function init() {
             const saved = localStorage.getItem('ravs_trades');
+            const savedTxns = localStorage.getItem('ravs_transactions');
             if (saved) {
                 try {
                     allTrades = JSON.parse(saved);
+                    if (savedTxns) rawTransactions = JSON.parse(savedTxns);
                     if (allTrades.length) {
                         tradeIdeas = computeTradeIdeas(allTrades);
                         renderDashboard();
