@@ -606,6 +606,7 @@
     </style>
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
     <div class="header">
@@ -776,23 +777,25 @@
 
         // CSV PARSER
         function parseTOSCSV(csvText) {
-            const lines = csvText.split('
-').filter(l => l.trim());
+            const lines = csvText.split(/\r?\n/).filter(l => l.trim());
             if (lines.length < 2) throw new Error('CSV appears empty');
 
             let headerIdx = -1;
             for (let i = 0; i < Math.min(10, lines.length); i++) {
-                if (lines[i].includes('DATE,TIME,TYPE,REF')) {
+                if (lines[i].toUpperCase().includes('DATE') && lines[i].toUpperCase().includes('TIME') && lines[i].toUpperCase().includes('TYPE')) {
                     headerIdx = i;
                     break;
                 }
             }
 
-            if (headerIdx === -1) throw new Error('Cannot find transaction header. Make sure this is a TOS Account Statement export.');
+            if (headerIdx === -1) {
+                console.log('First 10 lines of CSV:', lines.slice(0, 10));
+                throw new Error('Cannot find transaction header (looking for DATE,TIME,TYPE). Make sure this is a TOS Account Statement export from Monitor → Account Statement → Export to Excel.');
+            }
 
             const headers = parseCSVLine(lines[headerIdx]);
-            const descIdx = headers.findIndex(h => h.toLowerCase().includes('description'));
-            const amountIdx = headers.findIndex(h => h.toLowerCase() === 'amount');
+            const descIdx = headers.findIndex(h => h.toLowerCase().includes('description') || h.toLowerCase().includes('desc'));
+            const amountIdx = headers.findIndex(h => h.toLowerCase().includes('amount') || h.toLowerCase().includes('proceeds'));
             const feesIdx = headers.findIndex(h => h.toLowerCase().includes('misc fees'));
             const commIdx = headers.findIndex(h => h.toLowerCase().includes('commissions'));
             const dateIdx = headers.findIndex(h => h.toLowerCase().includes('date'));
@@ -811,8 +814,8 @@
                 const cols = parseCSVLine(line);
                 if (cols.length < 5) continue;
 
-                const type = (cols[2] || '').trim();
-                if (type !== 'TRD') continue;
+                const type = (cols[2] || '').trim().toUpperCase();
+                if (type !== 'TRD' && type !== 'TRADE' && type !== 'FILL') continue;
 
                 const desc = cols[descIdx] || '';
                 if (!desc || desc.includes('Cash balance')) continue;
@@ -870,7 +873,11 @@
                 rawTransactions.push(txn);
             }
 
-            if (!rawTrades.length) throw new Error('No trade transactions found in CSV');
+            if (!rawTrades.length) {
+                console.log('Headers found:', headers);
+                console.log('Total lines scanned:', lines.length);
+                throw new Error('No trade transactions found in CSV. Make sure you exported from TOS Monitor → Account Statement and the file contains TRD/Trade rows.');
+            }
             return matchTradesToClosedBatches(rawTrades);
         }
 
@@ -878,9 +885,10 @@
             const result = [];
             let current = '';
             let inQuotes = false;
+            const cleanLine = line.replace(/\r/g, '');
 
-            for (let i = 0; i < line.length; i++) {
-                const char = line[i];
+            for (let i = 0; i < cleanLine.length; i++) {
+                const char = cleanLine[i];
                 if (char === '"') {
                     inQuotes = !inQuotes;
                 } else if (char === ',' && !inQuotes) {
@@ -892,9 +900,7 @@
             }
             result.push(current.trim());
             return result;
-        }
-
-        function safeFloat(val) {
+        }function safeFloat(val) {
             if (!val || val.trim() === '') return 0;
             try {
                 return parseFloat(val.replace(/[$,"/]/g, '').trim());
@@ -904,12 +910,12 @@
         function parseTradeDescription(desc) {
             const clean = desc.replace(/=/g, '').trim();
             let side = '';
-            if (clean.startsWith('BOT')) side = 'BUY';
-            else if (clean.startsWith('SOLD')) side = 'SELL';
+            if (clean.startsWith('BOT') || clean.startsWith('BUY')) side = 'BUY';
+            else if (clean.startsWith('SOLD') || clean.startsWith('SELL') || clean.startsWith('SLD')) side = 'SELL';
             else return null;
 
             let rest = clean.replace(/^(BOT|SOLD)\s+/, '');
-            const qtyMatch = rest.match(/^([+-]?\d+)/);
+            const qtyMatch = rest.match(/^([+-]?\d+(?:\.\d+)?)/);
             if (!qtyMatch) return null;
             const quantity = Math.abs(parseInt(qtyMatch[1]));
             rest = rest.substring(qtyMatch[0].length).trim();
@@ -952,6 +958,7 @@
         }
 
         function matchTradesToClosedBatches(trades) {
+            console.log('Matching', trades.length, 'raw transactions');
             const groups = {};
             trades.forEach(t => {
                 const key = `${t.symbol}_${t.optionType}_${t.strike}_${t.expiration}`;
@@ -960,6 +967,7 @@
                 else groups[key].closes.push(t);
             });
 
+            console.log('Trade groups formed:', Object.keys(groups).length);
             const closedBatches = [];
             Object.entries(groups).forEach(([key, group]) => {
                 group.opens.sort((a, b) => a.date - b.date);
@@ -1020,6 +1028,7 @@
                 }
             });
 
+            console.log('Closed batches created:', closedBatches.length);
             return closedBatches.sort((a, b) => b.closeDate - a.closeDate);
         }
 
@@ -1879,6 +1888,8 @@
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
+                    console.log('CSV loaded, length:', e.target.result.length);
+                    console.log('First 500 chars:', e.target.result.substring(0, 500));
                     allTrades = parseTOSCSV(e.target.result);
                     if (!allTrades.length) {
                         showToast('No closed trades found in CSV. Check format.', 'error');
