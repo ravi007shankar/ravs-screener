@@ -1416,8 +1416,8 @@
                 threshold: Math.round(threshold),
                 winRate: large.length > 0 ? (wins / large.length * 100).toFixed(1) : 0,
                 normalWR: normal.length > 0 ? (normalWins / normal.length * 100).toFixed(1) : 0,
-                avgLoss: losses.length > 0 ? losses.reduce((s, t) => s + t.pl, 0) / losses.length : 0,
-                totalLoss: losses.reduce((s, t) => s + t.pl, 0)
+                avgLoss: losses.length > 0 ? losses.reduce((s, t) => s + t.pnl, 0) / losses.length : 0,
+                totalLoss: losses.reduce((s, t) => s + t.pnl, 0)
             };
         }
 
@@ -1482,8 +1482,8 @@
             return {
                 count: chaseTrades.length,
                 winRate: chaseTrades.length > 0 ? (wins / chaseTrades.length * 100).toFixed(1) : 0,
-                avgPL: chaseTrades.length > 0 ? chaseTrades.reduce((s, t) => s + t.pl, 0) / chaseTrades.length : 0,
-                totalLoss: chaseTrades.filter(t => t.pl < 0).reduce((s, t) => s + t.pl, 0),
+                avgPL: chaseTrades.length > 0 ? chaseTrades.reduce((s, t) => s + t.pnl, 0) / chaseTrades.length : 0,
+                totalLoss: chaseTrades.filter(t => t.pnl < 0).reduce((s, t) => s + t.pnl, 0),
                 plannedWR: plannedTrades.length > 0 ? (plannedWins / plannedTrades.length * 100).toFixed(1) : 0
             };
         }
@@ -1556,20 +1556,20 @@
             const losers = allTrades.filter(t => t.pnl < 0);
             const winRate = allTrades.length ? (winners.length / allTrades.length * 100).toFixed(1) : 0;
             const avgWin = winners.length ? (winners.reduce((s, t) => s + t.pnl, 0) / winners.length) : 0;
-            const avgLoss = losers.length ? (losers.reduce((s, t) => s + t.pl, 0) / losers.length) : 0;
+            const avgLoss = losers.length ? (losers.reduce((s, t) => s + t.pnl, 0) / losers.length) : 0;
             const bestTrade = allTrades.length ? Math.max(...allTrades.map(t => t.pnl)) : 0;
             const worstTrade = allTrades.length ? Math.min(...allTrades.map(t => t.pnl)) : 0;
             const totalCommissions = allTrades.reduce((s, t) => s + t.commission, 0);
 
-            // NEW: Average $ size per transaction
+            // Average $ size per transaction
             const positionSizes = allTrades.map(t => Math.abs(t.quantity * t.entryPrice * (t.optionType === 'STOCK' ? 1 : 100))).filter(s => s > 0);
             const avgSize = positionSizes.length > 0 ? positionSizes.reduce((a, b) => a + b, 0) / positionSizes.length : 0;
 
-            // NEW: Avg % profit on winning transactions
+            // Avg % profit on winning transactions
             const winReturns = winners.map(t => t.returnPct);
             const avgWinPct = winReturns.length > 0 ? (winReturns.reduce((a, b) => a + b, 0) / winReturns.length) : 0;
 
-            // NEW: Avg % loss on losing transactions
+            // Avg % loss on losing transactions (returnPct is already negative for losers)
             const lossReturns = losers.map(t => t.returnPct);
             const avgLossPct = lossReturns.length > 0 ? (lossReturns.reduce((a, b) => a + b, 0) / lossReturns.length) : 0;
 
@@ -1577,10 +1577,9 @@
                 { label: 'Net P&L', value: (totalPnL >= 0 ? '+' : '') + '$' + totalPnL.toFixed(2), sub: allTrades.length + ' transactions', cls: totalPnL >= 0 ? 'positive' : 'negative', card: totalPnL >= 0 ? 'positive' : 'negative' },
                 { label: 'Win Rate', value: winRate + '%', sub: winners.length + 'W / ' + losers.length + 'L', cls: '', card: winRate >= 50 ? 'positive' : 'negative' },
                 { label: 'Avg Winner', value: '+$' + avgWin.toFixed(2), sub: 'Best: +$' + bestTrade.toFixed(2), cls: 'positive', card: 'positive' },
-                { label: 'Avg Loser', value: '$' + avgLoss.toFixed(2), sub: 'Worst: $' + worstTrade.toFixed(2), cls: 'negative', card: 'negative' },
+                { label: 'Avg Loser', value: (avgLoss >= 0 ? '' : '-') + '$' + Math.abs(avgLoss).toFixed(2), sub: 'Worst: ' + (worstTrade >= 0 ? '+' : '-') + '$' + Math.abs(worstTrade).toFixed(2), cls: 'negative', card: 'negative' },
                 { label: 'R-Multiple', value: avgLoss !== 0 ? (Math.abs(avgWin / avgLoss)).toFixed(2) : '∞', sub: 'Reward/Risk', cls: '', card: 'accent' },
                 { label: 'Commissions', value: '$' + totalCommissions.toFixed(2), sub: 'Total fees', cls: 'negative', card: 'neutral' },
-                // NEW METRICS
                 { label: 'Avg $ Size', value: '$' + avgSize.toFixed(0), sub: 'Per transaction', cls: '', card: 'accent' },
                 { label: 'Avg Win %', value: '+' + avgWinPct.toFixed(1) + '%', sub: winners.length + ' winners', cls: 'positive', card: 'positive' },
                 { label: 'Avg Loss %', value: avgLossPct.toFixed(1) + '%', sub: losers.length + ' losers', cls: 'negative', card: 'negative' }
@@ -1608,41 +1607,39 @@
             const avgTxnsPerTrade = ideas.length ? 
                 (ideas.reduce((s, t) => s + t.transactions, 0) / ideas.length).toFixed(1) : 0;
 
-            // NEW: Average $ size per trade (using tradeIdeas data)
-            // For trade ideas, we calculate total entry cost across all transactions for that idea
+            // Average $ size per trade (using tradeIdeas data)
             const tradeSizes = ideas.map(idea => {
-                const matchingTrades = allTrades.filter(t => t.tradeIdea === `${t.symbol}_${t.optionType}_${t.strike}_${t.expiration}`);
-                // Actually, let's use the entryPrices and totalQty from the idea
                 const multiplier = idea.optionType === 'STOCK' ? 1 : 100;
                 const avgEntry = idea.entryPrices.length > 0 ? idea.entryPrices.reduce((a, b) => a + b, 0) / idea.entryPrices.length : 0;
                 return avgEntry * idea.totalQty * multiplier;
             }).filter(s => s > 0);
             const avgTradeSize = tradeSizes.length > 0 ? tradeSizes.reduce((a, b) => a + b, 0) / tradeSizes.length : 0;
 
-            // NEW: Avg % profit on winning trades
-            // We need to compute returnPct for trade ideas. Since tradeIdeas doesn't store returnPct directly,
-            // we compute it from the grouped trades
-            const winnerReturns = [];
-            const loserReturns = [];
-            ideas.forEach(idea => {
-                const ideaTrades = allTrades.filter(t => t.tradeIdea === `${t.symbol}_${t.optionType}_${t.strike}_${t.expiration}`);
-                if (ideaTrades.length > 0) {
-                    const avgReturn = ideaTrades.reduce((s, t) => s + t.returnPct, 0) / ideaTrades.length;
-                    if (idea.pnl > 0) winnerReturns.push(avgReturn);
-                    else if (idea.pnl < 0) loserReturns.push(avgReturn);
-                }
-            });
+            // Avg % profit on winning trades — computed at idea level: (pnl / entryCost) * 100
+            const winnerReturns = winners.map(idea => {
+                const multiplier = idea.optionType === 'STOCK' ? 1 : 100;
+                const avgEntry = idea.entryPrices.length > 0 ? idea.entryPrices.reduce((a, b) => a + b, 0) / idea.entryPrices.length : 0;
+                const entryCost = avgEntry * idea.totalQty * multiplier;
+                return entryCost > 0 ? (idea.pnl / entryCost) * 100 : 0;
+            }).filter(r => !isNaN(r) && isFinite(r));
             const avgWinPctTrade = winnerReturns.length > 0 ? winnerReturns.reduce((a, b) => a + b, 0) / winnerReturns.length : 0;
+
+            // Avg % loss on losing trades — computed at idea level: (pnl / entryCost) * 100
+            const loserReturns = losers.map(idea => {
+                const multiplier = idea.optionType === 'STOCK' ? 1 : 100;
+                const avgEntry = idea.entryPrices.length > 0 ? idea.entryPrices.reduce((a, b) => a + b, 0) / idea.entryPrices.length : 0;
+                const entryCost = avgEntry * idea.totalQty * multiplier;
+                return entryCost > 0 ? (idea.pnl / entryCost) * 100 : 0;
+            }).filter(r => !isNaN(r) && isFinite(r));
             const avgLossPctTrade = loserReturns.length > 0 ? loserReturns.reduce((a, b) => a + b, 0) / loserReturns.length : 0;
 
             const stats = [
                 { label: 'Net P&L', value: (totalPnL >= 0 ? '+' : '') + '$' + totalPnL.toFixed(2), sub: ideas.length + ' trade ideas', cls: totalPnL >= 0 ? 'positive' : 'negative', card: totalPnL >= 0 ? 'positive' : 'negative' },
                 { label: 'Win Rate', value: winRate + '%', sub: winners.length + 'W / ' + losers.length + 'L', cls: '', card: winRate >= 50 ? 'positive' : 'negative' },
                 { label: 'Avg Winner', value: '+$' + avgWin.toFixed(2), sub: 'Best: +$' + bestTrade.toFixed(2), cls: 'positive', card: 'positive' },
-                { label: 'Avg Loser', value: '$' + avgLoss.toFixed(2), sub: 'Worst: $' + worstTrade.toFixed(2), cls: 'negative', card: 'negative' },
+                { label: 'Avg Loser', value: (avgLoss >= 0 ? '' : '-') + '$' + Math.abs(avgLoss).toFixed(2), sub: 'Worst: ' + (worstTrade >= 0 ? '+' : '-') + '$' + Math.abs(worstTrade).toFixed(2), cls: 'negative', card: 'negative' },
                 { label: 'R-Multiple', value: avgLoss !== 0 ? (Math.abs(avgWin / avgLoss)).toFixed(2) : '∞', sub: 'Reward/Risk', cls: '', card: 'accent' },
                 { label: 'Avg Txns/Trade', value: avgTxnsPerTrade, sub: 'Transactions per idea', cls: '', card: 'neutral' },
-                // NEW METRICS
                 { label: 'Avg $ Size', value: '$' + avgTradeSize.toFixed(0), sub: 'Per trade idea', cls: '', card: 'accent' },
                 { label: 'Avg Win %', value: '+' + avgWinPctTrade.toFixed(1) + '%', sub: winners.length + ' winners', cls: 'positive', card: 'positive' },
                 { label: 'Avg Loss %', value: avgLossPctTrade.toFixed(1) + '%', sub: losers.length + ' losers', cls: 'negative', card: 'negative' }
