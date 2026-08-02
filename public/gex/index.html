@@ -466,7 +466,7 @@ async function loadTicker(ticker) {
 
   try {
     // Try to fetch mock JSON from data/ folder
-    const response = await fetch(`./data/mock_${ticker.toLowerCase()}.json`);
+    const response = await fetch(`./mock_${ticker.toLowerCase()}.json`);
     if (!response.ok) throw new Error('Mock data not found');
     const data = await response.json();
     currentData = data;
@@ -682,7 +682,7 @@ function formatGex(val) {
 async function loadScreener() {
   document.getElementById('screenerLoading').style.display = 'flex';
   try {
-    const res = await fetch('./data/mock_screener.json');
+    const res = await fetch('./mock_screener.json');
     if (!res.ok) throw new Error('Not found');
     screenerData = (await res.json()).tickers || [];
   } catch (e) {
