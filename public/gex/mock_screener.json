@@ -1,0 +1,95 @@
+{
+  "tickers": [
+    {
+      "ticker": "SPX",
+      "spot": 5520.45,
+      "pattern": "THE_RUG",
+      "bias": "BEARISH",
+      "confidence": 0.75,
+      "key_level": 5525.0,
+      "regime": "VOLATILE"
+    },
+    {
+      "ticker": "QQQ",
+      "spot": 485.2,
+      "pattern": "REVERSE_RUG",
+      "bias": "BULLISH",
+      "confidence": 0.8,
+      "key_level": 480.0,
+      "regime": "PINNED"
+    },
+    {
+      "ticker": "SPXW",
+      "spot": 5520.45,
+      "pattern": "WHIPSAW",
+      "bias": "NO_TRADE",
+      "confidence": 0.65,
+      "key_level": null,
+      "regime": "NEUTRAL"
+    },
+    {
+      "ticker": "AAPL",
+      "spot": 232.5,
+      "pattern": "PINNED",
+      "bias": "NEUTRAL",
+      "confidence": 0.7,
+      "key_level": "230-235",
+      "regime": "PINNED"
+    },
+    {
+      "ticker": "TSLA",
+      "spot": 248.8,
+      "pattern": "AIR_POCKET",
+      "bias": "NO_TRADE",
+      "confidence": 0.6,
+      "key_level": "245-250",
+      "regime": "NEUTRAL"
+    },
+    {
+      "ticker": "NVDA",
+      "spot": 118.4,
+      "pattern": "PIKA_CLOUD",
+      "bias": "NEUTRAL",
+      "confidence": 0.55,
+      "key_level": "115-120",
+      "regime": "NEUTRAL"
+    },
+    {
+      "ticker": "MSFT",
+      "spot": 425.1,
+      "pattern": "THE_RUG",
+      "bias": "BEARISH",
+      "confidence": 0.72,
+      "key_level": 430.0,
+      "regime": "VOLATILE"
+    },
+    {
+      "ticker": "AMZN",
+      "spot": 198.6,
+      "pattern": "REVERSE_RUG",
+      "bias": "BULLISH",
+      "confidence": 0.75,
+      "key_level": 195.0,
+      "regime": "PINNED"
+    },
+    {
+      "ticker": "META",
+      "spot": 512.3,
+      "pattern": "PINNED",
+      "bias": "NEUTRAL",
+      "confidence": 0.68,
+      "key_level": "505-515",
+      "regime": "PINNED"
+    },
+    {
+      "ticker": "GOOGL",
+      "spot": 178.9,
+      "pattern": "WHIPSAW",
+      "bias": "NO_TRADE",
+      "confidence": 0.62,
+      "key_level": null,
+      "regime": "NEUTRAL"
+    }
+  ],
+  "timestamp": "2026-08-02T14:30:00-05:00"
+}

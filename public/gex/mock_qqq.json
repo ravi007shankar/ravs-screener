@@ -1,0 +1,212 @@
+{
+  "ticker": "QQQ",
+  "spot": 485.2,
+  "timestamp": "2026-08-02T14:30:00-05:00",
+  "expiries": [
+    "2026-08-04",
+    "2026-08-05",
+    "2026-08-06",
+    "2026-08-08",
+    "2026-08-11"
+  ],
+  "heatmap": [
+    {
+      "strike": 500.0,
+      "is_spot": false,
+      "2026-08-04": -120.5,
+      "2026-08-04_unit": "M",
+      "2026-08-04_sign": "negative",
+      "2026-08-05": -95.3,
+      "2026-08-05_unit": "M",
+      "2026-08-05_sign": "negative",
+      "2026-08-06": 0,
+      "2026-08-06_unit": "M",
+      "2026-08-06_sign": "zero",
+      "2026-08-08": 0,
+      "2026-08-08_unit": "M",
+      "2026-08-08_sign": "zero",
+      "2026-08-11": 0,
+      "2026-08-11_unit": "M",
+      "2026-08-11_sign": "zero"
+    },
+    {
+      "strike": 495.0,
+      "is_spot": false,
+      "2026-08-04": -85.2,
+      "2026-08-04_unit": "M",
+      "2026-08-04_sign": "negative",
+      "2026-08-05": -60.4,
+      "2026-08-05_unit": "M",
+      "2026-08-05_sign": "negative",
+      "2026-08-06": -45.8,
+      "2026-08-06_unit": "M",
+      "2026-08-06_sign": "negative",
+      "2026-08-08": 0,
+      "2026-08-08_unit": "M",
+      "2026-08-08_sign": "zero",
+      "2026-08-11": 0,
+      "2026-08-11_unit": "M",
+      "2026-08-11_sign": "zero"
+    },
+    {
+      "strike": 490.0,
+      "is_spot": false,
+      "2026-08-04": -45.6,
+      "2026-08-04_unit": "M",
+      "2026-08-04_sign": "negative",
+      "2026-08-05": -30.2,
+      "2026-08-05_unit": "M",
+      "2026-08-05_sign": "negative",
+      "2026-08-06": -25.4,
+      "2026-08-06_unit": "M",
+      "2026-08-06_sign": "negative",
+      "2026-08-08": -15.8,
+      "2026-08-08_unit": "M",
+      "2026-08-08_sign": "negative",
+      "2026-08-11": 0,
+      "2026-08-11_unit": "M",
+      "2026-08-11_sign": "zero"
+    },
+    {
+      "strike": 485.0,
+      "is_spot": true,
+      "2026-08-04": 65.2,
+      "2026-08-04_unit": "M",
+      "2026-08-04_sign": "positive",
+      "2026-08-05": 45.8,
+      "2026-08-05_unit": "M",
+      "2026-08-05_sign": "positive",
+      "2026-08-06": 35.4,
+      "2026-08-06_unit": "M",
+      "2026-08-06_sign": "positive",
+      "2026-08-08": 25.6,
+      "2026-08-08_unit": "M",
+      "2026-08-08_sign": "positive",
+      "2026-08-11": 18.2,
+      "2026-08-11_unit": "M",
+      "2026-08-11_sign": "positive"
+    },
+    {
+      "strike": 480.0,
+      "is_spot": false,
+      "2026-08-04": 180.5,
+      "2026-08-04_unit": "M",
+      "2026-08-04_sign": "positive",
+      "2026-08-05": 150.3,
+      "2026-08-05_unit": "M",
+      "2026-08-05_sign": "positive",
+      "2026-08-06": 120.8,
+      "2026-08-06_unit": "M",
+      "2026-08-06_sign": "positive",
+      "2026-08-08": 95.4,
+      "2026-08-08_unit": "M",
+      "2026-08-08_sign": "positive",
+      "2026-08-11": 75.2,
+      "2026-08-11_unit": "M",
+      "2026-08-11_sign": "positive"
+    },
+    {
+      "strike": 475.0,
+      "is_spot": false,
+      "2026-08-04": 120.3,
+      "2026-08-04_unit": "M",
+      "2026-08-04_sign": "positive",
+      "2026-08-05": 95.6,
+      "2026-08-05_unit": "M",
+      "2026-08-05_sign": "positive",
+      "2026-08-06": 80.4,
+      "2026-08-06_unit": "M",
+      "2026-08-06_sign": "positive",
+      "2026-08-08": 65.2,
+      "2026-08-08_unit": "M",
+      "2026-08-08_sign": "positive",
+      "2026-08-11": 50.8,
+      "2026-08-11_unit": "M",
+      "2026-08-11_sign": "positive"
+    },
+    {
+      "strike": 470.0,
+      "is_spot": false,
+      "2026-08-04": 45.2,
+      "2026-08-04_unit": "M",
+      "2026-08-04_sign": "positive",
+      "2026-08-05": 35.8,
+      "2026-08-05_unit": "M",
+      "2026-08-05_sign": "positive",
+      "2026-08-06": 28.4,
+      "2026-08-06_unit": "M",
+      "2026-08-06_sign": "positive",
+      "2026-08-08": 22.5,
+      "2026-08-08_unit": "M",
+      "2026-08-08_sign": "positive",
+      "2026-08-11": 18.6,
+      "2026-08-11_unit": "M",
+      "2026-08-11_sign": "positive"
+    }
+  ],
+  "patterns": {
+    "KING": {
+      "strike": 480.0,
+      "gex": 180500000.0,
+      "is_negative": false,
+      "type": "MAGNET/PIN",
+      "max_expiry": "2026-08-04"
+    },
+    "SPOT": {
+      "strike": 485.0,
+      "gex": 65200000.0,
+      "regime": "PINNED"
+    },
+    "REVERSE_RUG": {
+      "detected": true,
+      "confidence": 0.8,
+      "floor": 480.0,
+      "bias": "BULLISH",
+      "note": "Positive gamma floor below, negative fuel above. Both forces point same way."
+    },
+    "SHELF_BELOW": {
+      "strikes": [
+        480.0,
+        475.0,
+        470.0
+      ],
+      "total_gex": 345800000.0,
+      "sign": "POSITIVE"
+    },
+    "CROSS_EXPIRY": {
+      "king_negative_on": 0,
+      "king_positive_on": 5,
+      "total_expiries": 5,
+      "reliable": true,
+      "note": "Cross-expiry agreement confirmed."
+    }
+  },
+  "trade_plan": {
+    "ticker": "QQQ",
+    "spot": 485.2,
+    "bias": "BULLISH",
+    "confidence": 0.8,
+    "primary_pattern": "REVERSE_RUG",
+    "setup": "Reverse Rug: Floor at 480.0",
+    "entry": "Long QQQ at 480.0-485.2",
+    "stop_loss": "Below 477.2",
+    "target_1": "492.5 (+1.5%)",
+    "target_2": "Next negative shelf above",
+    "expiry": "Front-week",
+    "instrument": "QQQ Calls",
+    "risk_note": "Both forces point same way. Buy dips into floor.",
+    "king_level": 480.0
+  },
+  "levels": {
+    "spot_regime": "PINNED",
+    "king": {
+      "strike": 480.0,
+      "gex": 180500000.0,
+      "is_negative": false,
+      "type": "MAGNET/PIN",
+      "max_expiry": "2026-08-04"
+    },
+    "ceiling": null,
+    "floor": 480.0
+  }
+}
