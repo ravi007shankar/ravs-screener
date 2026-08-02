@@ -130,6 +130,7 @@
         .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
         @media (max-width: 1000px) { .two-col { grid-template-columns: 1fr; } }
     </style>
+<base target="_blank">
 </head>
 <body>
     <div class="header">
@@ -138,7 +139,11 @@
     <h1>🔥 RavsTrades Screener</h1>
     <div style="margin-top:10px;">
         <a href="index.html" style="color:#00d4ff;text-decoration:none;font-weight:600;margin-right:20px;">Screener</a>
-        <a href="performance.html" style="color:#8892b0;text-decoration:none;font-weight:600;">Performance</a>
+        <a href="performance.html" style="color:#8892b0;text-decoration:none;font-weight:600;margin-right:20px;">Performance</a>
+        <a href="gex/" style="color:#fff;text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:6px;">
+            GEX
+            <span style="background:linear-gradient(135deg,#ff6b35,#f7931e);color:#0a0e1a;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;">New</span>
+        </a>
     </div>
         <div class="header-stats">
             <div class="stat">
@@ -161,6 +166,21 @@
     </div>
     
     <div class="container">
+
+        <div class="section">
+            <div style="background: linear-gradient(135deg, #1a1f2e 0%, #2d1b4e 100%); border-radius: 12px; border: 1px solid #7c3aed; padding: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                <div>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                        <span style="font-size: 24px;">Γ</span>
+                        <h2 style="font-size: 20px; color: #ccd6f6; margin: 0;">GEX Intelligence</h2>
+                    </div>
+                    <p style="color: #8892b0; font-size: 14px; margin: 0;">Dealer gamma exposure maps, Heatseeker pattern detection, and AI trade plans for SPX / QQQ.</p>
+                </div>
+                <a href="gex/" style="padding: 12px 28px; background: linear-gradient(135deg, #7c3aed, #a855f7); border: none; border-radius: 8px; color: #fff; font-weight: 700; font-size: 14px; text-decoration: none; cursor: pointer; display: inline-block;">
+                    Open GEX →
+                </a>
+            </div>
+        </div>
         <div class="section">
             <h2 class="section-title">🎯 Money Flow - Hot Sectors Today</h2>
             <div class="hot-sectors" id="hotSectors">
