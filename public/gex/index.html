@@ -99,14 +99,47 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 .spot-metric-value { font-size: 20px; font-weight: 700; }
 .spot-metric-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
 
+/* ===== STRUCTURE MAP ===== */
+.structure-map {
+  background: linear-gradient(135deg, rgba(15,23,42,0.9), rgba(10,14,23,0.95));
+  border: 1px solid var(--border); border-radius: 12px;
+  padding: 20px; margin-bottom: 16px;
+}
+.structure-map-title {
+  font-size: 11px; color: var(--text-muted); text-transform: uppercase;
+  letter-spacing: 0.8px; font-weight: 700; margin-bottom: 16px;
+}
+.structure-lane {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 10px; position: relative;
+}
+.structure-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  width: 100px; text-align: right; color: var(--text-muted);
+}
+.structure-bar {
+  height: 28px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; font-family: var(--font-mono);
+  min-width: 70px; padding: 0 10px;
+}
+.structure-bar.positive { background: linear-gradient(90deg, #14532d, #166534); color: #86efac; border: 1px solid rgba(34,197,94,0.3); }
+.structure-bar.negative { background: linear-gradient(90deg, #581c87, #7c3aed); color: #d8b4fe; border: 1px solid rgba(168,85,247,0.3); }
+.structure-bar.spot { background: linear-gradient(90deg, rgba(56,189,248,0.2), rgba(56,189,248,0.1)); color: var(--accent-blue); border: 1px solid var(--accent-blue); }
+.structure-bar.gold { background: linear-gradient(90deg, rgba(251,191,36,0.2), rgba(251,191,36,0.1)); color: var(--accent-gold); border: 1px solid var(--accent-gold); }
+.structure-arrow { font-size: 14px; }
+.structure-arrow.up { color: var(--accent-green); }
+.structure-arrow.down { color: var(--accent-purple); }
+.structure-desc { font-size: 10px; color: var(--text-muted); margin-left: 6px; }
+
 /* HEATMAP */
 .heatmap-container { overflow-x: auto; max-height: 68vh; overflow-y: auto; border-radius: 8px; }
-.heatmap-grid { display: grid; grid-template-columns: 100px repeat(5, 1fr); gap: 3px; font-size: 11px; min-width: 600px; padding: 4px; }
+.heatmap-grid { display: grid; grid-template-columns: 140px repeat(5, 1fr); gap: 3px; font-size: 11px; min-width: 600px; padding: 4px; }
 .heatmap-header { color: var(--text-muted); font-weight: 700; padding: 12px 6px; text-align: center; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0; background: var(--bg-secondary); z-index: 5; border-bottom: 1px solid var(--border); }
 .heatmap-strike { 
-  color: var(--text-muted); padding: 10px 12px; text-align: right; font-weight: 600; 
-  font-family: var(--font-mono); font-size: 12px; display: flex; align-items: center; 
-  justify-content: flex-end; gap: 8px; border-radius: 4px;
+  color: var(--text-muted); padding: 10px 8px; text-align: right; font-weight: 600; 
+  font-family: var(--font-mono); font-size: 11px; display: flex; align-items: center; 
+  justify-content: flex-end; gap: 6px; border-radius: 4px; flex-wrap: wrap;
 }
 .heatmap-strike.spot { 
   color: var(--accent-gold); font-weight: 800; 
@@ -115,6 +148,19 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 }
 .heatmap-strike .spot-arrow { color: var(--accent-blue); font-size: 10px; }
 .heatmap-strike .king-icon { color: var(--accent-gold); font-size: 11px; }
+
+/* Annotation badges on strike rows */
+.annotation-badge {
+  font-size: 8px; font-weight: 800; padding: 1px 4px; border-radius: 3px;
+  text-transform: uppercase; letter-spacing: 0.3px; line-height: 1;
+}
+.annotation-king { background: rgba(251,191,36,0.2); color: var(--accent-gold); border: 1px solid var(--accent-gold); }
+.annotation-spot { background: rgba(56,189,248,0.2); color: var(--accent-blue); border: 1px solid var(--accent-blue); }
+.annotation-ceiling { background: rgba(34,197,94,0.2); color: var(--accent-green); border: 1px solid var(--accent-green); }
+.annotation-floor { background: rgba(34,197,94,0.2); color: var(--accent-green); border: 1px solid var(--accent-green); }
+.annotation-vacuum { background: rgba(168,85,247,0.2); color: var(--accent-purple); border: 1px solid var(--accent-purple); }
+.annotation-band { background: rgba(34,197,94,0.15); color: #86efac; border: 1px solid rgba(34,197,94,0.4); }
+
 .heatmap-cell {
   padding: 10px 4px; text-align: center; border-radius: 5px; font-weight: 700;
   font-family: var(--font-mono); font-size: 10px; position: relative; transition: all 0.15s;
@@ -134,6 +180,13 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
   box-shadow: inset 0 0 0 1px var(--accent-gold), 0 0 10px rgba(251,191,36,0.2);
 }
 
+/* Cell annotation effects */
+.cell-annotation-king { box-shadow: inset 0 0 0 2px var(--accent-gold), 0 0 20px rgba(251,191,36,0.3) !important; }
+.cell-annotation-ceiling { border-top: 3px solid var(--accent-green) !important; }
+.cell-annotation-floor { border-bottom: 3px solid var(--accent-green) !important; }
+.cell-annotation-vacuum { box-shadow: inset 0 0 0 2px var(--accent-purple), 0 0 15px rgba(168,85,247,0.3) !important; }
+.cell-annotation-band { border-left: 3px solid var(--accent-green); border-right: 3px solid var(--accent-green); }
+
 /* TOOLTIP */
 .heatmap-cell .tooltip {
   position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
@@ -152,10 +205,10 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 .xp-value { font-size: 13px; font-weight: 800; }
 
 /* LEVELS */
-.levels-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.levels-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .level-card { 
   background: linear-gradient(135deg, rgba(15,23,42,0.8), rgba(30,41,59,0.4));
-  border: 1px solid var(--border); border-radius: 10px; padding: 16px; 
+  border: 1px solid var(--border); border-radius: 10px; padding: 14px; 
   text-align: center; transition: all 0.2s;
 }
 .level-card:hover { border-color: var(--accent-gold); transform: translateY(-2px); }
@@ -164,8 +217,8 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
   background: linear-gradient(135deg, rgba(251,191,36,0.08), rgba(251,191,36,0.02));
 }
 .level-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
-.level-value { font-size: 24px; font-weight: 800; margin-top: 6px; }
-.level-desc { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+.level-value { font-size: 20px; font-weight: 800; margin-top: 6px; }
+.level-desc { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
 
 /* PATTERNS */
 .pattern-list { display: flex; flex-direction: column; gap: 8px; }
@@ -179,10 +232,20 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 .pattern-tag.bullish { border-left-color: var(--accent-green); }
 .pattern-tag.neutral { border-left-color: var(--accent-blue); }
 .pattern-tag.warning { border-left-color: var(--accent-orange); }
-.pattern-tag-header { display: flex; justify-content: space-between; align-items: center; }
+.pattern-tag-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .pattern-tag-name { font-weight: 700; font-size: 12px; }
 .pattern-tag-meta { font-size: 10px; color: var(--text-muted); font-weight: 600; }
 .pattern-tag-desc { font-size: 11px; color: var(--text-secondary); margin-top: 4px; line-height: 1.4; }
+
+/* Direction badge on patterns */
+.pattern-direction {
+  font-size: 9px; font-weight: 800; padding: 2px 8px; border-radius: 4px;
+  text-transform: uppercase; letter-spacing: 0.3px; margin-left: auto; flex-shrink: 0;
+}
+.pattern-tag.bullish .pattern-direction { background: rgba(34,197,94,0.2); color: var(--accent-green); }
+.pattern-tag.bearish .pattern-direction { background: rgba(239,68,68,0.2); color: var(--accent-red); }
+.pattern-tag.neutral .pattern-direction { background: rgba(56,189,248,0.2); color: var(--accent-blue); }
+.pattern-tag.warning .pattern-direction { background: rgba(249,115,22,0.2); color: var(--accent-orange); }
 
 /* TRADE PLAN */
 .trade-plan { 
@@ -219,16 +282,18 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 
 @media (max-width: 1100px) {
   .two-col { grid-template-columns: 1fr; }
-  .levels-grid { grid-template-columns: repeat(2, 1fr); }
+  .levels-grid { grid-template-columns: repeat(3, 1fr); }
+  .heatmap-grid { grid-template-columns: 120px repeat(5, 1fr); }
 }
 @media (max-width: 768px) {
   .navbar { flex-direction: column; gap: 12px; padding: 12px 16px; }
   .main-container { padding: 16px; }
   .spot-bar { flex-direction: column; gap: 12px; align-items: flex-start; }
   .spot-metrics { width: 100%; justify-content: space-between; }
-  .levels-grid { grid-template-columns: 1fr 1fr; }
+  .levels-grid { grid-template-columns: repeat(2, 1fr); }
   .ticker-bar { gap: 6px; }
   .ticker-input { width: 100px; }
+  .structure-label { width: 70px; }
 }
 
 ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -296,6 +361,9 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
       </div>
     </div>
 
+    <!-- STRUCTURE MAP -->
+    <div class="structure-map" id="structureMap"></div>
+
     <div class="two-col">
       <div>
         <div class="card">
@@ -342,7 +410,6 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 let currentData = null;
 let currentTicker = 'SPX';
 let refreshInterval = null;
-
 
 async function loadTicker(ticker) {
   currentTicker = ticker;
@@ -417,6 +484,60 @@ function updateTimestamp() {
   document.getElementById('lastUpdate').textContent = 'Updated: ' + now.toLocaleTimeString();
 }
 
+// ===== STRUCTURE MAP =====
+function renderStructureMap(data) {
+  const container = document.getElementById('structureMap');
+  if (!container) return;
+
+  const spot = data.spot || 0;
+  const p = data.patterns || {};
+  const tp = data.trade_plan || {};
+
+  let html = '<div class="structure-map-title">Gamma Architecture</div>';
+
+  // Ceiling
+  const ceiling = p.CEILING?.strike || (p.THE_RUG?.ceiling);
+  if (ceiling) {
+    html += `<div class="structure-lane"><span class="structure-label">Ceiling</span><span class="structure-arrow">↓</span><div class="structure-bar positive">${ceiling}</div><span class="structure-desc">+GEX rejects price</span></div>`;
+  }
+
+  // Vacuum Above
+  const vacAbove = p.VACUUM_ABOVE?.strike || (tp.vacuum_above);
+  if (vacAbove) {
+    html += `<div class="structure-lane"><span class="structure-label">Vacuum ↑</span><span class="structure-arrow up">↑</span><div class="structure-bar negative">${vacAbove}</div><span class="structure-desc" style="color:var(--accent-purple)">Pulls price UP</span></div>`;
+  }
+
+  // Spot
+  html += `<div class="structure-lane"><span class="structure-label">Spot</span><span class="structure-arrow" style="color:var(--accent-blue)">▶</span><div class="structure-bar spot">${spot.toFixed(2)}</div><span class="structure-desc">${p.SPOT?.regime || 'NEUTRAL'}</span></div>`;
+
+  // Vacuum Below
+  const vacBelow = p.VACUUM_BELOW?.strike || (tp.vacuum_below);
+  if (vacBelow) {
+    html += `<div class="structure-lane"><span class="structure-label">Vacuum ↓</span><span class="structure-arrow down">↓</span><div class="structure-bar negative">${vacBelow}</div><span class="structure-desc" style="color:var(--accent-purple)">Pulls price DOWN</span></div>`;
+  }
+
+  // Floor
+  const floor = p.FLOOR?.strike || (p.REVERSE_RUG?.floor) || (tp.floor);
+  if (floor) {
+    html += `<div class="structure-lane"><span class="structure-label">Floor</span><span class="structure-arrow">↑</span><div class="structure-bar positive">${floor}</div><span class="structure-desc">+GEX supports price</span></div>`;
+  }
+
+  // Pin Band
+  if (tp.band_low && tp.band_high) {
+    html += `<div class="structure-lane"><span class="structure-label">Pin Band</span><span class="structure-arrow" style="color:var(--accent-green)">⟷</span><div class="structure-bar positive" style="min-width:100px;">${tp.band_low}–${tp.band_high}</div><span class="structure-desc" style="color:var(--accent-green)">Spot inside band</span></div>`;
+  }
+
+  // King
+  if (p.KING?.strike) {
+    const king = p.KING;
+    const kingColor = king.is_negative ? 'var(--accent-purple)' : 'var(--accent-green)';
+    const kingText = king.is_negative ? 'VACUUM' : 'MAGNET';
+    html += `<div class="structure-lane"><span class="structure-label">King</span><span style="color:${kingColor};font-size:14px;">👑</span><div class="structure-bar ${king.is_negative ? 'negative' : 'positive'}">${king.strike}</div><span class="structure-desc" style="color:${kingColor}">${kingText} | ${formatGex(king.gex)}</span></div>`;
+  }
+
+  container.innerHTML = html;
+}
+
 function getFallbackData(ticker) {
   if (ticker === 'SPX') return {
     ticker: 'SPX', spot: 5520.45, change_percent: -0.15, change: -8.28, vix: 14.82, odte_vol: '2.1M',
@@ -436,10 +557,10 @@ function getFallbackData(ticker) {
     patterns: {
       KING: {strike: 5450, gex: -890500000, is_negative: true, type: 'VACUUM/AMPLIFIER'},
       SPOT: {strike: 5500, gex: -120500000, regime: 'VOLATILE'},
-      'THE_RUG': {detected: true, confidence: 0.75, ceiling: 5525, bias: 'BEARISH', note: 'Positive gamma ceiling above, negative vacuum below.'},
+      THE_RUG: {detected: true, confidence: 0.75, ceiling: 5525, bias: 'BEARISH', note: 'Positive gamma ceiling above, negative vacuum below.'},
       CROSS_EXPIRY: {king_negative_on: 2, king_positive_on: 1, total_expiries: 5, reliable: false, note: 'Four confirmations of nothing beat one guess.'}
     },
-    trade_plan: {ticker:'SPX', spot:5520.45, bias:'BEARISH', confidence:0.75, primary_pattern:'THE_RUG', setup:'The Rug: Ceiling at 5525.0', entry:'Short SPX below 5520.45', stop_loss:'Above 5552.6', target_1:'5450.0 (King)', target_2:'Next positive shelf below', expiry:'Front-week', instrument:'SPX Puts', risk_note:"Wait for breakdown confirmation. Don't short the rejection.", king_level: 5450},
+    trade_plan: {ticker:'SPX', spot:5520.45, bias:'BEARISH', confidence:0.75, primary_pattern:'THE_RUG', setup:'The Rug: Ceiling at 5525.0', entry:'Short SPX below 5520.45', stop_loss:'Above 5552.6', target_1:'5450.0 (King)', target_2:'Next positive shelf below', expiry:'Front-week', instrument:'SPX Puts', risk_note:"Wait for breakdown confirmation. Don't short the rejection.", king_level: 5450, ceiling: 5525, floor: null, vacuum_above: null, vacuum_below: null, band_low: null, band_high: null},
     levels: {spot_regime:'VOLATILE', king:{strike:5450}, ceiling:5525, floor:null}
   };
 
@@ -461,7 +582,7 @@ function getFallbackData(ticker) {
       REVERSE_RUG: {detected: true, confidence: 0.80, floor: 480, bias: 'BULLISH', note: 'Positive gamma floor below, negative fuel above.'},
       CROSS_EXPIRY: {king_negative_on: 0, king_positive_on: 5, total_expiries: 5, reliable: true, note: 'Cross-expiry agreement confirmed.'}
     },
-    trade_plan: {ticker:'QQQ', spot:485.20, bias:'BULLISH', confidence:0.80, primary_pattern:'REVERSE_RUG', setup:'Reverse Rug: Floor at 480.0', entry:'Long QQQ at 480.0-485.2', stop_loss:'Below 477.2', target_1:'492.5 (+1.5%)', target_2:'Next negative shelf above', expiry:'Front-week', instrument:'QQQ Calls', risk_note:'Both forces point same way. Buy dips into floor.', king_level: 480},
+    trade_plan: {ticker:'QQQ', spot:485.20, bias:'BULLISH', confidence:0.80, primary_pattern:'REVERSE_RUG', setup:'Reverse Rug: Floor at 480.0', entry:'Long QQQ at 480.0-485.2', stop_loss:'Below 477.2', target_1:'492.5 (+1.5%)', target_2:'Next negative shelf above', expiry:'Front-week', instrument:'QQQ Calls', risk_note:'Both forces point same way. Buy dips into floor.', king_level: 480, ceiling: null, floor: 480, vacuum_above: null, vacuum_below: null, band_low: null, band_high: null},
     levels: {spot_regime:'PINNED', king:{strike:480}, ceiling:null, floor:480}
   };
 }
@@ -470,9 +591,8 @@ function getHeatmapColor(val, sign, maxAbs) {
   if (sign === 'zero' || val === 0 || !maxAbs) return {bg: 'rgba(30,41,59,0.3)', color: '#475569'};
   const abs = Math.abs(val);
   const ratio = Math.min(abs / maxAbs, 1);
-  
+
   if (sign === 'positive') {
-    // Rich green gradient
     const r = Math.round(20 + ratio * 14);
     const g = Math.round(83 + ratio * 114);
     const b = Math.round(45 + ratio * 37);
@@ -484,7 +604,6 @@ function getHeatmapColor(val, sign, maxAbs) {
       color: `rgb(${tr},${tg},${tb})`
     };
   } else {
-    // Deep purple/magenta gradient
     const r = Math.round(88 + ratio * 80);
     const g = Math.round(28 + ratio * 50);
     const b = Math.round(135 + ratio * 100);
@@ -528,7 +647,8 @@ function renderGEX(data) {
   if (maxAbs === 0) maxAbs = 1;
 
   document.getElementById('spotLabel').textContent = data.ticker + ' Spot';
-    // Spot price with real daily change
+
+  // Spot price with real daily change
   const changePct = data.change_percent;
   const changeVal = data.change;
   let changeHtml = '';
@@ -552,6 +672,59 @@ function renderGEX(data) {
   document.getElementById('netGex').textContent = data.patterns && data.patterns.SPOT ? formatGex(data.patterns.SPOT.gex) : '—';
   document.getElementById('spotPattern').textContent = data.trade_plan ? data.trade_plan.primary_pattern || '—' : '—';
 
+  // Render structure map
+  renderStructureMap(data);
+
+  // Build annotation map for strikes
+  const annotations = {};
+  const p = data.patterns || {};
+  const tp = data.trade_plan || {};
+
+  function addAnn(strike, type) {
+    if (strike === undefined || strike === null) return;
+    const key = parseFloat(strike);
+    annotations[key] = annotations[key] || [];
+    if (!annotations[key].includes(type)) annotations[key].push(type);
+  }
+
+  // Spot
+  if (data.spot) {
+    const spotStrike = Math.round(data.spot * 2) / 2;
+    addAnn(spotStrike, 'spot');
+  }
+
+  // King
+  if (p.KING?.strike) addAnn(p.KING.strike, 'king');
+
+  // Ceiling
+  if (p.CEILING?.strike) addAnn(p.CEILING.strike, 'ceiling');
+  if (p.THE_RUG?.ceiling) addAnn(p.THE_RUG.ceiling, 'ceiling');
+
+  // Floor
+  if (p.FLOOR?.strike) addAnn(p.FLOOR.strike, 'floor');
+  if (p.REVERSE_RUG?.floor) addAnn(p.REVERSE_RUG.floor, 'floor');
+  if (tp.floor) addAnn(tp.floor, 'floor');
+
+  // Vacuum Above
+  if (p.VACUUM_ABOVE?.strike) addAnn(p.VACUUM_ABOVE.strike, 'vacuum');
+  if (tp.vacuum_above) addAnn(tp.vacuum_above, 'vacuum');
+
+  // Vacuum Below
+  if (p.VACUUM_BELOW?.strike) addAnn(p.VACUUM_BELOW.strike, 'vacuum');
+  if (tp.vacuum_below) addAnn(tp.vacuum_below, 'vacuum');
+
+  // Band
+  if (tp.band_low && tp.band_high) {
+    for (let s = parseFloat(tp.band_low); s <= parseFloat(tp.band_high); s += 2.5) {
+      addAnn(s, 'band');
+    }
+  }
+  if (p.POSITIVE_BAND?.low && p.POSITIVE_BAND?.high) {
+    for (let s = parseFloat(p.POSITIVE_BAND.low); s <= parseFloat(p.POSITIVE_BAND.high); s += 2.5) {
+      addAnn(s, 'band');
+    }
+  }
+
   const grid = document.getElementById('heatmapGrid');
   let html = `<div class="heatmap-header">Strike</div>`;
   data.expiries.forEach(e => {
@@ -562,10 +735,21 @@ function renderGEX(data) {
   filteredHeatmap.forEach(row => {
     const isSpot = row.is_spot;
     const isKing = data.patterns && data.patterns.KING && data.patterns.KING.strike === row.strike;
+    const rowAnns = annotations[row.strike] || [];
+
+    // Build strike label with badges
+    let badges = '';
+    if (rowAnns.includes('king')) badges += '<span class="annotation-badge annotation-king">King</span>';
+    if (rowAnns.includes('spot')) badges += '<span class="annotation-badge annotation-spot">Spot</span>';
+    if (rowAnns.includes('ceiling')) badges += '<span class="annotation-badge annotation-ceiling">Ceiling</span>';
+    if (rowAnns.includes('floor')) badges += '<span class="annotation-badge annotation-floor">Floor</span>';
+    if (rowAnns.includes('vacuum')) badges += '<span class="annotation-badge annotation-vacuum">Vacuum</span>';
+    if (rowAnns.includes('band')) badges += '<span class="annotation-badge annotation-band">Band</span>';
+
     const arrow = isSpot ? '<span class="spot-arrow">▶</span>' : '';
     const kingIcon = isKing ? '<span class="king-icon">👑</span>' : '';
-    html += `<div class="heatmap-strike ${isSpot ? 'spot' : ''}">${arrow}${row.strike.toLocaleString()}${kingIcon}</div>`;
-    
+    html += `<div class="heatmap-strike ${isSpot ? 'spot' : ''}">${arrow}${row.strike.toLocaleString()}${kingIcon}${badges}</div>`;
+
     data.expiries.forEach(exp => {
       const val = row[exp];
       const sign = row[exp + '_sign'];
@@ -574,10 +758,18 @@ function renderGEX(data) {
       } else {
         const colors = getHeatmapColor(val, sign, maxAbs);
         const display = formatCellValue(val);
-        const spotCls = isSpot ? 'cell-spot' : '';
-        const kingCls = isKing ? 'cell-king' : '';
+        let cellClasses = [];
+        if (isSpot) cellClasses.push('cell-spot');
+        if (isKing) cellClasses.push('cell-king');
+        if (rowAnns.includes('king')) cellClasses.push('cell-annotation-king');
+        if (rowAnns.includes('ceiling')) cellClasses.push('cell-annotation-ceiling');
+        if (rowAnns.includes('floor')) cellClasses.push('cell-annotation-floor');
+        if (rowAnns.includes('vacuum')) cellClasses.push('cell-annotation-vacuum');
+        if (rowAnns.includes('band')) cellClasses.push('cell-annotation-band');
+
+        const clsStr = cellClasses.join(' ');
         const tooltip = `<div class="tooltip">${val.toFixed(1)} ${sign === 'positive' ? '+' : '−'}GEX</div>`;
-        html += `<div class="heatmap-cell ${spotCls} ${kingCls}" style="background:${colors.bg}; color:${colors.color};">${display}${tooltip}</div>`;
+        html += `<div class="heatmap-cell ${clsStr}" style="background:${colors.bg}; color:${colors.color};">${display}${tooltip}</div>`;
       }
     });
   });
@@ -597,70 +789,101 @@ function renderGEX(data) {
   });
   strip.innerHTML = stripHtml;
 
+  // LEVELS GRID
   const levels = document.getElementById('levelsGrid');
-  const p = data.patterns || {};
-  const tp = data.trade_plan || {};
-  const king = p.KING || {};
   const spotPat = p.SPOT || {};
 
   let levelsHtml = '';
   const regimeColor = spotPat.regime === 'VOLATILE' ? 'var(--accent-purple)' : spotPat.regime === 'PINNED' ? 'var(--accent-green)' : 'var(--accent-blue)';
   levelsHtml += `<div class="level-card"><div class="level-label">Spot Regime</div><div class="level-value" style="color:${regimeColor}">${spotPat.regime || 'NEUTRAL'}</div><div class="level-desc">${formatGex(spotPat.gex)} at ${spotPat.strike}</div></div>`;
 
-  if (data.levels && data.levels.ceiling) {
-    levelsHtml += `<div class="level-card highlight"><div class="level-label" style="color:var(--accent-gold)">Ceiling</div><div class="level-value" style="color:var(--accent-gold)">${data.levels.ceiling}</div><div class="level-desc">Front-week cap</div></div>`;
+  // Ceiling
+  const ceiling = data.levels?.ceiling || p.CEILING?.strike || p.THE_RUG?.ceiling;
+  if (ceiling) {
+    levelsHtml += `<div class="level-card highlight"><div class="level-label" style="color:var(--accent-green)">Ceiling</div><div class="level-value" style="color:var(--accent-green)">${ceiling}</div><div class="level-desc">+GEX rejects price</div></div>`;
   } else {
     levelsHtml += `<div class="level-card"><div class="level-label">Ceiling</div><div class="level-value" style="color:var(--text-muted)">—</div><div class="level-desc">No cap detected</div></div>`;
   }
 
+  // King
+  const king = p.KING || {};
   const kingColor = king.is_negative ? 'var(--accent-purple)' : 'var(--accent-green)';
-  levelsHtml += `<div class="level-card"><div class="level-label" style="color:${kingColor}">King</div><div class="level-value" style="color:${kingColor}">${king.strike || '—'}</div><div class="level-desc">${king.type || ''}</div></div>`;
+  const kingLabel = king.is_negative ? 'VACUUM' : 'MAGNET';
+  levelsHtml += `<div class="level-card"><div class="level-label" style="color:${kingColor}">King (${kingLabel})</div><div class="level-value" style="color:${kingColor}">${king.strike || '—'}</div><div class="level-desc">${king.type || ''}</div></div>`;
 
-  if (data.levels && data.levels.floor) {
-    levelsHtml += `<div class="level-card"><div class="level-label" style="color:var(--accent-blue)">Floor</div><div class="level-value" style="color:var(--accent-blue)">${data.levels.floor}</div><div class="level-desc">Support shelf</div></div>`;
+  // Floor
+  const floor = data.levels?.floor || p.FLOOR?.strike || p.REVERSE_RUG?.floor || tp.floor;
+  if (floor) {
+    levelsHtml += `<div class="level-card"><div class="level-label" style="color:var(--accent-green)">Floor</div><div class="level-value" style="color:var(--accent-green)">${floor}</div><div class="level-desc">+GEX supports price</div></div>`;
   } else {
     levelsHtml += `<div class="level-card"><div class="level-label">Floor</div><div class="level-value" style="color:var(--text-muted)">—</div><div class="level-desc">No floor detected</div></div>`;
   }
+
+  // Vacuum Above
+  const vacAbove = p.VACUUM_ABOVE?.strike || tp.vacuum_above;
+  if (vacAbove) {
+    levelsHtml += `<div class="level-card"><div class="level-label" style="color:var(--accent-purple)">Vacuum ↑</div><div class="level-value" style="color:var(--accent-purple)">${vacAbove}</div><div class="level-desc">Pulls price UP</div></div>`;
+  }
+
+  // Vacuum Below
+  const vacBelow = p.VACUUM_BELOW?.strike || tp.vacuum_below;
+  if (vacBelow) {
+    levelsHtml += `<div class="level-card"><div class="level-label" style="color:var(--accent-purple)">Vacuum ↓</div><div class="level-value" style="color:var(--accent-purple)">${vacBelow}</div><div class="level-desc">Pulls price DOWN</div></div>`;
+  }
+
+  // Band
+  const bandLow = tp.band_low || p.POSITIVE_BAND?.low;
+  const bandHigh = tp.band_high || p.POSITIVE_BAND?.high;
+  if (bandLow && bandHigh) {
+    levelsHtml += `<div class="level-card highlight"><div class="level-label" style="color:var(--accent-green)">Pin Band</div><div class="level-value" style="color:var(--accent-green)">${bandLow}–${bandHigh}</div><div class="level-desc">Spot inside positive band</div></div>`;
+  }
+
   levels.innerHTML = levelsHtml;
 
-   const patList = document.getElementById('patternList');
+  // PATTERN LIST
+  const patList = document.getElementById('patternList');
   let patHtml = '';
   const patternMap = {
-    'THE_RUG': {cls: 'bearish', color: 'var(--accent-red)', label: 'THE RUG'},
-    'REVERSE_RUG': {cls: 'bullish', color: 'var(--accent-green)', label: 'REVERSE RUG'},
-    'PIKA_CLOUD': {cls: 'neutral', color: 'var(--accent-blue)', label: 'PIKA CLOUD'},
-    'AIR_POCKET': {cls: 'warning', color: 'var(--accent-orange)', label: 'AIR POCKET'},
-    'AIR POCKET': {cls: 'warning', color: 'var(--accent-orange)', label: 'AIR POCKET'},
-    'WHIPSAW': {cls: 'warning', color: 'var(--accent-orange)', label: 'WHIPSAW'},
-    'KING': {cls: 'warning', color: 'var(--accent-purple)', label: 'KING'},
-    'SHELF_ABOVE': {cls: 'neutral', color: 'var(--accent-blue)', label: 'SHELF ABOVE'},
-    'SHELF_BELOW': {cls: 'neutral', color: 'var(--accent-blue)', label: 'SHELF BELOW'},
-    'CROSS_EXPIRY': {cls: 'neutral', color: 'var(--text-secondary)', label: 'CROSS-EXPIRY'},
-    'GATEKEEPERS': {cls: 'neutral', color: 'var(--accent-gold)', label: 'GATEKEEPERS'}
+    'THE_RUG': {cls: 'bearish', color: 'var(--accent-red)', label: 'THE RUG', dir: 'SHORT'},
+    'REVERSE_RUG': {cls: 'bullish', color: 'var(--accent-green)', label: 'REVERSE RUG', dir: 'LONG'},
+    'PINNED': {cls: 'neutral', color: 'var(--accent-blue)', label: 'PINNED', dir: 'RANGE'},
+    'FLOOR': {cls: 'bullish', color: 'var(--accent-green)', label: 'FLOOR', dir: 'LONG'},
+    'CEILING': {cls: 'bearish', color: 'var(--accent-red)', label: 'CEILING', dir: 'SHORT'},
+    'VACUUM_ABOVE': {cls: 'bullish', color: 'var(--accent-green)', label: 'VACUUM ABOVE', dir: 'LONG'},
+    'VACUUM_BELOW': {cls: 'bearish', color: 'var(--accent-red)', label: 'VACUUM BELOW', dir: 'SHORT'},
+    'PIKA_CLOUD': {cls: 'neutral', color: 'var(--accent-blue)', label: 'PIKA CLOUD', dir: 'NEUTRAL'},
+    'AIR_POCKET': {cls: 'warning', color: 'var(--accent-orange)', label: 'AIR POCKET', dir: 'CAUTION'},
+    'AIR POCKET': {cls: 'warning', color: 'var(--accent-orange)', label: 'AIR POCKET', dir: 'CAUTION'},
+    'WHIPSAW': {cls: 'warning', color: 'var(--accent-orange)', label: 'WHIPSAW', dir: 'CAUTION'},
+    'KING': {cls: 'warning', color: 'var(--accent-purple)', label: 'KING', dir: 'KEY LEVEL'},
+    'SHELF_ABOVE': {cls: 'neutral', color: 'var(--accent-blue)', label: 'SHELF ABOVE', dir: 'RESISTANCE'},
+    'SHELF_BELOW': {cls: 'neutral', color: 'var(--accent-blue)', label: 'SHELF BELOW', dir: 'SUPPORT'},
+    'POSITIVE_BAND': {cls: 'neutral', color: 'var(--accent-green)', label: 'POSITIVE BAND', dir: 'PINNED'},
+    'CROSS_EXPIRY': {cls: 'neutral', color: 'var(--text-secondary)', label: 'CROSS-EXPIRY', dir: 'AGREE'},
+    'GATEKEEPERS': {cls: 'neutral', color: 'var(--accent-gold)', label: 'GATEKEEPERS', dir: 'BARRIER'}
   };
 
-  // Build description from pattern type + fields
   function buildPatternDesc(key, pat, spotPrice) {
     if (!pat || typeof pat !== 'object') return null;
-    
+
     if (key === 'KING') {
       const gexStr = pat.gex ? formatGex(pat.gex) : '';
       const typeStr = pat.type || (pat.is_negative ? 'VACUUM' : 'MAGNET');
       return `Strike: ${pat.strike || '—'} | ${typeStr}${gexStr ? ' | ' + gexStr : ''}`;
     }
-    
+
     if (key === 'SPOT') {
       const gexStr = pat.gex ? formatGex(pat.gex) : '';
       return `Regime: ${pat.regime || 'NEUTRAL'} at ${pat.strike || '—'}${gexStr ? ' | ' + gexStr : ''}`;
     }
-    
+
     if (key === 'SHELF_ABOVE' || key === 'SHELF_BELOW') {
       const dir = key === 'SHELF_ABOVE' ? 'above' : 'below';
       const strike = pat.strike || pat.level || '—';
       const gexStr = pat.gex ? formatGex(pat.gex) : '';
       return `+GEX shelf ${dir} spot at ${strike}${gexStr ? ' | ' + gexStr : ''}`;
     }
-    
+
     if (key === 'AIR_POCKET' || key === 'AIR POCKET') {
       let range = '';
       if (pat.low && pat.high) {
@@ -683,12 +906,12 @@ function renderGEX(data) {
       }
       return range ? `Air pocket: ${range}. No structural force. Price moves fast.` : (pat.note || 'No structural force detected.');
     }
-    
+
     if (key === 'GATEKEEPERS') {
       const count = pat.count || pat.gatekeepers || 0;
       return `${count} gatekeeper(s) between spot and King.`;
     }
-    
+
     return pat.note || pat.trade_note || '';
   }
 
@@ -696,18 +919,20 @@ function renderGEX(data) {
     if (key === 'ticker' || key === 'spot' || key === 'spot_strike' || key === 'timestamp' || key === 'total_gex') return;
     const pat = p[key];
     if (!pat || typeof pat !== 'object') return;
-    
-    const meta = patternMap[key] || {cls: 'neutral', color: 'var(--text-secondary)', label: key.replace(/_/g, ' ')};
+
+    const meta = patternMap[key] || {cls: 'neutral', color: 'var(--text-secondary)', label: key.replace(/_/g, ' '), dir: ''};
     const bias = pat.bias || (pat.is_negative ? 'NEGATIVE' : pat.detected ? 'DETECTED' : '');
     const conf = pat.confidence ? (pat.confidence * 100).toFixed(0) + '%' : '';
     const note = buildPatternDesc(key, pat, spot);
-    
+
     if (!note && key !== 'CROSS_EXPIRY') return;
-    
-    patHtml += `<div class="pattern-tag ${meta.cls}"><div class="pattern-tag-header"><span class="pattern-tag-name" style="color:${meta.color}">${meta.label}</span><span class="pattern-tag-meta">${bias} ${conf}</span></div><div class="pattern-tag-desc">${note || 'No additional data.'}</div></div>`;
+
+    const dirBadge = meta.dir ? `<span class="pattern-direction">${meta.dir}</span>` : '';
+    patHtml += `<div class="pattern-tag ${meta.cls}"><div class="pattern-tag-header"><span class="pattern-tag-name" style="color:${meta.color}">${meta.label}</span><span class="pattern-tag-meta">${bias} ${conf}</span>${dirBadge}</div><div class="pattern-tag-desc">${note || 'No additional data.'}</div></div>`;
   });
   patList.innerHTML = patHtml || '<div style="color:var(--text-muted); font-size:12px; padding:10px;">No patterns detected</div>';
 
+  // TRADE PLAN
   const biasEl = document.getElementById('tradeBias');
   biasEl.className = 'trade-bias ' + (tp.bias === 'BULLISH' ? 'bullish' : tp.bias === 'BEARISH' ? 'bearish' : tp.bias === 'NO_TRADE' ? 'notrade' : 'neutral');
   biasEl.textContent = tp.bias || 'NEUTRAL';
@@ -720,6 +945,12 @@ function renderGEX(data) {
     tp.stop_loss ? ['Stop Loss', tp.stop_loss] : null,
     tp.target_1 ? ['Target 1', tp.target_1] : null,
     tp.target_2 ? ['Target 2', tp.target_2] : null,
+    tp.king_level ? ['King Level', tp.king_level] : null,
+    tp.ceiling ? ['Ceiling', tp.ceiling] : null,
+    tp.floor ? ['Floor', tp.floor] : null,
+    tp.vacuum_above ? ['Vacuum ↑', tp.vacuum_above] : null,
+    tp.vacuum_below ? ['Vacuum ↓', tp.vacuum_below] : null,
+    tp.band_low && tp.band_high ? ['Pin Band', tp.band_low + ' – ' + tp.band_high] : null,
     tp.expiry ? ['Expiry', tp.expiry] : null,
     tp.instrument ? ['Instrument', tp.instrument] : null,
     tp.risk_note ? ['Risk', '2% account / spread'] : null
