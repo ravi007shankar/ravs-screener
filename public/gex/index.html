@@ -35,14 +35,6 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
 .brand-text p { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-.nav-tabs { display: flex; gap: 4px; background: var(--bg-secondary); padding: 4px; border-radius: 10px; border: 1px solid var(--border); }
-.nav-tab {
-  padding: 8px 20px; border-radius: 8px; font-size: 13px; font-weight: 600;
-  color: var(--text-secondary); cursor: pointer; border: none; background: transparent;
-  transition: all 0.2s; font-family: var(--font-main);
-}
-.nav-tab:hover { color: var(--text-primary); }
-.nav-tab.active { background: var(--accent-gold); color: var(--bg-primary); font-weight: 700; }
 .nav-right { display: flex; align-items: center; gap: 12px; }
 .status-pill {
   display: flex; align-items: center; gap: 6px; background: var(--bg-secondary);
@@ -50,19 +42,16 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
   font-size: 12px; color: var(--text-secondary);
 }
 .status-dot { width: 6px; height: 6px; background: var(--accent-green); border-radius: 50%; animation: pulse 2s infinite; }
+.status-dot.error { background: var(--accent-red); animation: none; }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
 /* MAIN */
 .main-container { max-width: 1440px; margin: 0 auto; padding: 24px 28px; }
-.section { display: none; }
-.section.active { display: block; animation: fadeIn 0.3s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
 .section-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; }
 .section-title { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
 .section-subtitle { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
 
-.ticker-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.ticker-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
 .ticker-btn {
   padding: 8px 20px; border-radius: 8px; font-size: 13px; font-weight: 700;
   border: 1px solid var(--border); background: var(--bg-secondary); color: var(--text-secondary);
@@ -70,6 +59,24 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 }
 .ticker-btn:hover { border-color: var(--accent-gold); color: var(--text-primary); }
 .ticker-btn.active { background: var(--accent-gold); color: var(--bg-primary); border-color: var(--accent-gold); box-shadow: 0 0 20px rgba(251,191,36,0.15); }
+.ticker-input-wrap { display: flex; gap: 6px; align-items: center; margin-left: 8px; }
+.ticker-input {
+  background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px;
+  padding: 8px 12px; color: var(--text-primary); font-size: 13px; font-family: var(--font-main);
+  width: 120px; text-transform: uppercase;
+}
+.ticker-input:focus { outline: none; border-color: var(--accent-gold); }
+.btn-go {
+  background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border);
+  padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;
+}
+.btn-go:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+.btn-refresh {
+  background: transparent; color: var(--text-muted); border: 1px solid var(--border);
+  padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;
+  margin-left: auto;
+}
+.btn-refresh:hover { color: var(--accent-gold); border-color: var(--accent-gold); }
 
 .card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
 .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
@@ -92,22 +99,20 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 .spot-metric-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
 
 /* HEATMAP */
-.heatmap-container { overflow-x: auto; }
-.heatmap-grid { display: grid; grid-template-columns: 80px repeat(5, 1fr); gap: 2px; font-size: 11px; min-width: 600px; }
-.heatmap-header { color: var(--text-muted); font-weight: 700; padding: 10px 6px; text-align: center; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
-.heatmap-strike { color: var(--text-muted); padding: 10px 8px; text-align: right; font-weight: 600; font-family: var(--font-mono); font-size: 11px; }
-.heatmap-strike.spot { color: var(--accent-gold); font-weight: 800; }
+.heatmap-container { overflow-x: auto; max-height: 70vh; overflow-y: auto; }
+.heatmap-grid { display: grid; grid-template-columns: 90px repeat(5, 1fr); gap: 2px; font-size: 11px; min-width: 600px; }
+.heatmap-header { color: var(--text-muted); font-weight: 700; padding: 10px 6px; text-align: center; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0; background: var(--bg-secondary); z-index: 5; }
+.heatmap-strike { color: var(--text-muted); padding: 10px 8px; text-align: right; font-weight: 600; font-family: var(--font-mono); font-size: 11px; display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+.heatmap-strike.spot { color: var(--accent-gold); font-weight: 800; background: rgba(251,191,36,0.05); }
+.heatmap-strike .spot-arrow { color: var(--accent-blue); font-size: 10px; }
 .heatmap-cell {
   padding: 10px 4px; text-align: center; border-radius: 4px; font-weight: 700;
   font-family: var(--font-mono); font-size: 10px; position: relative; transition: transform 0.15s;
+  min-height: 36px; display: flex; align-items: center; justify-content: center;
 }
-.heatmap-cell:hover { transform: scale(1.05); z-index: 10; box-shadow: 0 0 12px rgba(0,0,0,0.5); }
-.cell-positive { background: #14532d; color: #86efac; }
-.cell-positive-strong { background: #166534; color: #fbbf24; }
-.cell-negative { background: #7f1d1d; color: #fca5a5; }
-.cell-negative-strong { background: #581c87; color: #d8b4fe; box-shadow: 0 0 6px rgba(168,85,247,0.3); }
+.heatmap-cell:hover { transform: scale(1.08); z-index: 10; box-shadow: 0 0 12px rgba(0,0,0,0.5); }
 .cell-empty { background: transparent; color: #334155; }
-.cell-spot { border: 2px solid var(--accent-blue); }
+.cell-spot { box-shadow: inset 0 0 0 2px var(--accent-blue); }
 
 .xp-strip { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 14px; }
 .xp-item { border-radius: 6px; padding: 8px; text-align: center; }
@@ -154,60 +159,6 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 .trade-value { color: var(--text-primary); font-weight: 700; text-align: right; }
 .trade-note { margin-top: 12px; padding: 12px; background: var(--bg-primary); border-radius: 8px; border: 1px solid var(--border); font-size: 11px; color: var(--text-secondary); line-height: 1.6; font-style: italic; }
 
-/* SCREENER */
-.screener-toolbar { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
-.screener-search { flex: 1; min-width: 200px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; color: var(--text-primary); font-size: 13px; font-family: var(--font-main); }
-.screener-search:focus { outline: none; border-color: var(--accent-gold); }
-.screener-filter { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; color: var(--text-primary); font-size: 13px; font-family: var(--font-main); cursor: pointer; }
-.screener-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-.screener-table th { text-align: left; padding: 12px 16px; color: var(--text-muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; border-bottom: 1px solid var(--border); cursor: pointer; }
-.screener-table th:hover { color: var(--text-primary); }
-.screener-table td { padding: 14px 16px; border-bottom: 1px solid rgba(51,65,85,0.5); vertical-align: middle; }
-.screener-table tr:hover td { background: rgba(30,41,59,0.5); }
-.ticker-cell { display: flex; align-items: center; gap: 10px; }
-.ticker-icon { width: 32px; height: 32px; background: var(--bg-tertiary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; color: var(--accent-gold); }
-.ticker-name { font-weight: 700; font-size: 13px; }
-.ticker-type { font-size: 10px; color: var(--text-muted); }
-.badge { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
-.badge-bullish { background: rgba(34,197,94,0.12); color: var(--accent-green); }
-.badge-bearish { background: rgba(239,68,68,0.12); color: var(--accent-red); }
-.badge-neutral { background: rgba(56,189,248,0.12); color: var(--accent-blue); }
-.badge-notrade { background: rgba(148,163,184,0.12); color: var(--text-secondary); }
-.signal-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
-
-/* PERFORMANCE */
-.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
-.stat-card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
-.stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
-.stat-value { font-size: 28px; font-weight: 800; margin-top: 6px; letter-spacing: -1px; }
-.stat-change { font-size: 12px; font-weight: 600; margin-top: 4px; }
-.stat-change.up { color: var(--accent-green); }
-.stat-change.down { color: var(--accent-red); }
-.chart-container { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 20px; height: 320px; display: flex; align-items: center; justify-content: center; }
-.chart-container svg { width: 100%; height: 260px; }
-
-.add-trade-form { display: grid; grid-template-columns: repeat(6, 1fr) auto; gap: 10px; margin-bottom: 16px; align-items: end; }
-.form-input { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; color: var(--text-primary); font-size: 13px; font-family: var(--font-main); }
-.form-input:focus { outline: none; border-color: var(--accent-gold); }
-.btn-primary { background: var(--accent-gold); color: var(--bg-primary); border: none; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 800; cursor: pointer; font-family: var(--font-main); transition: all 0.2s; }
-.btn-primary:hover { box-shadow: 0 0 20px rgba(251,191,36,0.3); transform: translateY(-1px); }
-.btn-sm { padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 700; border: 1px solid var(--border); background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-family: var(--font-main); }
-.btn-sm:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
-
-.trade-log { margin-top: 20px; }
-.log-entry { display: grid; grid-template-columns: 100px 60px 80px 100px 80px 80px 1fr 100px; gap: 12px; padding: 12px 16px; border-bottom: 1px solid rgba(51,65,85,0.5); align-items: center; font-size: 12px; }
-.log-entry:hover { background: rgba(30,41,59,0.5); }
-.log-header { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; padding: 10px 16px; border-bottom: 1px solid var(--border); }
-.log-date { color: var(--text-muted); font-family: var(--font-mono); }
-.log-ticker { font-weight: 700; }
-.log-pattern { color: var(--text-secondary); }
-.log-entry-price, .log-exit-price { font-family: var(--font-mono); }
-.log-pnl { font-weight: 700; font-family: var(--font-mono); }
-.log-pnl.positive { color: var(--accent-green); }
-.log-pnl.negative { color: var(--accent-red); }
-.log-note { color: var(--text-muted); font-size: 11px; }
-.log-actions { text-align: right; }
-
 .two-col { display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
 
 /* LOADING */
@@ -217,13 +168,11 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 
 .error { padding: 20px; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; color: var(--accent-red); font-size: 13px; }
 
+.last-update { font-size: 11px; color: var(--text-muted); margin-left: 12px; }
+
 @media (max-width: 1100px) {
   .two-col { grid-template-columns: 1fr; }
   .levels-grid { grid-template-columns: repeat(2, 1fr); }
-  .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .log-entry { grid-template-columns: 1fr 1fr; gap: 8px; }
-  .log-header { display: none; }
-  .add-trade-form { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 768px) {
   .navbar { flex-direction: column; gap: 12px; padding: 12px 16px; }
@@ -231,7 +180,8 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
   .spot-bar { flex-direction: column; gap: 12px; align-items: flex-start; }
   .spot-metrics { width: 100%; justify-content: space-between; }
   .levels-grid { grid-template-columns: 1fr 1fr; }
-  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .ticker-bar { gap: 6px; }
+  .ticker-input { width: 100px; }
 }
 
 ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -248,18 +198,14 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
     <div class="brand-logo">Γ</div>
     <div class="brand-text">
       <h1>merk-I</h1>
-      <p>GEX Intelligence · Screener · Performance</p>
+      <p>GEX Intelligence · Live Options Data</p>
     </div>
   </div>
-  <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showSection('gex', this)">GEX</button>
-    <button class="nav-tab" onclick="showSection('screener', this)">Screener</button>
-    <button class="nav-tab" onclick="showSection('performance', this)">Performance</button>
-  </div>
   <div class="nav-right">
+    <span class="last-update" id="lastUpdate">—</span>
     <div class="status-pill">
-      <span class="status-dot"></span>
-      <span>Live API Connected</span>
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">Connecting...</span>
     </div>
   </div>
 </nav>
@@ -267,7 +213,7 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 <div class="main-container">
 
 <!-- ===== GEX SECTION ===== -->
-<div id="section-gex" class="section active">
+<div id="section-gex">
   <div class="section-header">
     <div>
       <h2 class="section-title">Gamma Exposure Map</h2>
@@ -277,8 +223,13 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 
   <div class="ticker-bar" id="gexTickerBar">
     <button class="ticker-btn active" data-ticker="SPX" onclick="loadTicker('SPX')">SPX</button>
+    <button class="ticker-btn" data-ticker="SPY" onclick="loadTicker('SPY')">SPY</button>
     <button class="ticker-btn" data-ticker="QQQ" onclick="loadTicker('QQQ')">QQQ</button>
-    <button class="ticker-btn" data-ticker="SPXW" onclick="loadTicker('SPXW')">SPXW</button>
+    <div class="ticker-input-wrap">
+      <input type="text" class="ticker-input" id="customTicker" placeholder="TICKER" maxlength="6" onkeypress="if(event.key==='Enter') loadCustomTicker()">
+      <button class="btn-go" onclick="loadCustomTicker()">Go</button>
+    </div>
+    <button class="btn-refresh" onclick="manualRefresh()">↻ Refresh</button>
   </div>
 
   <div id="gexLoading" class="loading" style="display:none;">Loading GEX data</div>
@@ -291,8 +242,8 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
         <h2 id="spotValue">—</h2>
       </div>
       <div class="spot-metrics" id="spotMetrics">
-        <div class="spot-metric"><div class="spot-metric-label">VIX</div><div class="spot-metric-value">14.82</div></div>
-        <div class="spot-metric"><div class="spot-metric-label">0DTE Vol</div><div class="spot-metric-value">2.1M</div></div>
+        <div class="spot-metric"><div class="spot-metric-label">VIX</div><div class="spot-metric-value" id="vixValue">—</div></div>
+        <div class="spot-metric"><div class="spot-metric-label">0DTE Vol</div><div class="spot-metric-value" id="odteVol">—</div></div>
         <div class="spot-metric"><div class="spot-metric-label">Net GEX</div><div class="spot-metric-value" id="netGex">—</div></div>
         <div class="spot-metric"><div class="spot-metric-label">Pattern</div><div class="spot-metric-value" id="spotPattern" style="color:var(--accent-gold);">—</div></div>
       </div>
@@ -330,110 +281,9 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
           </div>
           <div id="tradePlanBody"></div>
           <div class="trade-note" id="tradeNote"></div>
-          <div style="margin-top: 12px; display: flex; gap: 8px;">
-            <button class="btn-primary" style="flex:1;" onclick="logTradeFromPlan()">Log This Trade</button>
-            <button class="btn-sm" style="padding: 10px 16px;" onclick="exportGEX()">Export CSV</button>
-          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
-
-<!-- ===== SCREENER SECTION ===== -->
-<div id="section-screener" class="section">
-  <div class="section-header">
-    <div>
-      <h2 class="section-title">GEX Screener</h2>
-      <p class="section-subtitle">Scan all tickers for Heatseeker patterns · Live data</p>
-    </div>
-  </div>
-
-  <div class="screener-toolbar">
-    <input type="text" class="screener-search" placeholder="Search ticker..." id="screenerSearch" onkeyup="filterScreener()">
-    <select class="screener-filter" id="biasFilter" onchange="filterScreener()">
-      <option value="all">All Biases</option>
-      <option value="bullish">Bullish</option>
-      <option value="bearish">Bearish</option>
-      <option value="neutral">Neutral</option>
-      <option value="notrade">No Trade</option>
-    </select>
-    <select class="screener-filter" id="patternFilter" onchange="filterScreener()">
-      <option value="all">All Patterns</option>
-      <option value="rug">The Rug</option>
-      <option value="reverse-rug">Reverse Rug</option>
-      <option value="pika-cloud">Pika Cloud</option>
-      <option value="air-pocket">Air Pocket</option>
-      <option value="whipsaw">Whipsaw</option>
-      <option value="pinned">Pinned</option>
-    </select>
-    <button class="btn-primary" onclick="refreshScreener()">↻ Refresh</button>
-  </div>
-
-  <div id="screenerLoading" class="loading" style="display:none;">Loading screener</div>
-
-  <div class="card" style="padding: 0; overflow: hidden;">
-    <table class="screener-table" id="screenerTable">
-      <thead><tr>
-        <th>Ticker</th><th>Spot</th><th>Pattern</th><th>Bias</th><th>Confidence</th><th>Key Level</th><th>Signal</th><th>Action</th>
-      </tr></thead>
-      <tbody id="screenerBody"></tbody>
-    </table>
-  </div>
-</div>
-
-<!-- ===== PERFORMANCE SECTION ===== -->
-<div id="section-performance" class="section">
-  <div class="section-header">
-    <div>
-      <h2 class="section-title">Performance Tracker</h2>
-      <p class="section-subtitle">Log, track, and analyze every GEX-based trade</p>
-    </div>
-  </div>
-
-  <div class="stats-grid" id="statsGrid"></div>
-
-  <div class="card">
-    <div class="card-header">
-      <span class="card-title">Equity Curve</span>
-      <span style="font-size: 11px; color: var(--text-muted);">Last 30 trades</span>
-    </div>
-    <div class="chart-container">
-      <svg viewBox="0 0 800 260" preserveAspectRatio="none">
-        <defs><linearGradient id="eqGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="rgba(34,197,94,0.2)"/><stop offset="100%" stop-color="rgba(34,197,94,0)"/>
-        </linearGradient></defs>
-        <path d="M0,220 L40,215 L80,210 L120,205 L160,200 L200,195 L240,190 L280,185 L320,180 L360,175 L400,170 L440,165 L480,160 L520,155 L560,150 L600,145 L640,140 L680,135 L720,130 L760,125 L800,40" 
-              fill="url(#eqGrad)" stroke="#22c55e" stroke-width="2"/>
-        <line x1="0" y1="220" x2="800" y2="220" stroke="#334155" stroke-width="1" stroke-dasharray="4"/>
-        <text x="10" y="240" fill="#64748b" font-size="11" font-family="JetBrains Mono">$0</text>
-        <text x="10" y="30" fill="#64748b" font-size="11" font-family="JetBrains Mono">+$15K</text>
-      </svg>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header"><span class="card-title">Log New Trade</span></div>
-    <div class="add-trade-form">
-      <div><label style="font-size:10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 4px;">Date</label><input type="date" class="form-input" id="tradeDate" style="width: 100%;"></div>
-      <div><label style="font-size:10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 4px;">Ticker</label><input type="text" class="form-input" id="tradeTicker" placeholder="SPX" style="width: 100%;"></div>
-      <div><label style="font-size:10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 4px;">Pattern</label><select class="form-input" id="tradePattern" style="width: 100%;"><option>The Rug</option><option>Reverse Rug</option><option>Pika Cloud</option><option>Air Pocket</option><option>Whipsaw</option><option>Pinned</option></select></div>
-      <div><label style="font-size:10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 4px;">Entry</label><input type="number" class="form-input" id="tradeEntry" placeholder="5500" style="width: 100%;"></div>
-      <div><label style="font-size:10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 4px;">Exit</label><input type="number" class="form-input" id="tradeExit" placeholder="5450" style="width: 100%;"></div>
-      <div><label style="font-size:10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 4px;">Contracts</label><input type="number" class="form-input" id="tradeContracts" placeholder="2" style="width: 100%;"></div>
-      <button class="btn-primary" onclick="addTrade()">Add Trade</button>
-    </div>
-  </div>
-
-  <div class="card trade-log">
-    <div class="card-header">
-      <span class="card-title">Trade Log</span>
-      <button class="btn-sm" onclick="exportTrades()">Export CSV</button>
-    </div>
-    <div class="log-header">
-      <span>Date</span><span>Ticker</span><span>Pattern</span><span>Entry</span><span>Exit</span><span>P&L</span><span>Note</span><span style="text-align: right;">Action</span>
-    </div>
-    <div id="tradeLogBody"></div>
   </div>
 </div>
 
@@ -443,52 +293,91 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 // ===== STATE =====
 let currentData = null;
 let currentTicker = 'SPX';
-let screenerData = [];
-let trades = JSON.parse(localStorage.getItem('gex_trades') || '[]');
-
-// ===== NAVIGATION =====
-function showSection(id, btn) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('section-' + id).classList.add('active');
-  if (btn) btn.classList.add('active');
-}
+let refreshInterval = null;
+const STRIKE_RANGE = 0.04; // ±4% around spot
 
 // ===== DATA FETCHING =====
 async function loadTicker(ticker) {
   currentTicker = ticker;
   document.querySelectorAll('.ticker-btn').forEach(b => b.classList.remove('active'));
-  document.querySelector(`.ticker-btn[data-ticker="${ticker}"]`).classList.add('active');
+  const btn = document.querySelector(`.ticker-btn[data-ticker="${ticker}"]`);
+  if (btn) btn.classList.add('active');
 
   document.getElementById('gexLoading').style.display = 'flex';
   document.getElementById('gexContent').style.display = 'none';
   document.getElementById('gexError').style.display = 'none';
 
   try {
-    // LIVE API via Netlify proxy (or direct droplet)
     const response = await fetch(`/api/gex/${ticker}`);
     if (!response.ok) throw new Error('API error: ' + response.status);
     const data = await response.json();
     currentData = data;
     renderGEX(data);
+    setStatus(true, 'Live API Connected');
     document.getElementById('gexLoading').style.display = 'none';
     document.getElementById('gexContent').style.display = 'block';
   } catch (err) {
-    console.log('Live API failed, using fallback:', err);
+    console.log('Live API failed:', err);
     document.getElementById('gexError').textContent = 'Live API unavailable. Showing fallback data. Error: ' + err.message;
     document.getElementById('gexError').style.display = 'block';
-    // Fallback to embedded demo data
     const fallback = getFallbackData(ticker);
     currentData = fallback;
     renderGEX(fallback);
+    setStatus(false, 'API Error — Fallback Data');
     document.getElementById('gexLoading').style.display = 'none';
     document.getElementById('gexContent').style.display = 'block';
   }
+  updateTimestamp();
 }
 
+function loadCustomTicker() {
+  const input = document.getElementById('customTicker');
+  const ticker = input.value.trim().toUpperCase();
+  if (!ticker) return;
+  
+  // Add button if not exists
+  const bar = document.getElementById('gexTickerBar');
+  const existing = bar.querySelector(`[data-ticker="${ticker}"]`);
+  if (!existing) {
+    const btn = document.createElement('button');
+    btn.className = 'ticker-btn';
+    btn.setAttribute('data-ticker', ticker);
+    btn.textContent = ticker;
+    btn.onclick = () => loadTicker(ticker);
+    // Insert before the input wrap
+    const wrap = bar.querySelector('.ticker-input-wrap');
+    bar.insertBefore(btn, wrap);
+  }
+  loadTicker(ticker);
+  input.value = '';
+}
+
+function manualRefresh() {
+  if (currentTicker) loadTicker(currentTicker);
+}
+
+function setStatus(online, text) {
+  const dot = document.getElementById('statusDot');
+  const txt = document.getElementById('statusText');
+  if (online) {
+    dot.className = 'status-dot';
+    txt.textContent = text;
+  } else {
+    dot.className = 'status-dot error';
+    txt.textContent = text;
+  }
+}
+
+function updateTimestamp() {
+  const now = new Date();
+  document.getElementById('lastUpdate').textContent = 'Updated: ' + now.toLocaleTimeString();
+}
+
+// ===== FALLBACK DATA =====
 function getFallbackData(ticker) {
   if (ticker === 'SPX') return {
-    ticker: 'SPX', spot: 5520.45, expiries: ['2026-08-04','2026-08-05','2026-08-06','2026-08-08','2026-08-11'],
+    ticker: 'SPX', spot: 5520.45, vix: 14.82, odte_vol: '2.1M',
+    expiries: ['2026-08-04','2026-08-05','2026-08-06','2026-08-08','2026-08-11'],
     heatmap: [
       {strike:5600, is_spot:false, '2026-08-04':0, '2026-08-04_sign':'zero', '2026-08-05':0, '2026-08-05_sign':'zero', '2026-08-06':0, '2026-08-06_sign':'zero', '2026-08-08':0, '2026-08-08_sign':'zero', '2026-08-11':0, '2026-08-11_sign':'zero'},
       {strike:5575, is_spot:false, '2026-08-04':-45.2, '2026-08-04_sign':'negative', '2026-08-05':-38.1, '2026-08-05_sign':'negative', '2026-08-06':0, '2026-08-06_sign':'zero', '2026-08-08':0, '2026-08-08_sign':'zero', '2026-08-11':0, '2026-08-11_sign':'zero'},
@@ -513,7 +402,8 @@ function getFallbackData(ticker) {
 
   // QQQ fallback
   return {
-    ticker: 'QQQ', spot: 485.20, expiries: ['2026-08-04','2026-08-05','2026-08-06','2026-08-08','2026-08-11'],
+    ticker: 'QQQ', spot: 485.20, vix: 14.82, odte_vol: '1.8M',
+    expiries: ['2026-08-04','2026-08-05','2026-08-06','2026-08-08','2026-08-11'],
     heatmap: [
       {strike:500, is_spot:false, '2026-08-04':-120.5, '2026-08-04_sign':'negative', '2026-08-05':-95.3, '2026-08-05_sign':'negative', '2026-08-06':0, '2026-08-06_sign':'zero', '2026-08-08':0, '2026-08-08_sign':'zero', '2026-08-11':0, '2026-08-11_sign':'zero'},
       {strike:495, is_spot:false, '2026-08-04':-85.2, '2026-08-04_sign':'negative', '2026-08-05':-60.4, '2026-08-05_sign':'negative', '2026-08-06':-45.8, '2026-08-06_sign':'negative', '2026-08-08':0, '2026-08-08_sign':'zero', '2026-08-11':0, '2026-08-11_sign':'zero'},
@@ -534,11 +424,61 @@ function getFallbackData(ticker) {
   };
 }
 
+// ===== HEATMAP COLOR ENGINE =====
+function getHeatmapColor(val, sign, maxAbs) {
+  if (sign === 'zero' || val === 0 || !maxAbs) return {bg: 'transparent', color: '#334155'};
+  const abs = Math.abs(val);
+  const ratio = Math.min(abs / maxAbs, 1);
+  
+  if (sign === 'positive') {
+    // Green gradient: dark forest → bright emerald
+    const h = 142;
+    const s = 60 + ratio * 30;
+    const l = 18 + ratio * 22;
+    const textL = 70 + ratio * 25;
+    return {bg: `hsl(${h},${s}%,${l}%)`, color: `hsl(${h},80%,${textL}%)`};
+  } else {
+    // Purple/magenta gradient for negative (like reference image)
+    const h = 270 + ratio * 20; // 270→290
+    const s = 55 + ratio * 35;
+    const l = 22 + ratio * 18;
+    const textL = 75 + ratio * 20;
+    return {bg: `hsl(${h},${s}%,${l}%)`, color: `hsl(280,90%,${textL}%)`};
+  }
+}
+
+function formatCellValue(val) {
+  const abs = Math.abs(val);
+  if (abs >= 1000000) return '$' + (abs/1000000).toFixed(1) + 'M';
+  if (abs >= 1000) return '$' + (abs/1000).toFixed(1) + 'K';
+  return '$' + abs.toFixed(1) + 'K';
+}
+
 // ===== RENDER GEX =====
 function renderGEX(data) {
+  const spot = data.spot || 0;
+  
+  // Filter strikes to ±4% around spot
+  const filteredHeatmap = (data.heatmap || []).filter(row => {
+    if (!row.strike) return false;
+    return Math.abs(row.strike - spot) / spot <= STRIKE_RANGE;
+  }).sort((a, b) => b.strike - a.strike); // highest strike at top
+
+  // Compute max absolute GEX for color scaling
+  let maxAbs = 0;
+  filteredHeatmap.forEach(row => {
+    data.expiries.forEach(exp => {
+      const v = Math.abs(row[exp] || 0);
+      if (v > maxAbs) maxAbs = v;
+    });
+  });
+  if (maxAbs === 0) maxAbs = 1;
+
   // Spot bar
   document.getElementById('spotLabel').textContent = data.ticker + ' Spot';
-  document.getElementById('spotValue').innerHTML = data.spot.toLocaleString('en-US', {minimumFractionDigits: 2}) + ' <span class="spot-change up">▲ 0.22%</span>';
+  document.getElementById('spotValue').innerHTML = spot.toLocaleString('en-US', {minimumFractionDigits: 2}) + ' <span class="spot-change up">▲ 0.22%</span>';
+  document.getElementById('vixValue').textContent = data.vix || '—';
+  document.getElementById('odteVol').textContent = data.odte_vol || '—';
   document.getElementById('netGex').textContent = data.patterns && data.patterns.SPOT ? formatGex(data.patterns.SPOT.gex) : '—';
   document.getElementById('spotPattern').textContent = data.trade_plan ? data.trade_plan.primary_pattern || '—' : '—';
 
@@ -546,41 +486,39 @@ function renderGEX(data) {
   const grid = document.getElementById('heatmapGrid');
   let html = `<div class="heatmap-header">Strike</div>`;
   data.expiries.forEach(e => {
-    const short = e.slice(5); // 2026-08-04 → 08-04
+    const short = e.slice(5);
     html += `<div class="heatmap-header">${short}</div>`;
   });
 
-  data.heatmap.forEach(row => {
+  filteredHeatmap.forEach(row => {
     const isSpot = row.is_spot;
-    html += `<div class="heatmap-strike ${isSpot ? 'spot' : ''}">${isSpot ? '→ ' : ''}${row.strike.toLocaleString()}</div>`;
+    const isKing = data.patterns && data.patterns.KING && data.patterns.KING.strike === row.strike;
+    const arrow = isSpot ? '<span class="spot-arrow">▶</span>' : '';
+    const kingLabel = isKing ? ' ★' : '';
+    html += `<div class="heatmap-strike ${isSpot ? 'spot' : ''}">${arrow}${row.strike.toLocaleString()}${kingLabel}</div>`;
+    
     data.expiries.forEach(exp => {
       const val = row[exp];
       const sign = row[exp + '_sign'];
-      const unit = row[exp + '_unit'] || 'M';
       if (sign === 'zero' || val === 0 || val === undefined) {
         html += `<div class="heatmap-cell cell-empty">—</div>`;
       } else {
-        const absVal = Math.abs(val);
-        const display = (val > 0 ? '+' : '') + absVal.toFixed(1) + unit;
-        let cls = 'cell-positive';
-        if (sign === 'negative' && absVal > 500) cls = 'cell-negative-strong';
-        else if (sign === 'negative') cls = 'cell-negative';
-        else if (absVal > 400) cls = 'cell-positive-strong';
-        if (isSpot) cls += ' cell-spot';
-        const king = data.patterns && data.patterns.KING && data.patterns.KING.strike === row.strike;
-        if (king) cls += ' cell-king';
-        html += `<div class="heatmap-cell ${cls}">${display}${king ? '★' : ''}</div>`;
+        const colors = getHeatmapColor(val, sign, maxAbs);
+        const display = formatCellValue(val);
+        const spotCls = isSpot ? 'cell-spot' : '';
+        const kingStar = isKing ? ' ★' : '';
+        html += `<div class="heatmap-cell ${spotCls}" style="background:${colors.bg}; color:${colors.color};">${display}${kingStar}</div>`;
       }
     });
   });
   grid.innerHTML = html;
 
-  // Cross-expiry strip (simplified - sum by expiry)
+  // Cross-expiry strip
   const strip = document.getElementById('xpStrip');
   let stripHtml = '';
   data.expiries.forEach(exp => {
     let sum = 0;
-    data.heatmap.forEach(r => { if (r[exp]) sum += r[exp]; });
+    filteredHeatmap.forEach(r => { if (r[exp]) sum += r[exp]; });
     const short = exp.slice(5);
     const cls = sum >= 0 ? 'positive' : 'negative';
     const sign = sum >= 0 ? '+' : '';
@@ -595,26 +533,21 @@ function renderGEX(data) {
   const p = data.patterns || {};
   const tp = data.trade_plan || {};
   const king = p.KING || {};
-  const spot = p.SPOT || {};
+  const spotPat = p.SPOT || {};
 
   let levelsHtml = '';
+  const regimeColor = spotPat.regime === 'VOLATILE' ? 'var(--accent-purple)' : spotPat.regime === 'PINNED' ? 'var(--accent-green)' : 'var(--accent-blue)';
+  levelsHtml += `<div class="level-card"><div class="level-label">Spot Regime</div><div class="level-value" style="color:${regimeColor}">${spotPat.regime || 'NEUTRAL'}</div><div class="level-desc">${formatGex(spotPat.gex)} at ${spotPat.strike}</div></div>`;
 
-  // Spot regime
-  const regimeColor = spot.regime === 'VOLATILE' ? 'var(--accent-purple)' : spot.regime === 'PINNED' ? 'var(--accent-green)' : 'var(--accent-blue)';
-  levelsHtml += `<div class="level-card"><div class="level-label">Spot Regime</div><div class="level-value" style="color:${regimeColor}">${spot.regime || 'NEUTRAL'}</div><div class="level-desc">${formatGex(spot.gex)} at ${spot.strike}</div></div>`;
-
-  // Ceiling
   if (data.levels && data.levels.ceiling) {
     levelsHtml += `<div class="level-card highlight"><div class="level-label" style="color:var(--accent-gold)">Ceiling</div><div class="level-value" style="color:var(--accent-gold)">${data.levels.ceiling}</div><div class="level-desc">Front-week cap</div></div>`;
   } else {
     levelsHtml += `<div class="level-card"><div class="level-label">Ceiling</div><div class="level-value" style="color:var(--text-muted)">—</div><div class="level-desc">No cap detected</div></div>`;
   }
 
-  // King
   const kingColor = king.is_negative ? 'var(--accent-purple)' : 'var(--accent-green)';
   levelsHtml += `<div class="level-card"><div class="level-label" style="color:${kingColor}">King</div><div class="level-value" style="color:${kingColor}">${king.strike || '—'}</div><div class="level-desc">${king.type || ''}</div></div>`;
 
-  // Floor
   if (data.levels && data.levels.floor) {
     levelsHtml += `<div class="level-card"><div class="level-label" style="color:var(--accent-blue)">Floor</div><div class="level-value" style="color:var(--accent-blue)">${data.levels.floor}</div><div class="level-desc">Support shelf</div></div>`;
   } else {
@@ -634,14 +567,15 @@ function renderGEX(data) {
     'KING': {cls: 'warning', color: 'var(--accent-purple)', label: 'KING'},
     'SHELF_ABOVE': {cls: 'neutral', color: 'var(--accent-blue)', label: 'SHELF ABOVE'},
     'SHELF_BELOW': {cls: 'neutral', color: 'var(--accent-blue)', label: 'SHELF BELOW'},
-    'CROSS_EXPIRY': {cls: 'neutral', color: 'var(--text-secondary)', label: 'CROSS-EXPIRY'}
+    'CROSS_EXPIRY': {cls: 'neutral', color: 'var(--text-secondary)', label: 'CROSS-EXPIRY'},
+    'GATEKEEPERS': {cls: 'neutral', color: 'var(--accent-gold)', label: 'GATEKEEPERS'}
   };
 
   Object.keys(p).forEach(key => {
     if (key === 'ticker' || key === 'spot' || key === 'spot_strike' || key === 'timestamp' || key === 'total_gex') return;
     const pat = p[key];
     if (!pat || typeof pat !== 'object') return;
-    const meta = patternMap[key] || {cls: 'neutral', color: 'var(--text-secondary)', label: key};
+    const meta = patternMap[key] || {cls: 'neutral', color: 'var(--text-secondary)', label: key.replace(/_/g, ' ')};
     const bias = pat.bias || (pat.is_negative ? 'NEGATIVE' : pat.detected ? 'DETECTED' : '');
     const conf = pat.confidence ? (pat.confidence * 100).toFixed(0) + '%' : '';
     const note = pat.note || pat.trade_note || '';
@@ -680,190 +614,18 @@ function formatGex(val) {
   return sign + '$' + (abs/1e3).toFixed(1) + 'K';
 }
 
-// ===== SCREENER =====
-async function loadScreener() {
-  document.getElementById('screenerLoading').style.display = 'flex';
-  try {
-    const res = await fetch('/api/screener');
-    if (!res.ok) throw new Error('API error: ' + res.status);
-    screenerData = (await res.json()).tickers || [];
-  } catch (e) {
-    console.log('Live API failed, using fallback:', e);
-    // Fallback
-    screenerData = [
-      {ticker:'SPX', spot:5520.45, pattern:'THE_RUG', bias:'bearish', confidence:0.75, key_level:5525.0, regime:'VOLATILE'},
-      {ticker:'QQQ', spot:485.20, pattern:'REVERSE_RUG', bias:'bullish', confidence:0.80, key_level:480.0, regime:'PINNED'},
-      {ticker:'SPXW', spot:5520.45, pattern:'WHIPSAW', bias:'notrade', confidence:0.65, key_level:null, regime:'NEUTRAL'},
-      {ticker:'AAPL', spot:232.50, pattern:'PINNED', bias:'neutral', confidence:0.70, key_level:'230-235', regime:'PINNED'},
-      {ticker:'TSLA', spot:248.80, pattern:'AIR_POCKET', bias:'notrade', confidence:0.60, key_level:'245-250', regime:'NEUTRAL'},
-      {ticker:'NVDA', spot:118.40, pattern:'PIKA_CLOUD', bias:'neutral', confidence:0.55, key_level:'115-120', regime:'NEUTRAL'},
-      {ticker:'MSFT', spot:425.10, pattern:'THE_RUG', bias:'bearish', confidence:0.72, key_level:430.0, regime:'VOLATILE'},
-      {ticker:'AMZN', spot:198.60, pattern:'REVERSE_RUG', bias:'bullish', confidence:0.75, key_level:195.0, regime:'PINNED'},
-      {ticker:'META', spot:512.30, pattern:'PINNED', bias:'neutral', confidence:0.68, key_level:'505-515', regime:'PINNED'},
-      {ticker:'GOOGL', spot:178.90, pattern:'WHIPSAW', bias:'notrade', confidence:0.62, key_level:null, regime:'NEUTRAL'}
-    ];
-  }
-  document.getElementById('screenerLoading').style.display = 'none';
-  renderScreener();
-}
-
-function renderScreener(data = screenerData) {
-  const tbody = document.getElementById('screenerBody');
-  tbody.innerHTML = data.map(row => {
-    const biasClass = row.bias === 'bullish' ? 'badge-bullish' : row.bias === 'bearish' ? 'badge-bearish' : row.bias === 'notrade' ? 'badge-notrade' : 'badge-neutral';
-    const biasLabel = row.bias === 'notrade' ? 'No Trade' : row.bias.charAt(0).toUpperCase() + row.bias.slice(1);
-    const dotColor = row.bias === 'bullish' ? '#22c55e' : row.bias === 'bearish' ? '#ef4444' : row.bias === 'notrade' ? '#94a3b8' : '#38bdf8';
-    const keyLevel = row.key_level || '—';
-    return `
-      <tr>
-        <td><div class="ticker-cell"><div class="ticker-icon">${row.ticker.slice(0,2)}</div><div><div class="ticker-name">${row.ticker}</div><div class="ticker-type">${row.regime}</div></div></div></td>
-        <td style="font-family:var(--font-mono); font-weight:600;">${row.spot.toFixed(2)}</td>
-        <td style="color:var(--text-secondary); font-weight:600;">${row.pattern}</td>
-        <td><span class="badge ${biasClass}">${biasLabel}</span></td>
-        <td><div style="display:flex; align-items:center; gap:6px;"><div style="width:40px; height:4px; background:var(--border); border-radius:2px; overflow:hidden;"><div style="width:${row.confidence*100}%; height:100%; background:${dotColor}; border-radius:2px;"></div></div><span style="font-weight:700; font-size:11px;">${(row.confidence*100).toFixed(0)}%</span></div></td>
-        <td style="font-family:var(--font-mono); color:var(--text-secondary);">${keyLevel}</td>
-        <td><span class="signal-dot" style="background:${dotColor};"></span><span style="font-size:11px; color:var(--text-secondary);">${row.pattern}</span></td>
-        <td style="text-align:right;"><button class="btn-sm" onclick="viewGEX('${row.ticker}')">View GEX</button></td>
-      </tr>`;
-  }).join('');
-}
-
-function filterScreener() {
-  const search = document.getElementById('screenerSearch').value.toLowerCase();
-  const bias = document.getElementById('biasFilter').value;
-  const pattern = document.getElementById('patternFilter').value;
-  const filtered = screenerData.filter(row => {
-    const matchSearch = row.ticker.toLowerCase().includes(search);
-    const matchBias = bias === 'all' || row.bias === bias;
-    const matchPattern = pattern === 'all' || row.pattern.toLowerCase().replace(/ /g, '-') === pattern;
-    return matchSearch && matchBias && matchPattern;
-  });
-  renderScreener(filtered);
-}
-
-function refreshScreener() {
-  document.getElementById('screenerSearch').value = '';
-  document.getElementById('biasFilter').value = 'all';
-  document.getElementById('patternFilter').value = 'all';
-  renderScreener(screenerData);
-}
-
-function viewGEX(ticker) {
-  showSection('gex', document.querySelectorAll('.nav-tab')[0]);
-  loadTicker(ticker);
-}
-
-// ===== PERFORMANCE =====
-const demoTrades = [
-  {date:'2026-07-28', ticker:'SPX', pattern:'The Rug', entry:5520, exit:5450, pnl:1850, note:'Front-week rug played perfectly. King at 5450 hit.', contracts:2},
-  {date:'2026-07-25', ticker:'QQQ', pattern:'Reverse Rug', entry:478, exit:485, pnl:1200, note:'Floor held. Bounced into fuel above.', contracts:5},
-  {date:'2026-07-24', ticker:'SPX', pattern:'Whipsaw', entry:5480, exit:5485, pnl:-300, note:'Should have stood aside. Chopped out.', contracts:1},
-  {date:'2026-07-22', ticker:'AAPL', pattern:'Pinned', entry:228, exit:232, pnl:450, note:'Iron condor. 50% profit target hit.', contracts:3},
-  {date:'2026-07-21', ticker:'TSLA', pattern:'Air Pocket', entry:250, exit:245, pnl:2100, note:'Entered at edge of pocket. Accelerated through.', contracts:4},
-  {date:'2026-07-18', ticker:'SPX', pattern:'The Rug', entry:5550, exit:5500, pnl:2400, note:'Ceiling rejection + no floor = clean short.', contracts:3},
-  {date:'2026-07-17', ticker:'QQQ', pattern:'Pika Cloud', entry:482, exit:480, pnl:-150, note:'Cloud was porous. Tried to fade breakout. Wrong.', contracts:2},
-  {date:'2026-07-15', ticker:'NVDA', pattern:'Reverse Rug', entry:112, exit:118, pnl:1800, note:'Strong floor at 110. Fuel above carried it.', contracts:6}
-];
-
-if (trades.length === 0) {
-  trades = demoTrades;
-  localStorage.setItem('gex_trades', JSON.stringify(trades));
-}
-
-function renderTrades() {
-  const container = document.getElementById('tradeLogBody');
-  container.innerHTML = trades.map((t, i) => {
-    const pnlClass = t.pnl >= 0 ? 'positive' : 'negative';
-    const pnlSign = t.pnl >= 0 ? '+' : '';
-    return `<div class="log-entry">
-      <span class="log-date">${t.date}</span>
-      <span class="log-ticker">${t.ticker}</span>
-      <span class="log-pattern">${t.pattern}</span>
-      <span class="log-entry-price">${t.entry}</span>
-      <span class="log-exit-price">${t.exit}</span>
-      <span class="log-pnl ${pnlClass}">${pnlSign}$${t.pnl.toLocaleString()}</span>
-      <span class="log-note">${t.note}</span>
-      <span class="log-actions"><button class="btn-sm" onclick="deleteTrade(${i})">Delete</button></span>
-    </div>`;
-  }).join('');
-  updateStats();
-}
-
-function addTrade() {
-  const date = document.getElementById('tradeDate').value || new Date().toISOString().split('T')[0];
-  const ticker = document.getElementById('tradeTicker').value.toUpperCase();
-  const pattern = document.getElementById('tradePattern').value;
-  const entry = parseFloat(document.getElementById('tradeEntry').value);
-  const exit = parseFloat(document.getElementById('tradeExit').value);
-  const contracts = parseInt(document.getElementById('tradeContracts').value) || 1;
-  if (!ticker || !entry || !exit) { alert('Fill in ticker, entry, and exit'); return; }
-  const multiplier = ticker === 'SPX' || ticker === 'SPXW' ? 100 : ticker === 'QQQ' ? 20 : 50;
-  const pnl = Math.round((exit - entry) * multiplier * contracts * (pattern === 'The Rug' || pattern === 'Air Pocket' ? -1 : 1));
-  trades.unshift({date, ticker, pattern, entry, exit, pnl, contracts, note:`Logged from ${pattern} signal`});
-  localStorage.setItem('gex_trades', JSON.stringify(trades));
-  renderTrades();
-  document.getElementById('tradeTicker').value = '';
-  document.getElementById('tradeEntry').value = '';
-  document.getElementById('tradeExit').value = '';
-  document.getElementById('tradeContracts').value = '';
-}
-
-function deleteTrade(index) {
-  trades.splice(index, 1);
-  localStorage.setItem('gex_trades', JSON.stringify(trades));
-  renderTrades();
-}
-
-function updateStats() {
-  const totalPnL = trades.reduce((s, t) => s + t.pnl, 0);
-  const wins = trades.filter(t => t.pnl > 0).length;
-  const losses = trades.filter(t => t.pnl < 0).length;
-  const be = trades.filter(t => t.pnl === 0).length;
-  const winRate = trades.length > 0 ? ((wins / trades.length) * 100).toFixed(1) : 0;
-  const avgReturn = trades.length > 0 ? Math.round(totalPnL / trades.length) : 0;
-  const statsGrid = document.getElementById('statsGrid');
-  statsGrid.innerHTML = `
-    <div class="stat-card"><div class="stat-label">Total P&L</div><div class="stat-value" style="color:${totalPnL >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'}">${totalPnL >= 0 ? '+' : ''}$${totalPnL.toLocaleString()}</div><div class="stat-change ${totalPnL >= 0 ? 'up' : 'down'}">${totalPnL >= 0 ? '▲' : '▼'} Running total</div></div>
-    <div class="stat-card"><div class="stat-label">Win Rate</div><div class="stat-value" style="color:var(--accent-gold)">${winRate}%</div><div class="stat-change">${wins}W · ${losses}L · ${be}BE</div></div>
-    <div class="stat-card"><div class="stat-label">Avg Return / Trade</div><div class="stat-value" style="color:${avgReturn >= 0 ? 'var(--accent-blue)' : 'var(--accent-red)'}">${avgReturn >= 0 ? '+' : ''}$${avgReturn.toLocaleString()}</div><div class="stat-change">Per trade average</div></div>
-    <div class="stat-card"><div class="stat-label">Total Trades</div><div class="stat-value">${trades.length}</div><div class="stat-change" style="color:var(--text-muted)">All time</div></div>
-  `;
-}
-
-function exportTrades() {
-  const csv = ['Date,Ticker,Pattern,Entry,Exit,P&L,Note'].concat(trades.map(t => `${t.date},${t.ticker},${t.pattern},${t.entry},${t.exit},${t.pnl},"${t.note}"`)).join('\n');
-  const blob = new Blob([csv], {type:'text/csv'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = `gex_trades_${new Date().toISOString().split('T')[0]}.csv`; a.click();
-}
-
-function exportGEX() {
-  if (!currentData) return;
-  const csv = ['Strike,' + currentData.expiries.join(',')].concat(
-    currentData.heatmap.map(r => r.strike + ',' + currentData.expiries.map(e => r[e] || 0).join(','))
-  ).join('\n');
-  const blob = new Blob([csv], {type:'text/csv'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = `${currentData.ticker}_gex_${new Date().toISOString().split('T')[0]}.csv`; a.click();
-}
-
-function logTradeFromPlan() {
-  if (!currentData || !currentData.trade_plan) return;
-  const tp = currentData.trade_plan;
-  showSection('performance', document.querySelectorAll('.nav-tab')[2]);
-  document.getElementById('tradeTicker').value = tp.ticker || currentData.ticker;
-  document.getElementById('tradePattern').value = tp.primary_pattern || 'The Rug';
-  document.getElementById('tradeEntry').value = tp.entry ? tp.entry.match(/[0-9.]+/) : '';
-  document.getElementById('tradeExit').value = tp.target_1 ? tp.target_1.match(/[0-9.]+/) : '';
-  document.getElementById('tradeContracts').value = '2';
+// ===== AUTO REFRESH =====
+function startAutoRefresh() {
+  if (refreshInterval) clearInterval(refreshInterval);
+  refreshInterval = setInterval(() => {
+    if (currentTicker) loadTicker(currentTicker);
+  }, 60000); // refresh every 60 seconds
 }
 
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
   loadTicker('SPX');
-  loadScreener();
-  renderTrades();
-  document.getElementById('tradeDate').value = new Date().toISOString().split('T')[0];
+  startAutoRefresh();
 });
 </script>
 
