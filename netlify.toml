@@ -4,3 +4,9 @@
 
 [build.environment]
   PYTHON_VERSION = "3.9"
+
+[[redirects]]
+  from = "/api/*"
+  to = "http://134.122.18.23/api/:splat"
+  status = 200
+  force = true
