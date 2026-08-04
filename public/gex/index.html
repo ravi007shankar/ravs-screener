@@ -296,6 +296,65 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
   .structure-label { width: 70px; }
 }
 
+/* PRIMARY PATTERN */
+.primary-pattern-card {
+  background: linear-gradient(135deg, rgba(15,23,42,0.95), rgba(30,41,59,0.6));
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 8px;
+}
+.primary-pattern-card.bullish { border-color: rgba(34,197,94,0.4); background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(15,23,42,0.95)); }
+.primary-pattern-card.bearish { border-color: rgba(239,68,68,0.4); background: linear-gradient(135deg, rgba(239,68,68,0.08), rgba(15,23,42,0.95)); }
+.primary-pattern-card.neutral { border-color: rgba(56,189,248,0.4); background: linear-gradient(135deg, rgba(56,189,248,0.08), rgba(15,23,42,0.95)); }
+
+.primary-header {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
+}
+.primary-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 900;
+}
+.primary-icon.bullish { background: rgba(34,197,94,0.2); color: var(--accent-green); }
+.primary-icon.bearish { background: rgba(239,68,68,0.2); color: var(--accent-red); }
+.primary-icon.neutral { background: rgba(56,189,248,0.2); color: var(--accent-blue); }
+
+.primary-name {
+  font-size: 16px; font-weight: 800; letter-spacing: -0.3px;
+}
+.primary-name.bullish { color: var(--accent-green); }
+.primary-name.bearish { color: var(--accent-red); }
+.primary-name.neutral { color: var(--accent-blue); }
+
+.primary-meta {
+  font-size: 11px; color: var(--text-muted); font-weight: 600;
+}
+
+.primary-explanation {
+  font-size: 12px; color: var(--text-secondary); line-height: 1.6;
+  padding: 10px; background: rgba(10,14,23,0.5); border-radius: 6px;
+  border-left: 3px solid var(--border);
+}
+.primary-explanation.bullish { border-left-color: var(--accent-green); }
+.primary-explanation.bearish { border-left-color: var(--accent-red); }
+.primary-explanation.neutral { border-left-color: var(--accent-blue); }
+
+/* Supporting patterns collapsed */
+.pattern-list.collapsed { display: none; }
+.pattern-list.expanded { display: flex; }
+
+/* Small pattern for supporting signals */
+.pattern-tag-small {
+  background: linear-gradient(90deg, rgba(30,41,59,0.6), rgba(15,23,42,0.4));
+  border-left: 2px solid var(--border); padding: 8px 10px;
+  border-radius: 0 6px 6px 0; font-size: 11px;
+}
+.pattern-tag-small.bullish { border-left-color: var(--accent-green); }
+.pattern-tag-small.bearish { border-left-color: var(--accent-red); }
+.pattern-tag-small.neutral { border-left-color: var(--accent-blue); }
+.pattern-tag-small.warning { border-left-color: var(--accent-orange); }
+
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
@@ -387,8 +446,19 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 
       <div>
         <div class="card">
-          <div class="card-header"><span class="card-title">AI Pattern Detection</span></div>
-          <div class="pattern-list" id="patternList"></div>
+          <div class="card-header">
+            <span class="card-title">Primary Pattern</span>
+            <span style="font-size:11px;color:var(--text-muted);" id="primaryPatternMeta">—</span>
+          </div>
+          <div id="primaryPattern"></div>
+        </div>
+
+        <div class="card" style="margin-top:12px;">
+          <div class="card-header" style="cursor:pointer;" onclick="toggleSupporting()">
+            <span class="card-title">Supporting Signals</span>
+            <span style="font-size:11px;color:var(--text-muted);" id="supportingCount">0 signals</span>
+          </div>
+          <div class="pattern-list" id="patternList" style="display:none;"></div>
         </div>
 
         <div class="trade-plan">
@@ -840,97 +910,105 @@ function renderGEX(data) {
 
   levels.innerHTML = levelsHtml;
 
-  // PATTERN LIST
-  const patList = document.getElementById('patternList');
-  let patHtml = '';
-  const patternMap = {
-    'THE_RUG': {cls: 'bearish', color: 'var(--accent-red)', label: 'THE RUG', dir: 'SHORT'},
-    'REVERSE_RUG': {cls: 'bullish', color: 'var(--accent-green)', label: 'REVERSE RUG', dir: 'LONG'},
-    'PINNED': {cls: 'neutral', color: 'var(--accent-blue)', label: 'PINNED', dir: 'RANGE'},
-    'FLOOR': {cls: 'bullish', color: 'var(--accent-green)', label: 'FLOOR', dir: 'LONG'},
-    'CEILING': {cls: 'bearish', color: 'var(--accent-red)', label: 'CEILING', dir: 'SHORT'},
-    'VACUUM_ABOVE': {cls: 'bullish', color: 'var(--accent-green)', label: 'VACUUM ABOVE', dir: 'LONG'},
-    'VACUUM_BELOW': {cls: 'bearish', color: 'var(--accent-red)', label: 'VACUUM BELOW', dir: 'SHORT'},
-    'PIKA_CLOUD': {cls: 'neutral', color: 'var(--accent-blue)', label: 'PIKA CLOUD', dir: 'NEUTRAL'},
-    'AIR_POCKET': {cls: 'warning', color: 'var(--accent-orange)', label: 'AIR POCKET', dir: 'CAUTION'},
-    'AIR POCKET': {cls: 'warning', color: 'var(--accent-orange)', label: 'AIR POCKET', dir: 'CAUTION'},
-    'WHIPSAW': {cls: 'warning', color: 'var(--accent-orange)', label: 'WHIPSAW', dir: 'CAUTION'},
-    'KING': {cls: 'warning', color: 'var(--accent-purple)', label: 'KING', dir: 'KEY LEVEL'},
-    'SHELF_ABOVE': {cls: 'neutral', color: 'var(--accent-blue)', label: 'SHELF ABOVE', dir: 'RESISTANCE'},
-    'SHELF_BELOW': {cls: 'neutral', color: 'var(--accent-blue)', label: 'SHELF BELOW', dir: 'SUPPORT'},
-    'POSITIVE_BAND': {cls: 'neutral', color: 'var(--accent-green)', label: 'POSITIVE BAND', dir: 'PINNED'},
-    'CROSS_EXPIRY': {cls: 'neutral', color: 'var(--text-secondary)', label: 'CROSS-EXPIRY', dir: 'AGREE'},
-    'GATEKEEPERS': {cls: 'neutral', color: 'var(--accent-gold)', label: 'GATEKEEPERS', dir: 'BARRIER'}
+  // ===== PRIMARY PATTERN (prominent) =====
+  const primaryContainer = document.getElementById('primaryPattern');
+  const tp = data.trade_plan || {};
+  const primaryKey = tp.primary_pattern || 'NEUTRAL';
+  const primaryBias = tp.bias || 'NEUTRAL';
+  const primaryConf = ((tp.confidence || 0) * 100).toFixed(0);
+
+  // Explanation text based on pattern type
+  const explanations = {
+    'THE_RUG': 'Price sits under a positive gamma ceiling with negative vacuum below. Rallies get rejected at the ceiling, then price accelerates down through the vacuum.',
+    'REVERSE_RUG': 'Price sits above a positive gamma floor with negative vacuum above. Dips get bought at the floor, then price accelerates up toward the vacuum.',
+    'PINNED': 'Spot is inside a continuous positive gamma band. Dealers buy dips and sell rallies, keeping price range-bound. Sell premium, don't pick direction.',
+    'FLOOR': 'A strong positive gamma floor sits below spot. Any pullback toward this level gets absorbed by dealer buying. Buy dips into the floor.',
+    'CEILING': 'A strong positive gamma ceiling sits above spot. Any rally toward this level gets sold by dealers. Sell rallies into the ceiling.',
+    'VACUUM_ABOVE': 'A negative gamma vacuum above spot pulls price upward like a magnet. No structural resistance above means rallies can extend fast.',
+    'VACUUM_BELOW': 'A negative gamma vacuum below spot pulls price downward like a drain. No structural support below means breakdowns can accelerate.',
+    'PIKA_CLOUD': 'A cluster of positive gamma strikes creates a cloud that stalls price. Breakouts into the cloud tend to fail. Fade the edges.',
+    'AIR_POCKET': 'A gap between strikes with no gamma exposure. Price can move fast through this zone with no dealer friction. Watch for gaps.',
+    'WHIPSAW': 'Mixed gamma signs on both sides of spot create choppy, directionless price action. No clear edge — stand aside or sell volatility.',
+    'NEUTRAL': 'No dominant gamma structure detected. Wait for a clearer setup before trading.'
   };
 
-  function buildPatternDesc(key, pat, spotPrice) {
+  const primaryIcon = {...};
+  const iconMap = {'BULLISH':'↗','BEARISH':'↘','NEUTRAL':'→','NO_TRADE':'⊘'};
+  const icon = iconMap[primaryBias] || '→';
+  const biasCls = primaryBias === 'BULLISH' ? 'bullish' : primaryBias === 'BEARISH' ? 'bearish' : 'neutral';
+
+  const primaryName = primaryKey.replace(/_/g, ' ');
+  const primaryExplain = explanations[primaryKey] || explanations['NEUTRAL'];
+
+  primaryContainer.innerHTML = `
+    <div class="primary-pattern-card ${biasCls}">
+      <div class="primary-header">
+        <div class="primary-icon ${biasCls}">${icon}</div>
+        <div>
+          <div class="primary-name ${biasCls}">${primaryName}</div>
+          <div class="primary-meta">${primaryBias} · ${primaryConf}% confidence · ${tp.setup || ''}</div>
+        </div>
+      </div>
+      <div class="primary-explanation ${biasCls}">${primaryExplain}</div>
+    </div>
+  `;
+
+  document.getElementById('primaryPatternMeta').textContent = primaryBias + ' · ' + primaryConf + '%';
+
+  // ===== SUPPORTING SIGNALS (smaller, collapsible) =====
+  const patList = document.getElementById('patternList');
+  let patHtml = '';
+  let supportingCount = 0;
+
+  const patternMap = {
+    'KING': {cls: 'warning', color: 'var(--accent-purple)', label: 'KING'},
+    'SPOT': {cls: 'neutral', color: 'var(--accent-blue)', label: 'SPOT REGIME'},
+    'PIKA_CLOUD': {cls: 'neutral', color: 'var(--accent-blue)', label: 'PIKA CLOUD'},
+    'SHELF_ABOVE': {cls: 'neutral', color: 'var(--accent-blue)', label: 'SHELF ABOVE'},
+    'SHELF_BELOW': {cls: 'neutral', color: 'var(--accent-blue)', label: 'SHELF BELOW'},
+    'POSITIVE_BAND': {cls: 'neutral', color: 'var(--accent-green)', label: 'POSITIVE BAND'},
+    'CROSS_EXPIRY': {cls: 'neutral', color: 'var(--text-secondary)', label: 'CROSS-EXPIRY'},
+    'GATEKEEPERS': {cls: 'neutral', color: 'var(--accent-gold)', label: 'GATEKEEPERS'},
+    'AIR_POCKET': {cls: 'warning', color: 'var(--accent-orange)', label: 'AIR POCKET'},
+    'WHIPSAW': {cls: 'warning', color: 'var(--accent-orange)', label: 'WHIPSAW'}
+  };
+
+  // Skip primary pattern and stale/contradictory patterns in supporting list
+  const skipPatterns = [primaryKey, 'THE_RUG', 'REVERSE_RUG', 'CEILING', 'FLOOR', 'VACUUM_ABOVE', 'VACUUM_BELOW', 'PINNED'];
+
+  function buildPatternDesc(key, pat) {
     if (!pat || typeof pat !== 'object') return null;
-
     if (key === 'KING') {
-      const gexStr = pat.gex ? formatGex(pat.gex) : '';
       const typeStr = pat.type || (pat.is_negative ? 'VACUUM' : 'MAGNET');
-      return `Strike: ${pat.strike || '—'} | ${typeStr}${gexStr ? ' | ' + gexStr : ''}`;
+      return `${pat.strike || '—'} · ${typeStr} · ${formatGex(pat.gex)}`;
     }
-
-    if (key === 'SPOT') {
-      const gexStr = pat.gex ? formatGex(pat.gex) : '';
-      return `Regime: ${pat.regime || 'NEUTRAL'} at ${pat.strike || '—'}${gexStr ? ' | ' + gexStr : ''}`;
-    }
-
-    if (key === 'SHELF_ABOVE' || key === 'SHELF_BELOW') {
-      const dir = key === 'SHELF_ABOVE' ? 'above' : 'below';
-      const strike = pat.strike || pat.level || '—';
-      const gexStr = pat.gex ? formatGex(pat.gex) : '';
-      return `+GEX shelf ${dir} spot at ${strike}${gexStr ? ' | ' + gexStr : ''}`;
-    }
-
-    if (key === 'AIR_POCKET' || key === 'AIR POCKET') {
-      let range = '';
-      if (pat.low && pat.high) {
-        const center = (pat.low + pat.high) / 2;
-        if (spotPrice && Math.abs(center - spotPrice) / spotPrice > 0.15) {
-          return `⚠️ STALE DATA: Range ${pat.low}-${pat.high} is far from spot ${spotPrice.toFixed(2)}. Check backend.`;
-        }
-        range = `${pat.low}-${pat.high}`;
-      } else if (pat.note && pat.note.includes(':')) {
-        const match = pat.note.match(/(\d+)[-\s]+(\d+)/);
-        if (match) {
-          const low = parseFloat(match[1]);
-          const high = parseFloat(match[2]);
-          const center = (low + high) / 2;
-          if (spotPrice && Math.abs(center - spotPrice) / spotPrice > 0.15) {
-            return `⚠️ STALE DATA: Range ${low}-${high} is far from spot ${spotPrice.toFixed(2)}. Check backend.`;
-          }
-          range = `${low}-${high}`;
-        }
-      }
-      return range ? `Air pocket: ${range}. No structural force. Price moves fast.` : (pat.note || 'No structural force detected.');
-    }
-
-    if (key === 'GATEKEEPERS') {
-      const count = pat.count || pat.gatekeepers || 0;
-      return `${count} gatekeeper(s) between spot and King.`;
-    }
-
-    return pat.note || pat.trade_note || '';
+    if (key === 'SPOT') return `${pat.regime || 'NEUTRAL'} at ${pat.strike || '—'} · ${formatGex(pat.gex)}`;
+    if (key === 'CROSS_EXPIRY') return pat.note || 'Cross-expiry check';
+    if (key === 'GATEKEEPERS') return `${pat.count || 0} gatekeepers block path to King`;
+    if (key === 'PIKA_CLOUD') return pat.note || 'Cloud detected';
+    if (key === 'SHELF_ABOVE' || key === 'SHELF_BELOW') return pat.note || 'Shelf detected';
+    if (key === 'AIR_POCKET') return pat.note || 'Air pocket detected';
+    return pat.note || '';
   }
 
   Object.keys(p).forEach(key => {
+    if (skipPatterns.includes(key)) return;
     if (key === 'ticker' || key === 'spot' || key === 'spot_strike' || key === 'timestamp' || key === 'total_gex') return;
     const pat = p[key];
     if (!pat || typeof pat !== 'object') return;
 
-    const meta = patternMap[key] || {cls: 'neutral', color: 'var(--text-secondary)', label: key.replace(/_/g, ' '), dir: ''};
-    const bias = pat.bias || (pat.is_negative ? 'NEGATIVE' : pat.detected ? 'DETECTED' : '');
-    const conf = pat.confidence ? (pat.confidence * 100).toFixed(0) + '%' : '';
-    const note = buildPatternDesc(key, pat, spot);
+    const meta = patternMap[key];
+    if (!meta) return; // Skip unknown patterns
 
-    if (!note && key !== 'CROSS_EXPIRY') return;
+    const note = buildPatternDesc(key, pat);
+    if (!note) return;
 
-    const dirBadge = meta.dir ? `<span class="pattern-direction">${meta.dir}</span>` : '';
-    patHtml += `<div class="pattern-tag ${meta.cls}"><div class="pattern-tag-header"><span class="pattern-tag-name" style="color:${meta.color}">${meta.label}</span><span class="pattern-tag-meta">${bias} ${conf}</span>${dirBadge}</div><div class="pattern-tag-desc">${note || 'No additional data.'}</div></div>`;
+    supportingCount++;
+    patHtml += `<div class="pattern-tag-small ${meta.cls}"><span style="color:${meta.color};font-weight:700;">${meta.label}</span> · ${note}</div>`;
   });
-  patList.innerHTML = patHtml || '<div style="color:var(--text-muted); font-size:12px; padding:10px;">No patterns detected</div>';
+
+  patList.innerHTML = patHtml || '<div style="color:var(--text-muted); font-size:11px; padding:8px;">No supporting signals</div>';
+  document.getElementById('supportingCount').textContent = supportingCount + ' signal' + (supportingCount !== 1 ? 's' : '');
 
   // TRADE PLAN
   const biasEl = document.getElementById('tradeBias');
@@ -967,6 +1045,15 @@ function formatGex(val) {
   if (abs >= 1e9) return sign + '$' + (abs/1e9).toFixed(2) + 'B';
   if (abs >= 1e6) return sign + '$' + (abs/1e6).toFixed(1) + 'M';
   return sign + '$' + (abs/1e3).toFixed(1) + 'K';
+}
+
+function toggleSupporting() {
+  const list = document.getElementById('patternList');
+  if (list.style.display === 'none') {
+    list.style.display = 'flex';
+  } else {
+    list.style.display = 'none';
+  }
 }
 
 function startAutoRefresh() {
