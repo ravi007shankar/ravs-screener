@@ -341,7 +341,7 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 let currentData = null;
 let currentTicker = 'SPX';
 let refreshInterval = null;
-const STRIKE_RANGE = 0.04;
+
 
 async function loadTicker(ticker) {
   currentTicker = ticker;
@@ -506,9 +506,15 @@ function formatCellValue(val) {
 
 function renderGEX(data) {
   const spot = data.spot || 0;
+  const isIndex = ['SPX', 'SPY', 'QQQ', 'IWM', 'DIA'].includes(data.ticker);
+  const strikeRange = isIndex ? 0.04 : 0.20;
+  const kingStrike = data.patterns?.KING?.strike;
+
   const filteredHeatmap = (data.heatmap || []).filter(row => {
     if (!row.strike) return false;
-    return Math.abs(row.strike - spot) / spot <= STRIKE_RANGE;
+    const inRange = Math.abs(row.strike - spot) / spot <= strikeRange;
+    const isKing = kingStrike && Math.abs(row.strike - kingStrike) < 0.01;
+    return inRange || isKing;
   }).sort((a, b) => b.strike - a.strike);
 
   let maxAbs = 0;
