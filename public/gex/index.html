@@ -598,13 +598,14 @@ function renderGEX(data) {
   }
   levels.innerHTML = levelsHtml;
 
-  const patList = document.getElementById('patternList');
+   const patList = document.getElementById('patternList');
   let patHtml = '';
   const patternMap = {
     'THE_RUG': {cls: 'bearish', color: 'var(--accent-red)', label: 'THE RUG'},
     'REVERSE_RUG': {cls: 'bullish', color: 'var(--accent-green)', label: 'REVERSE RUG'},
     'PIKA_CLOUD': {cls: 'neutral', color: 'var(--accent-blue)', label: 'PIKA CLOUD'},
     'AIR_POCKET': {cls: 'warning', color: 'var(--accent-orange)', label: 'AIR POCKET'},
+    'AIR POCKET': {cls: 'warning', color: 'var(--accent-orange)', label: 'AIR POCKET'},
     'WHIPSAW': {cls: 'warning', color: 'var(--accent-orange)', label: 'WHIPSAW'},
     'KING': {cls: 'warning', color: 'var(--accent-purple)', label: 'KING'},
     'SHELF_ABOVE': {cls: 'neutral', color: 'var(--accent-blue)', label: 'SHELF ABOVE'},
@@ -613,15 +614,72 @@ function renderGEX(data) {
     'GATEKEEPERS': {cls: 'neutral', color: 'var(--accent-gold)', label: 'GATEKEEPERS'}
   };
 
+  // Build description from pattern type + fields
+  function buildPatternDesc(key, pat, spotPrice) {
+    if (!pat || typeof pat !== 'object') return null;
+    
+    if (key === 'KING') {
+      const gexStr = pat.gex ? formatGex(pat.gex) : '';
+      const typeStr = pat.type || (pat.is_negative ? 'VACUUM' : 'MAGNET');
+      return `Strike: ${pat.strike || '—'} | ${typeStr}${gexStr ? ' | ' + gexStr : ''}`;
+    }
+    
+    if (key === 'SPOT') {
+      const gexStr = pat.gex ? formatGex(pat.gex) : '';
+      return `Regime: ${pat.regime || 'NEUTRAL'} at ${pat.strike || '—'}${gexStr ? ' | ' + gexStr : ''}`;
+    }
+    
+    if (key === 'SHELF_ABOVE' || key === 'SHELF_BELOW') {
+      const dir = key === 'SHELF_ABOVE' ? 'above' : 'below';
+      const strike = pat.strike || pat.level || '—';
+      const gexStr = pat.gex ? formatGex(pat.gex) : '';
+      return `+GEX shelf ${dir} spot at ${strike}${gexStr ? ' | ' + gexStr : ''}`;
+    }
+    
+    if (key === 'AIR_POCKET' || key === 'AIR POCKET') {
+      let range = '';
+      if (pat.low && pat.high) {
+        const center = (pat.low + pat.high) / 2;
+        if (spotPrice && Math.abs(center - spotPrice) / spotPrice > 0.15) {
+          return `⚠️ STALE DATA: Range ${pat.low}-${pat.high} is far from spot ${spotPrice.toFixed(2)}. Check backend.`;
+        }
+        range = `${pat.low}-${pat.high}`;
+      } else if (pat.note && pat.note.includes(':')) {
+        const match = pat.note.match(/(\d+)[-\s]+(\d+)/);
+        if (match) {
+          const low = parseFloat(match[1]);
+          const high = parseFloat(match[2]);
+          const center = (low + high) / 2;
+          if (spotPrice && Math.abs(center - spotPrice) / spotPrice > 0.15) {
+            return `⚠️ STALE DATA: Range ${low}-${high} is far from spot ${spotPrice.toFixed(2)}. Check backend.`;
+          }
+          range = `${low}-${high}`;
+        }
+      }
+      return range ? `Air pocket: ${range}. No structural force. Price moves fast.` : (pat.note || 'No structural force detected.');
+    }
+    
+    if (key === 'GATEKEEPERS') {
+      const count = pat.count || pat.gatekeepers || 0;
+      return `${count} gatekeeper(s) between spot and King.`;
+    }
+    
+    return pat.note || pat.trade_note || '';
+  }
+
   Object.keys(p).forEach(key => {
     if (key === 'ticker' || key === 'spot' || key === 'spot_strike' || key === 'timestamp' || key === 'total_gex') return;
     const pat = p[key];
     if (!pat || typeof pat !== 'object') return;
+    
     const meta = patternMap[key] || {cls: 'neutral', color: 'var(--text-secondary)', label: key.replace(/_/g, ' ')};
     const bias = pat.bias || (pat.is_negative ? 'NEGATIVE' : pat.detected ? 'DETECTED' : '');
     const conf = pat.confidence ? (pat.confidence * 100).toFixed(0) + '%' : '';
-    const note = pat.note || pat.trade_note || '';
-    patHtml += `<div class="pattern-tag ${meta.cls}"><div class="pattern-tag-header"><span class="pattern-tag-name" style="color:${meta.color}">${meta.label}</span><span class="pattern-tag-meta">${bias} ${conf}</span></div><div class="pattern-tag-desc">${note}</div></div>`;
+    const note = buildPatternDesc(key, pat, spot);
+    
+    if (!note && key !== 'CROSS_EXPIRY') return;
+    
+    patHtml += `<div class="pattern-tag ${meta.cls}"><div class="pattern-tag-header"><span class="pattern-tag-name" style="color:${meta.color}">${meta.label}</span><span class="pattern-tag-meta">${bias} ${conf}</span></div><div class="pattern-tag-desc">${note || 'No additional data.'}</div></div>`;
   });
   patList.innerHTML = patHtml || '<div style="color:var(--text-muted); font-size:12px; padding:10px;">No patterns detected</div>';
 
