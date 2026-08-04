@@ -912,7 +912,7 @@ function renderGEX(data) {
 
   // ===== PRIMARY PATTERN (prominent) =====
   const primaryContainer = document.getElementById('primaryPattern');
-  const tp = data.trade_plan || {};
+  // tp already declared above
   const primaryKey = tp.primary_pattern || 'NEUTRAL';
   const primaryBias = tp.bias || 'NEUTRAL';
   const primaryConf = ((tp.confidence || 0) * 100).toFixed(0);
@@ -921,7 +921,7 @@ function renderGEX(data) {
   const explanations = {
     'THE_RUG': 'Price sits under a positive gamma ceiling with negative vacuum below. Rallies get rejected at the ceiling, then price accelerates down through the vacuum.',
     'REVERSE_RUG': 'Price sits above a positive gamma floor with negative vacuum above. Dips get bought at the floor, then price accelerates up toward the vacuum.',
-    'PINNED': 'Spot is inside a continuous positive gamma band. Dealers buy dips and sell rallies, keeping price range-bound. Sell premium, don't pick direction.',
+    'PINNED': 'Spot is inside a continuous positive gamma band. Dealers buy dips and sell rallies, keeping price range-bound. Sell premium, dont pick direction.',
     'FLOOR': 'A strong positive gamma floor sits below spot. Any pullback toward this level gets absorbed by dealer buying. Buy dips into the floor.',
     'CEILING': 'A strong positive gamma ceiling sits above spot. Any rally toward this level gets sold by dealers. Sell rallies into the ceiling.',
     'VACUUM_ABOVE': 'A negative gamma vacuum above spot pulls price upward like a magnet. No structural resistance above means rallies can extend fast.',
@@ -932,7 +932,6 @@ function renderGEX(data) {
     'NEUTRAL': 'No dominant gamma structure detected. Wait for a clearer setup before trading.'
   };
 
-  const primaryIcon = {...};
   const iconMap = {'BULLISH':'↗','BEARISH':'↘','NEUTRAL':'→','NO_TRADE':'⊘'};
   const icon = iconMap[primaryBias] || '→';
   const biasCls = primaryBias === 'BULLISH' ? 'bullish' : primaryBias === 'BEARISH' ? 'bearish' : 'neutral';
