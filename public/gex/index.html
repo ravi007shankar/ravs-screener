@@ -237,6 +237,7 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 </style>
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 
@@ -418,7 +419,7 @@ function updateTimestamp() {
 
 function getFallbackData(ticker) {
   if (ticker === 'SPX') return {
-    ticker: 'SPX', spot: 5520.45, vix: 14.82, odte_vol: '2.1M',
+    ticker: 'SPX', spot: 5520.45, change_percent: -0.15, change: -8.28, vix: 14.82, odte_vol: '2.1M',
     expiries: ['2026-08-04','2026-08-05','2026-08-06','2026-08-08','2026-08-11'],
     heatmap: [
       {strike:5600, is_spot:false, '2026-08-04':0, '2026-08-04_sign':'zero', '2026-08-05':0, '2026-08-05_sign':'zero', '2026-08-06':0, '2026-08-06_sign':'zero', '2026-08-08':0, '2026-08-08_sign':'zero', '2026-08-11':0, '2026-08-11_sign':'zero'},
@@ -443,7 +444,7 @@ function getFallbackData(ticker) {
   };
 
   return {
-    ticker: 'QQQ', spot: 485.20, vix: 14.82, odte_vol: '1.8M',
+    ticker: 'QQQ', spot: 485.20, change_percent: 0.42, change: 2.03, vix: 14.82, odte_vol: '1.8M',
     expiries: ['2026-08-04','2026-08-05','2026-08-06','2026-08-08','2026-08-11'],
     heatmap: [
       {strike:500, is_spot:false, '2026-08-04':-120.5, '2026-08-04_sign':'negative', '2026-08-05':-95.3, '2026-08-05_sign':'negative', '2026-08-06':0, '2026-08-06_sign':'zero', '2026-08-08':0, '2026-08-08_sign':'zero', '2026-08-11':0, '2026-08-11_sign':'zero'},
@@ -527,7 +528,25 @@ function renderGEX(data) {
   if (maxAbs === 0) maxAbs = 1;
 
   document.getElementById('spotLabel').textContent = data.ticker + ' Spot';
-  document.getElementById('spotValue').innerHTML = spot.toLocaleString('en-US', {minimumFractionDigits: 2}) + ' <span class="spot-change up">▲ 0.22%</span>';
+    // Spot price with real daily change
+  const changePct = data.change_percent;
+  const changeVal = data.change;
+  let changeHtml = '';
+
+  if (changePct !== undefined && changePct !== null) {
+    const isUp = changePct >= 0;
+    const arrow = isUp ? '▲' : '▼';
+    const cls = isUp ? 'up' : 'down';
+    changeHtml = ` <span class="spot-change ${cls}">${arrow} ${Math.abs(changePct).toFixed(2)}%</span>`;
+  } else if (changeVal !== undefined && changeVal !== null) {
+    const isUp = changeVal >= 0;
+    const arrow = isUp ? '▲' : '▼';
+    const cls = isUp ? 'up' : 'down';
+    const pct = spot > 0 ? (changeVal / (spot - changeVal) * 100) : 0;
+    changeHtml = ` <span class="spot-change ${cls}">${arrow} ${Math.abs(pct).toFixed(2)}%</span>`;
+  }
+
+  document.getElementById('spotValue').innerHTML = spot.toLocaleString('en-US', {minimumFractionDigits: 2}) + changeHtml;
   document.getElementById('vixValue').textContent = data.vix || '—';
   document.getElementById('odteVol').textContent = data.odte_vol || '—';
   document.getElementById('netGex').textContent = data.patterns && data.patterns.SPOT ? formatGex(data.patterns.SPOT.gex) : '—';
