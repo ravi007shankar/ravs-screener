@@ -8,7 +8,7 @@
 <style>
 :root {
   --bg-primary: #0a0e17; --bg-secondary: #0f172a; --bg-tertiary: #1e293b;
-  --border: #334155; --text-primary: #f8fafc; --text-secondary: #94a3b8; --text-muted: #64748b;
+  --border: #1e293b; --text-primary: #f8fafc; --text-secondary: #94a3b8; --text-muted: #64748b;
   --accent-gold: #fbbf24; --accent-green: #22c55e; --accent-red: #ef4444;
   --accent-purple: #a855f7; --accent-blue: #38bdf8; --accent-orange: #f97316;
   --font-main: 'Inter', system-ui, sans-serif; --font-mono: 'JetBrains Mono', monospace;
@@ -20,7 +20,7 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 .navbar {
   display: flex; justify-content: space-between; align-items: center;
   padding: 14px 28px; border-bottom: 1px solid var(--border);
-  background: rgba(10,14,23,0.95); backdrop-filter: blur(12px);
+  background: rgba(10,14,23,0.98); backdrop-filter: blur(12px);
   position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 12px;
 }
 .brand { display: flex; align-items: center; gap: 12px; }
@@ -48,7 +48,7 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 /* MAIN */
 .main-container { max-width: 1440px; margin: 0 auto; padding: 24px 28px; }
 .section-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; }
-.section-title { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+.section-title { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
 .section-subtitle { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
 
 .ticker-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
@@ -80,61 +80,101 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 
 .card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
 .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.card-title { font-size: 13px; color: var(--text-secondary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.card-title { font-size: 12px; color: var(--text-secondary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; }
 
 /* SPOT BAR */
 .spot-bar {
   display: flex; justify-content: space-between; align-items: center;
-  background: var(--bg-secondary); border: 1px solid var(--border);
-  border-radius: 12px; padding: 16px 24px; margin-bottom: 16px; flex-wrap: wrap; gap: 16px;
+  background: linear-gradient(135deg, rgba(15,23,42,0.9), rgba(30,41,59,0.6));
+  border: 1px solid var(--border); border-radius: 12px;
+  padding: 18px 24px; margin-bottom: 16px; flex-wrap: wrap; gap: 16px;
 }
-.spot-main h2 { font-size: 32px; font-weight: 800; letter-spacing: -1px; }
+.spot-main h2 { font-size: 36px; font-weight: 800; letter-spacing: -1.5px; }
 .spot-change { font-size: 14px; font-weight: 600; margin-left: 8px; }
 .spot-change.up { color: var(--accent-green); }
 .spot-change.down { color: var(--accent-red); }
 .spot-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
-.spot-metrics { display: flex; gap: 24px; flex-wrap: wrap; }
+.spot-metrics { display: flex; gap: 28px; flex-wrap: wrap; }
 .spot-metric { text-align: right; }
-.spot-metric-value { font-size: 18px; font-weight: 700; }
+.spot-metric-value { font-size: 20px; font-weight: 700; }
 .spot-metric-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
 
 /* HEATMAP */
-.heatmap-container { overflow-x: auto; max-height: 70vh; overflow-y: auto; }
-.heatmap-grid { display: grid; grid-template-columns: 90px repeat(5, 1fr); gap: 2px; font-size: 11px; min-width: 600px; }
-.heatmap-header { color: var(--text-muted); font-weight: 700; padding: 10px 6px; text-align: center; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0; background: var(--bg-secondary); z-index: 5; }
-.heatmap-strike { color: var(--text-muted); padding: 10px 8px; text-align: right; font-weight: 600; font-family: var(--font-mono); font-size: 11px; display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
-.heatmap-strike.spot { color: var(--accent-gold); font-weight: 800; background: rgba(251,191,36,0.05); }
-.heatmap-strike .spot-arrow { color: var(--accent-blue); font-size: 10px; }
-.heatmap-cell {
-  padding: 10px 4px; text-align: center; border-radius: 4px; font-weight: 700;
-  font-family: var(--font-mono); font-size: 10px; position: relative; transition: transform 0.15s;
-  min-height: 36px; display: flex; align-items: center; justify-content: center;
+.heatmap-container { overflow-x: auto; max-height: 68vh; overflow-y: auto; border-radius: 8px; }
+.heatmap-grid { display: grid; grid-template-columns: 100px repeat(5, 1fr); gap: 3px; font-size: 11px; min-width: 600px; padding: 4px; }
+.heatmap-header { color: var(--text-muted); font-weight: 700; padding: 12px 6px; text-align: center; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0; background: var(--bg-secondary); z-index: 5; border-bottom: 1px solid var(--border); }
+.heatmap-strike { 
+  color: var(--text-muted); padding: 10px 12px; text-align: right; font-weight: 600; 
+  font-family: var(--font-mono); font-size: 12px; display: flex; align-items: center; 
+  justify-content: flex-end; gap: 8px; border-radius: 4px;
 }
-.heatmap-cell:hover { transform: scale(1.08); z-index: 10; box-shadow: 0 0 12px rgba(0,0,0,0.5); }
-.cell-empty { background: transparent; color: #334155; }
-.cell-spot { box-shadow: inset 0 0 0 2px var(--accent-blue); }
+.heatmap-strike.spot { 
+  color: var(--accent-gold); font-weight: 800; 
+  background: linear-gradient(90deg, rgba(56,189,248,0.08), transparent);
+  border-left: 3px solid var(--accent-blue);
+}
+.heatmap-strike .spot-arrow { color: var(--accent-blue); font-size: 10px; }
+.heatmap-strike .king-icon { color: var(--accent-gold); font-size: 11px; }
+.heatmap-cell {
+  padding: 10px 4px; text-align: center; border-radius: 5px; font-weight: 700;
+  font-family: var(--font-mono); font-size: 10px; position: relative; transition: all 0.15s;
+  min-height: 38px; display: flex; align-items: center; justify-content: center;
+  border: 1px solid transparent;
+}
+.heatmap-cell:hover { 
+  transform: scale(1.1); z-index: 20; 
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+  border-color: rgba(255,255,255,0.2);
+}
+.cell-empty { background: rgba(30,41,59,0.3); color: #475569; }
+.cell-spot { 
+  box-shadow: inset 0 0 0 2px var(--accent-blue), 0 0 15px rgba(56,189,248,0.15);
+}
+.cell-king { 
+  box-shadow: inset 0 0 0 1px var(--accent-gold), 0 0 10px rgba(251,191,36,0.2);
+}
+
+/* TOOLTIP */
+.heatmap-cell .tooltip {
+  position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+  background: var(--bg-primary); border: 1px solid var(--border);
+  padding: 6px 10px; border-radius: 6px; font-size: 10px; white-space: nowrap;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 30;
+  color: var(--text-primary); font-weight: 600;
+}
+.heatmap-cell:hover .tooltip { opacity: 1; }
 
 .xp-strip { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 14px; }
-.xp-item { border-radius: 6px; padding: 8px; text-align: center; }
-.xp-item.positive { background: #14532d; }
-.xp-item.negative { background: #581c87; border: 1px solid var(--accent-purple); }
-.xp-label { font-size: 9px; color: #86efac; text-transform: uppercase; font-weight: 700; }
-.xp-item.negative .xp-label { color: #d8b4fe; }
-.xp-value { font-size: 12px; font-weight: 800; color: #fff; }
+.xp-item { border-radius: 6px; padding: 10px; text-align: center; font-weight: 700; }
+.xp-item.positive { background: linear-gradient(135deg, #14532d, #166534); color: #86efac; }
+.xp-item.negative { background: linear-gradient(135deg, #581c87, #7c3aed); color: #d8b4fe; border: 1px solid rgba(168,85,247,0.3); }
+.xp-label { font-size: 9px; text-transform: uppercase; font-weight: 700; opacity: 0.8; }
+.xp-value { font-size: 13px; font-weight: 800; }
 
 /* LEVELS */
 .levels-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-.level-card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 10px; padding: 14px; text-align: center; transition: all 0.2s; }
+.level-card { 
+  background: linear-gradient(135deg, rgba(15,23,42,0.8), rgba(30,41,59,0.4));
+  border: 1px solid var(--border); border-radius: 10px; padding: 16px; 
+  text-align: center; transition: all 0.2s;
+}
 .level-card:hover { border-color: var(--accent-gold); transform: translateY(-2px); }
-.level-card.highlight { border-color: var(--accent-gold); background: rgba(251,191,36,0.05); }
+.level-card.highlight { 
+  border-color: var(--accent-gold); 
+  background: linear-gradient(135deg, rgba(251,191,36,0.08), rgba(251,191,36,0.02));
+}
 .level-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
-.level-value { font-size: 22px; font-weight: 800; margin-top: 4px; }
+.level-value { font-size: 24px; font-weight: 800; margin-top: 6px; }
 .level-desc { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
 
 /* PATTERNS */
 .pattern-list { display: flex; flex-direction: column; gap: 8px; }
-.pattern-tag { background: var(--bg-tertiary); border-left: 3px solid var(--accent-gold); padding: 10px 12px; border-radius: 0 8px 8px 0; cursor: pointer; transition: all 0.2s; }
-.pattern-tag:hover { background: #283548; }
+.pattern-tag { 
+  background: linear-gradient(90deg, rgba(30,41,59,0.8), rgba(15,23,42,0.6));
+  border-left: 3px solid var(--accent-gold); padding: 12px 14px; 
+  border-radius: 0 8px 8px 0; cursor: pointer; transition: all 0.2s;
+}
+.pattern-tag:hover { background: linear-gradient(90deg, #283548, #1e293b); transform: translateX(4px); }
 .pattern-tag.bearish { border-left-color: var(--accent-red); }
 .pattern-tag.bullish { border-left-color: var(--accent-green); }
 .pattern-tag.neutral { border-left-color: var(--accent-blue); }
@@ -145,19 +185,26 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 .pattern-tag-desc { font-size: 11px; color: var(--text-secondary); margin-top: 4px; line-height: 1.4; }
 
 /* TRADE PLAN */
-.trade-plan { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+.trade-plan { 
+  background: linear-gradient(135deg, rgba(15,23,42,0.9), rgba(30,41,59,0.5));
+  border: 1px solid var(--border); border-radius: 12px; padding: 20px; 
+}
 .trade-plan-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-.trade-bias { padding: 4px 14px; border-radius: 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
-.trade-bias.bullish { background: rgba(34,197,94,0.15); color: var(--accent-green); }
-.trade-bias.bearish { background: rgba(239,68,68,0.15); color: var(--accent-red); }
-.trade-bias.neutral { background: rgba(56,189,248,0.15); color: var(--accent-blue); }
-.trade-bias.notrade { background: rgba(148,163,184,0.15); color: var(--text-secondary); }
+.trade-bias { padding: 5px 16px; border-radius: 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+.trade-bias.bullish { background: rgba(34,197,94,0.15); color: var(--accent-green); border: 1px solid rgba(34,197,94,0.3); }
+.trade-bias.bearish { background: rgba(239,68,68,0.15); color: var(--accent-red); border: 1px solid rgba(239,68,68,0.3); }
+.trade-bias.neutral { background: rgba(56,189,248,0.15); color: var(--accent-blue); border: 1px solid rgba(56,189,248,0.3); }
+.trade-bias.notrade { background: rgba(148,163,184,0.15); color: var(--text-secondary); border: 1px solid rgba(148,163,184,0.3); }
 .trade-confidence { font-size: 13px; font-weight: 700; color: var(--accent-gold); }
-.trade-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+.trade-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(51,65,85,0.4); font-size: 12px; }
 .trade-row:last-child { border-bottom: none; }
 .trade-label { color: var(--text-muted); font-weight: 600; }
 .trade-value { color: var(--text-primary); font-weight: 700; text-align: right; }
-.trade-note { margin-top: 12px; padding: 12px; background: var(--bg-primary); border-radius: 8px; border: 1px solid var(--border); font-size: 11px; color: var(--text-secondary); line-height: 1.6; font-style: italic; }
+.trade-note { 
+  margin-top: 14px; padding: 14px; background: rgba(10,14,23,0.6); 
+  border-radius: 8px; border: 1px solid var(--border); 
+  font-size: 11px; color: var(--text-secondary); line-height: 1.6; font-style: italic;
+}
 
 .two-col { display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
 
@@ -212,7 +259,6 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 
 <div class="main-container">
 
-<!-- ===== GEX SECTION ===== -->
 <div id="section-gex">
   <div class="section-header">
     <div>
@@ -254,9 +300,11 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
         <div class="card">
           <div class="card-header">
             <span class="card-title">GEX Heatmap — 5 Expiries</span>
-            <div style="display:flex; gap:12px; font-size:11px; align-items:center;">
-              <span style="display:flex; align-items:center; gap:4px;"><span style="width:10px;height:10px;background:#22c55e;border-radius:2px;"></span> +GEX</span>
-              <span style="display:flex; align-items:center; gap:4px;"><span style="width:10px;height:10px;background:#a855f7;border-radius:2px;"></span> -GEX</span>
+            <div style="display:flex; gap:16px; font-size:11px; align-items:center;">
+              <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px;height:14px;background:linear-gradient(135deg,#14532d,#22c55e);border-radius:3px;"></span> +GEX</span>
+              <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px;height:14px;background:linear-gradient(135deg,#581c87,#a855f7);border-radius:3px;"></span> −GEX</span>
+              <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px;height:14px;border:2px solid var(--accent-blue);border-radius:3px;"></span> Spot</span>
+              <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px;height:14px;border:1px solid var(--accent-gold);border-radius:3px;background:rgba(251,191,36,0.1);"></span> King</span>
             </div>
           </div>
           <div class="heatmap-container">
@@ -290,13 +338,11 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 </div>
 
 <script>
-// ===== STATE =====
 let currentData = null;
 let currentTicker = 'SPX';
 let refreshInterval = null;
-const STRIKE_RANGE = 0.04; // ±4% around spot
+const STRIKE_RANGE = 0.04;
 
-// ===== DATA FETCHING =====
 async function loadTicker(ticker) {
   currentTicker = ticker;
   document.querySelectorAll('.ticker-btn').forEach(b => b.classList.remove('active'));
@@ -334,8 +380,6 @@ function loadCustomTicker() {
   const input = document.getElementById('customTicker');
   const ticker = input.value.trim().toUpperCase();
   if (!ticker) return;
-  
-  // Add button if not exists
   const bar = document.getElementById('gexTickerBar');
   const existing = bar.querySelector(`[data-ticker="${ticker}"]`);
   if (!existing) {
@@ -344,7 +388,6 @@ function loadCustomTicker() {
     btn.setAttribute('data-ticker', ticker);
     btn.textContent = ticker;
     btn.onclick = () => loadTicker(ticker);
-    // Insert before the input wrap
     const wrap = bar.querySelector('.ticker-input-wrap');
     bar.insertBefore(btn, wrap);
   }
@@ -373,7 +416,6 @@ function updateTimestamp() {
   document.getElementById('lastUpdate').textContent = 'Updated: ' + now.toLocaleTimeString();
 }
 
-// ===== FALLBACK DATA =====
 function getFallbackData(ticker) {
   if (ticker === 'SPX') return {
     ticker: 'SPX', spot: 5520.45, vix: 14.82, odte_vol: '2.1M',
@@ -400,7 +442,6 @@ function getFallbackData(ticker) {
     levels: {spot_regime:'VOLATILE', king:{strike:5450}, ceiling:5525, floor:null}
   };
 
-  // QQQ fallback
   return {
     ticker: 'QQQ', spot: 485.20, vix: 14.82, odte_vol: '1.8M',
     expiries: ['2026-08-04','2026-08-05','2026-08-06','2026-08-08','2026-08-11'],
@@ -424,26 +465,35 @@ function getFallbackData(ticker) {
   };
 }
 
-// ===== HEATMAP COLOR ENGINE =====
 function getHeatmapColor(val, sign, maxAbs) {
-  if (sign === 'zero' || val === 0 || !maxAbs) return {bg: 'transparent', color: '#334155'};
+  if (sign === 'zero' || val === 0 || !maxAbs) return {bg: 'rgba(30,41,59,0.3)', color: '#475569'};
   const abs = Math.abs(val);
   const ratio = Math.min(abs / maxAbs, 1);
   
   if (sign === 'positive') {
-    // Green gradient: dark forest → bright emerald
-    const h = 142;
-    const s = 60 + ratio * 30;
-    const l = 18 + ratio * 22;
-    const textL = 70 + ratio * 25;
-    return {bg: `hsl(${h},${s}%,${l}%)`, color: `hsl(${h},80%,${textL}%)`};
+    // Rich green gradient
+    const r = Math.round(20 + ratio * 14);
+    const g = Math.round(83 + ratio * 114);
+    const b = Math.round(45 + ratio * 37);
+    const tr = Math.round(134 + ratio * 100);
+    const tg = Math.round(239 - ratio * 20);
+    const tb = Math.round(172 + ratio * 40);
+    return {
+      bg: `linear-gradient(135deg, rgb(${r},${g},${b}), rgb(${Math.round(r+20)},${Math.round(g+40)},${Math.round(b+20)}))`,
+      color: `rgb(${tr},${tg},${tb})`
+    };
   } else {
-    // Purple/magenta gradient for negative (like reference image)
-    const h = 270 + ratio * 20; // 270→290
-    const s = 55 + ratio * 35;
-    const l = 22 + ratio * 18;
-    const textL = 75 + ratio * 20;
-    return {bg: `hsl(${h},${s}%,${l}%)`, color: `hsl(280,90%,${textL}%)`};
+    // Deep purple/magenta gradient
+    const r = Math.round(88 + ratio * 80);
+    const g = Math.round(28 + ratio * 50);
+    const b = Math.round(135 + ratio * 100);
+    const tr = Math.round(216 + ratio * 39);
+    const tg = Math.round(180 + ratio * 60);
+    const tb = Math.round(254);
+    return {
+      bg: `linear-gradient(135deg, rgb(${r},${g},${b}), rgb(${Math.round(r+40)},${Math.round(g+20)},${Math.round(b+40)}))`,
+      color: `rgb(${tr},${tg},${tb})`
+    };
   }
 }
 
@@ -454,17 +504,13 @@ function formatCellValue(val) {
   return '$' + abs.toFixed(1) + 'K';
 }
 
-// ===== RENDER GEX =====
 function renderGEX(data) {
   const spot = data.spot || 0;
-  
-  // Filter strikes to ±4% around spot
   const filteredHeatmap = (data.heatmap || []).filter(row => {
     if (!row.strike) return false;
     return Math.abs(row.strike - spot) / spot <= STRIKE_RANGE;
-  }).sort((a, b) => b.strike - a.strike); // highest strike at top
+  }).sort((a, b) => b.strike - a.strike);
 
-  // Compute max absolute GEX for color scaling
   let maxAbs = 0;
   filteredHeatmap.forEach(row => {
     data.expiries.forEach(exp => {
@@ -474,7 +520,6 @@ function renderGEX(data) {
   });
   if (maxAbs === 0) maxAbs = 1;
 
-  // Spot bar
   document.getElementById('spotLabel').textContent = data.ticker + ' Spot';
   document.getElementById('spotValue').innerHTML = spot.toLocaleString('en-US', {minimumFractionDigits: 2}) + ' <span class="spot-change up">▲ 0.22%</span>';
   document.getElementById('vixValue').textContent = data.vix || '—';
@@ -482,7 +527,6 @@ function renderGEX(data) {
   document.getElementById('netGex').textContent = data.patterns && data.patterns.SPOT ? formatGex(data.patterns.SPOT.gex) : '—';
   document.getElementById('spotPattern').textContent = data.trade_plan ? data.trade_plan.primary_pattern || '—' : '—';
 
-  // Heatmap
   const grid = document.getElementById('heatmapGrid');
   let html = `<div class="heatmap-header">Strike</div>`;
   data.expiries.forEach(e => {
@@ -494,8 +538,8 @@ function renderGEX(data) {
     const isSpot = row.is_spot;
     const isKing = data.patterns && data.patterns.KING && data.patterns.KING.strike === row.strike;
     const arrow = isSpot ? '<span class="spot-arrow">▶</span>' : '';
-    const kingLabel = isKing ? ' ★' : '';
-    html += `<div class="heatmap-strike ${isSpot ? 'spot' : ''}">${arrow}${row.strike.toLocaleString()}${kingLabel}</div>`;
+    const kingIcon = isKing ? '<span class="king-icon">👑</span>' : '';
+    html += `<div class="heatmap-strike ${isSpot ? 'spot' : ''}">${arrow}${row.strike.toLocaleString()}${kingIcon}</div>`;
     
     data.expiries.forEach(exp => {
       const val = row[exp];
@@ -506,14 +550,14 @@ function renderGEX(data) {
         const colors = getHeatmapColor(val, sign, maxAbs);
         const display = formatCellValue(val);
         const spotCls = isSpot ? 'cell-spot' : '';
-        const kingStar = isKing ? ' ★' : '';
-        html += `<div class="heatmap-cell ${spotCls}" style="background:${colors.bg}; color:${colors.color};">${display}${kingStar}</div>`;
+        const kingCls = isKing ? 'cell-king' : '';
+        const tooltip = `<div class="tooltip">${val.toFixed(1)} ${sign === 'positive' ? '+' : '−'}GEX</div>`;
+        html += `<div class="heatmap-cell ${spotCls} ${kingCls}" style="background:${colors.bg}; color:${colors.color};">${display}${tooltip}</div>`;
       }
     });
   });
   grid.innerHTML = html;
 
-  // Cross-expiry strip
   const strip = document.getElementById('xpStrip');
   let stripHtml = '';
   data.expiries.forEach(exp => {
@@ -528,7 +572,6 @@ function renderGEX(data) {
   });
   strip.innerHTML = stripHtml;
 
-  // Levels
   const levels = document.getElementById('levelsGrid');
   const p = data.patterns || {};
   const tp = data.trade_plan || {};
@@ -555,7 +598,6 @@ function renderGEX(data) {
   }
   levels.innerHTML = levelsHtml;
 
-  // Patterns
   const patList = document.getElementById('patternList');
   let patHtml = '';
   const patternMap = {
@@ -583,7 +625,6 @@ function renderGEX(data) {
   });
   patList.innerHTML = patHtml || '<div style="color:var(--text-muted); font-size:12px; padding:10px;">No patterns detected</div>';
 
-  // Trade plan
   const biasEl = document.getElementById('tradeBias');
   biasEl.className = 'trade-bias ' + (tp.bias === 'BULLISH' ? 'bullish' : tp.bias === 'BEARISH' ? 'bearish' : tp.bias === 'NO_TRADE' ? 'notrade' : 'neutral');
   biasEl.textContent = tp.bias || 'NEUTRAL';
@@ -614,15 +655,13 @@ function formatGex(val) {
   return sign + '$' + (abs/1e3).toFixed(1) + 'K';
 }
 
-// ===== AUTO REFRESH =====
 function startAutoRefresh() {
   if (refreshInterval) clearInterval(refreshInterval);
   refreshInterval = setInterval(() => {
     if (currentTicker) loadTicker(currentTicker);
-  }, 60000); // refresh every 60 seconds
+  }, 60000);
 }
 
-// ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
   loadTicker('SPX');
   startAutoRefresh();
