@@ -259,7 +259,7 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
   <div class="nav-right">
     <div class="status-pill">
       <span class="status-dot"></span>
-      <span>Mock Data Mode</span>
+      <span>Live API Connected</span>
     </div>
   </div>
 </nav>
@@ -271,7 +271,7 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
   <div class="section-header">
     <div>
       <h2 class="section-title">Gamma Exposure Map</h2>
-      <p class="section-subtitle">Dealer positioning by strike × expiry · Mock data for testing</p>
+      <p class="section-subtitle">Dealer positioning by strike × expiry · Live Tradier data</p>
     </div>
   </div>
 
@@ -345,7 +345,7 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
   <div class="section-header">
     <div>
       <h2 class="section-title">GEX Screener</h2>
-      <p class="section-subtitle">Scan all tickers for Heatseeker patterns · Mock data</p>
+      <p class="section-subtitle">Scan all tickers for Heatseeker patterns · Live data</p>
     </div>
   </div>
 
@@ -465,16 +465,18 @@ async function loadTicker(ticker) {
   document.getElementById('gexError').style.display = 'none';
 
   try {
-    // Try to fetch mock JSON from data/ folder
-    const response = await fetch(`./mock_${ticker.toLowerCase()}.json`);
-    if (!response.ok) throw new Error('Mock data not found');
+    // LIVE API via Netlify proxy (or direct droplet)
+    const response = await fetch(`/api/gex/${ticker}`);
+    if (!response.ok) throw new Error('API error: ' + response.status);
     const data = await response.json();
     currentData = data;
     renderGEX(data);
     document.getElementById('gexLoading').style.display = 'none';
     document.getElementById('gexContent').style.display = 'block';
   } catch (err) {
-    console.log('Mock fetch failed, using fallback:', err);
+    console.log('Live API failed, using fallback:', err);
+    document.getElementById('gexError').textContent = 'Live API unavailable. Showing fallback data. Error: ' + err.message;
+    document.getElementById('gexError').style.display = 'block';
     // Fallback to embedded demo data
     const fallback = getFallbackData(ticker);
     currentData = fallback;
@@ -682,10 +684,11 @@ function formatGex(val) {
 async function loadScreener() {
   document.getElementById('screenerLoading').style.display = 'flex';
   try {
-    const res = await fetch('./mock_screener.json');
-    if (!res.ok) throw new Error('Not found');
+    const res = await fetch('/api/screener');
+    if (!res.ok) throw new Error('API error: ' + res.status);
     screenerData = (await res.json()).tickers || [];
   } catch (e) {
+    console.log('Live API failed, using fallback:', e);
     // Fallback
     screenerData = [
       {ticker:'SPX', spot:5520.45, pattern:'THE_RUG', bias:'bearish', confidence:0.75, key_level:5525.0, regime:'VOLATILE'},
