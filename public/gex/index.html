@@ -687,11 +687,15 @@ function getHeatmapColor(val, sign, maxAbs) {
   }
 }
 
-function formatCellValue(val) {
-  const abs = Math.abs(val);
-  if (abs >= 1000000) return '$' + (abs/1000000).toFixed(1) + 'M';
-  if (abs >= 1000) return '$' + (abs/1000).toFixed(1) + 'K';
-  return '$' + abs.toFixed(1) + 'K';
+function formatCellValue(val, unit) {
+  let raw = Math.abs(val);
+  if (unit === 'M') raw = raw * 1000000;
+  else if (unit === 'K') raw = raw * 1000;
+  else if (unit === 'B') raw = raw * 1000000000;
+
+  if (raw >= 1000000) return '$' + (raw/1000000).toFixed(1) + 'M';
+  if (raw >= 1000) return '$' + (raw/1000).toFixed(1) + 'K';
+  return '$' + raw.toFixed(1);
 }
 
 function renderGEX(data) {
@@ -826,8 +830,9 @@ function renderGEX(data) {
       if (sign === 'zero' || val === 0 || val === undefined) {
         html += `<div class="heatmap-cell cell-empty">—</div>`;
       } else {
+        const unit = row[exp + '_unit'] || '';
         const colors = getHeatmapColor(val, sign, maxAbs);
-        const display = formatCellValue(val);
+        const display = formatCellValue(val, unit);
         let cellClasses = [];
         if (isSpot) cellClasses.push('cell-spot');
         if (isKing) cellClasses.push('cell-king');
@@ -854,7 +859,7 @@ function renderGEX(data) {
     const cls = sum >= 0 ? 'positive' : 'negative';
     const sign = sum >= 0 ? '+' : '';
     const absSum = Math.abs(sum);
-    const display = absSum > 1000 ? (absSum/1000).toFixed(1) + 'B' : absSum > 1 ? absSum.toFixed(0) + 'M' : (absSum*1000).toFixed(0) + 'K';
+    const display = absSum > 1000000 ? (absSum/1000000).toFixed(1) + 'B' : absSum > 1000 ? (absSum/1000).toFixed(1) + 'M' : absSum.toFixed(0) + 'K';
     stripHtml += `<div class="xp-item ${cls}"><div class="xp-label">${short}</div><div class="xp-value">${sign}${display}</div></div>`;
   });
   strip.innerHTML = stripHtml;
