@@ -657,10 +657,13 @@ function getFallbackData(ticker) {
   };
 }
 
-function getHeatmapColor(val, sign, maxAbs) {
+function getHeatmapColor(val, sign, maxAbs, unit) {
   if (sign === 'zero' || val === 0 || !maxAbs) return {bg: 'rgba(30,41,59,0.3)', color: '#475569'};
-  const abs = Math.abs(val);
-  const ratio = Math.min(abs / maxAbs, 1);
+  let raw = Math.abs(val);
+  if (unit === 'M') raw = raw * 1000000;
+  else if (unit === 'K') raw = raw * 1000;
+  else if (unit === 'B') raw = raw * 1000000000;
+  const ratio = Math.min(raw / maxAbs, 1);
 
   if (sign === 'positive') {
     const r = Math.round(20 + ratio * 14);
@@ -715,7 +718,12 @@ function renderGEX(data) {
   filteredHeatmap.forEach(row => {
     data.expiries.forEach(exp => {
       const v = Math.abs(row[exp] || 0);
-      if (v > maxAbs) maxAbs = v;
+      const unit = row[exp + '_unit'] || '';
+      let raw = v;
+      if (unit === 'M') raw = v * 1000000;
+      else if (unit === 'K') raw = v * 1000;
+      else if (unit === 'B') raw = v * 1000000000;
+      if (raw > maxAbs) maxAbs = raw;
     });
   });
   if (maxAbs === 0) maxAbs = 1;
