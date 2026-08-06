@@ -362,6 +362,7 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 </style>
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 
@@ -658,34 +659,63 @@ function getFallbackData(ticker) {
 }
 
 function getHeatmapColor(val, sign, maxAbs, unit) {
-  if (sign === 'zero' || val === 0 || !maxAbs) return {bg: 'rgba(30,41,59,0.3)', color: '#475569'};
+  if (sign === 'zero' || val === 0 || !maxAbs) return {bg: 'rgba(30,41,59,0.3)', color: '#475569', glow: 'none'};
   let raw = Math.abs(val);
   if (unit === 'M') raw = raw * 1000000;
   else if (unit === 'K') raw = raw * 1000;
   else if (unit === 'B') raw = raw * 1000000000;
-  const ratio = Math.min(raw / maxAbs, 1);
+  
+  let ratio = Math.min(raw / maxAbs, 1);
+  // Power curve makes mid-range values pop — low values stay muted, high values get bright
+  ratio = Math.pow(ratio, 0.55);
+  // Floor so even tiny non-zero values remain visible
+  ratio = Math.max(ratio, 0.12);
 
   if (sign === 'positive') {
-    const r = Math.round(20 + ratio * 14);
-    const g = Math.round(83 + ratio * 114);
-    const b = Math.round(45 + ratio * 37);
-    const tr = Math.round(134 + ratio * 100);
-    const tg = Math.round(239 - ratio * 20);
-    const tb = Math.round(172 + ratio * 40);
+    // Dark forest green → Bright neon green
+    const r = Math.round(18 + ratio * 50);
+    const g = Math.round(55 + ratio * 165);
+    const b = Math.round(30 + ratio * 75);
+    
+    const r2 = Math.min(Math.round(r + 25), 255);
+    const g2 = Math.min(Math.round(g + 30), 255);
+    const b2 = Math.min(Math.round(b + 25), 255);
+    
+    const tr = Math.round(130 + ratio * 125);
+    const tg = Math.round(210 + ratio * 45);
+    const tb = Math.round(130 + ratio * 125);
+    
+    const glow = ratio > 0.85 
+      ? `0 0 10px rgba(34,197,94,${(ratio-0.85)*3.3})` 
+      : 'none';
+    
     return {
-      bg: `linear-gradient(135deg, rgb(${r},${g},${b}), rgb(${Math.round(r+20)},${Math.round(g+40)},${Math.round(b+20)}))`,
-      color: `rgb(${tr},${tg},${tb})`
+      bg: `linear-gradient(135deg, rgb(${r},${g},${b}), rgb(${r2},${g2},${b2}))`,
+      color: `rgb(${tr},${tg},${tb})`,
+      glow: glow
     };
   } else {
-    const r = Math.round(88 + ratio * 80);
-    const g = Math.round(28 + ratio * 50);
-    const b = Math.round(135 + ratio * 100);
-    const tr = Math.round(216 + ratio * 39);
-    const tg = Math.round(180 + ratio * 60);
-    const tb = Math.round(254);
+    // Dark purple → Bright magenta
+    const r = Math.round(55 + ratio * 165);
+    const g = Math.round(18 + ratio * 50);
+    const b = Math.round(55 + ratio * 190);
+    
+    const r2 = Math.min(Math.round(r + 30), 255);
+    const g2 = Math.min(Math.round(g + 20), 255);
+    const b2 = Math.min(Math.round(b + 15), 255);
+    
+    const tr = Math.round(190 + ratio * 65);
+    const tg = Math.round(150 + ratio * 105);
+    const tb = Math.round(230 + ratio * 25);
+    
+    const glow = ratio > 0.85 
+      ? `0 0 10px rgba(168,85,247,${(ratio-0.85)*3.3})` 
+      : 'none';
+    
     return {
-      bg: `linear-gradient(135deg, rgb(${r},${g},${b}), rgb(${Math.round(r+40)},${Math.round(g+20)},${Math.round(b+40)}))`,
-      color: `rgb(${tr},${tg},${tb})`
+      bg: `linear-gradient(135deg, rgb(${r},${g},${b}), rgb(${r2},${g2},${b2}))`,
+      color: `rgb(${tr},${tg},${tb})`,
+      glow: glow
     };
   }
 }
@@ -852,7 +882,8 @@ function renderGEX(data) {
 
         const clsStr = cellClasses.join(' ');
         const tooltip = `<div class="tooltip">${val.toFixed(1)} ${sign === 'positive' ? '+' : '−'}GEX</div>`;
-        html += `<div class="heatmap-cell ${clsStr}" style="background:${colors.bg}; color:${colors.color};">${display}${tooltip}</div>`;
+        const glowStyle = colors.glow && colors.glow !== 'none' ? `box-shadow:${colors.glow};` : '';
+        html += `<div class="heatmap-cell ${clsStr}" style="background:${colors.bg}; color:${colors.color};${glowStyle}">${display}${tooltip}</div>`;
       }
     });
   });
