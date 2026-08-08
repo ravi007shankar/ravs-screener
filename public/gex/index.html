@@ -269,7 +269,7 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
   font-size: 11px; color: var(--text-secondary); line-height: 1.6; font-style: italic;
 }
 
-.two-col { display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
+.two-col { display: grid; grid-template-columns: 1fr 400px; gap: 20px; }
 
 /* LOADING */
 .loading { display: flex; align-items: center; justify-content: center; padding: 40px; color: var(--text-muted); font-size: 14px; }
@@ -380,7 +380,7 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
   margin-bottom: 16px;
 }
 .battlefield-title {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.8px;
@@ -391,13 +391,13 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 }
 .battlefield-title::before {
   content: "⚔";
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .battlefield-bias {
-  padding: 4px 12px;
+  padding: 5px 14px;
   border-radius: 6px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -426,12 +426,12 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 
 .bf-label {
   fill: var(--text-muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   font-family: var(--font-mono);
 }
 .bf-value {
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
   font-family: var(--font-mono);
 }
@@ -492,23 +492,30 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 }
 .bf-stat {
   text-align: center;
-  padding: 8px;
+  padding: 10px;
   background: rgba(10,14,23,0.5);
   border-radius: 6px;
   border: 1px solid rgba(30,41,59,0.5);
 }
 .bf-stat-label {
-  font-size: 9px;
+  font-size: 10px;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 700;
 }
 .bf-stat-value {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 800;
   margin-top: 4px;
   font-family: var(--font-mono);
+}
+
+.battlefield-scroll {
+  max-height: 560px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-radius: 8px;
 }
 
 ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -516,6 +523,7 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 </style>
+<base target="_blank">
 <base target="_blank">
 <base target="_blank">
 </head>
@@ -615,9 +623,9 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
         <div class="card" style="margin-top:12px;">
           <div class="card-header">
             <span class="card-title">Tactical Brief</span>
-            <span style="font-size:11px;color:var(--accent-gold);font-weight:700;" id="bfConfidence">—</span>
+            <span style="font-size:12px;color:var(--accent-gold);font-weight:700;" id="bfConfidence">—</span>
           </div>
-          <div id="bfBrief" style="font-size:12px;color:var(--text-secondary);line-height:1.6;padding:4px 0;"></div>
+          <div id="bfBrief" style="font-size:13px;color:var(--text-secondary);line-height:1.6;padding:4px 0;"></div>
         </div>
       </div>
     </div>
@@ -715,39 +723,32 @@ function renderStructureMap(data) {
 
   let html = '<div class="structure-map-title">Gamma Architecture</div>';
 
-  // Ceiling
   const ceiling = p.CEILING?.strike || (p.THE_RUG?.ceiling);
   if (ceiling) {
     html += `<div class="structure-lane"><span class="structure-label">Ceiling</span><span class="structure-arrow">↓</span><div class="structure-bar positive">${ceiling}</div><span class="structure-desc">+GEX rejects price</span></div>`;
   }
 
-  // Vacuum Above
   const vacAbove = p.VACUUM_ABOVE?.strike || (tp.vacuum_above);
   if (vacAbove) {
     html += `<div class="structure-lane"><span class="structure-label">Vacuum ↑</span><span class="structure-arrow up">↑</span><div class="structure-bar negative">${vacAbove}</div><span class="structure-desc" style="color:var(--accent-purple)">Pulls price UP</span></div>`;
   }
 
-  // Spot
   html += `<div class="structure-lane"><span class="structure-label">Spot</span><span class="structure-arrow" style="color:var(--accent-blue)">▶</span><div class="structure-bar spot">${spot.toFixed(2)}</div><span class="structure-desc">${p.SPOT?.regime || 'NEUTRAL'}</span></div>`;
 
-  // Vacuum Below
   const vacBelow = p.VACUUM_BELOW?.strike || (tp.vacuum_below);
   if (vacBelow) {
     html += `<div class="structure-lane"><span class="structure-label">Vacuum ↓</span><span class="structure-arrow down">↓</span><div class="structure-bar negative">${vacBelow}</div><span class="structure-desc" style="color:var(--accent-purple)">Pulls price DOWN</span></div>`;
   }
 
-  // Floor
   const floor = p.FLOOR?.strike || (p.REVERSE_RUG?.floor) || (tp.floor);
   if (floor) {
     html += `<div class="structure-lane"><span class="structure-label">Floor</span><span class="structure-arrow">↑</span><div class="structure-bar positive">${floor}</div><span class="structure-desc">+GEX supports price</span></div>`;
   }
 
-  // Pin Band
   if (tp.band_low && tp.band_high) {
     html += `<div class="structure-lane"><span class="structure-label">Pin Band</span><span class="structure-arrow" style="color:var(--accent-green)">⟷</span><div class="structure-bar positive" style="min-width:100px;">${tp.band_low}–${tp.band_high}</div><span class="structure-desc" style="color:var(--accent-green)">Spot inside band</span></div>`;
   }
 
-  // King
   if (p.KING?.strike) {
     const king = p.KING;
     const kingColor = king.is_negative ? 'var(--accent-purple)' : 'var(--accent-green)';
@@ -782,12 +783,14 @@ function renderBattlefield(data) {
   const strikeRange = isIndex ? 0.04 : 0.20;
   const kingStrike = p.KING?.strike;
 
-  const strikes = (data.heatmap || []).filter(row => {
+  let allStrikes = (data.heatmap || []).filter(row => {
     if (!row.strike) return false;
     const inRange = Math.abs(row.strike - spot) / spot <= strikeRange;
     const isKing = kingStrike && Math.abs(row.strike - kingStrike) < 0.01;
     return inRange || isKing;
-  }).sort((a, b) => b.strike - a.strike).map(row => {
+  }).sort((a, b) => b.strike - a.strike);
+
+  allStrikes = allStrikes.map(row => {
     let netGex = 0;
     expiries.forEach(exp => {
       const val = row[exp] || 0;
@@ -817,17 +820,63 @@ function renderBattlefield(data) {
   const bandLow = tp.band_low;
   const bandHigh = tp.band_high;
 
-  const W = 340;
-  const CX = 170;
-  const ROW_H = 26;
+  const keyStrikes = new Set();
+  [spot, kingStrike, ceiling, floor, vacAbove, vacBelow, bandLow, bandHigh].forEach(s => {
+    if (s !== undefined && s !== null) keyStrikes.add(parseFloat(s));
+  });
+
+  allStrikes.forEach(s => {
+    s.isKey = keyStrikes.has(s.strike);
+  });
+
+  const maxAbsAll = Math.max(...allStrikes.map(s => Math.abs(s.netGex)), 1);
+  const threshold = maxAbsAll * 0.08;
+
+  let strikes = allStrikes.filter(s => 
+    s.isSpot || s.isKing || s.isKey || Math.abs(s.netGex) >= threshold
+  );
+
+  if (strikes.length < 12) {
+    const spotIdx = allStrikes.findIndex(s => s.isSpot);
+    const start = Math.max(0, spotIdx - 6);
+    const end = Math.min(allStrikes.length, spotIdx + 7);
+    strikes = allStrikes.slice(start, end);
+  }
+
+  if (strikes.length > 18) {
+    const spotIdx = allStrikes.findIndex(s => s.isSpot);
+    strikes.forEach((s, i) => {
+      let score = 0;
+      if (s.isKey) score += 100;
+      if (s.isKing) score += 50;
+      if (s.isSpot) score += 40;
+      score += (Math.abs(s.netGex) / maxAbsAll) * 30;
+      const distFromSpot = Math.abs(allStrikes.indexOf(s) - spotIdx);
+      score += Math.max(0, 10 - distFromSpot);
+      s._score = score;
+    });
+    strikes.sort((a, b) => b._score - a._score);
+    strikes = strikes.slice(0, 18);
+    strikes.sort((a, b) => b.strike - a.strike);
+    strikes.forEach(s => delete s._score);
+  }
+
+  strikes.forEach(s => {
+    s.isSpot = Math.abs(s.strike - spot) < 0.01;
+    s.isKing = kingStrike && Math.abs(s.strike - kingStrike) < 0.01;
+  });
+
+  const W = 360;
+  const CX = 175;
+  const ROW_H = 28;
   const PAD_TOP = 10;
-  const PAD_BOT = 90;
+  const PAD_BOT = 86;
   const H = strikes.length * ROW_H + PAD_TOP + PAD_BOT;
-  const MAX_BAR = 110;
+  const MAX_BAR = 115;
 
   const maxAbs = Math.max(...strikes.map(s => Math.abs(s.netGex)), 1);
 
-  let svg = `<svg class="battlefield-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+  let svg = `<svg class="battlefield-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMin meet" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="posTerrain" x1="0" y1="0" x2="1" y2="0">
         <stop offset="0%" stop-color="#14532d"/>
@@ -861,9 +910,9 @@ function renderBattlefield(data) {
       svg += `<rect x="0" y="${y}" width="${W}" height="${ROW_H}" fill="rgba(34,197,94,0.04)" rx="4"/>`;
     }
 
-    const labelColor = isSpotRow ? 'var(--accent-blue)' : isKingRow ? 'var(--accent-gold)' : 'var(--text-muted)';
+    const labelColor = isSpotRow ? '#38bdf8' : isKingRow ? '#fbbf24' : '#64748b';
     const labelWeight = isSpotRow || isKingRow ? '800' : '600';
-    svg += `<text x="50" y="${cy + 4}" text-anchor="end" fill="${labelColor}" font-size="11" font-weight="${labelWeight}" font-family="var(--font-mono)">${s.strike.toLocaleString()}</text>`;
+    svg += `<text x="56" y="${cy + 4}" text-anchor="end" fill="${labelColor}" font-size="12" font-weight="${labelWeight}" font-family="var(--font-mono)">${s.strike.toLocaleString()}</text>`;
 
     svg += `<line x1="${CX}" y1="${y + 2}" x2="${CX}" y2="${y + ROW_H - 2}" stroke="#1e293b" stroke-width="1"/>`;
 
@@ -872,21 +921,21 @@ function renderBattlefield(data) {
     const absGex = Math.abs(s.netGex);
 
     if (s.netGex > 0 && barW > 2) {
-      svg += `<rect class="battlefield-terrain-pos" x="${CX}" y="${y + 6}" width="${barW}" height="14" />`;
-      const labelX = barW > 40 ? CX + barW - 4 : CX + barW + 4;
+      svg += `<rect class="battlefield-terrain-pos" x="${CX}" y="${y + 6}" width="${barW}" height="16" />`;
+      const labelX = barW > 40 ? CX + barW - 5 : CX + barW + 5;
       const anchor = barW > 40 ? 'end' : 'start';
-      svg += `<text x="${labelX}" y="${cy + 4}" text-anchor="${anchor}" fill="#86efac" class="bf-value pos">${formatGexMini(absGex)}</text>`;
+      svg += `<text x="${labelX}" y="${cy + 4}" text-anchor="${anchor}" fill="#86efac" font-size="10" font-weight="700" font-family="var(--font-mono)">${formatGexMini(absGex)}</text>`;
     } else if (s.netGex < 0 && barW > 2) {
-      svg += `<rect class="battlefield-terrain-neg" x="${CX - barW}" y="${y + 6}" width="${barW}" height="14" />`;
-      const labelX = barW > 40 ? CX - barW + 4 : CX - barW - 4;
+      svg += `<rect class="battlefield-terrain-neg" x="${CX - barW}" y="${y + 6}" width="${barW}" height="16" />`;
+      const labelX = barW > 40 ? CX - barW + 5 : CX - barW - 5;
       const anchor = barW > 40 ? 'start' : 'end';
-      svg += `<text x="${labelX}" y="${cy + 4}" text-anchor="${anchor}" fill="#d8b4fe" class="bf-value neg">${formatGexMini(absGex)}</text>`;
+      svg += `<text x="${labelX}" y="${cy + 4}" text-anchor="${anchor}" fill="#d8b4fe" font-size="10" font-weight="700" font-family="var(--font-mono)">${formatGexMini(absGex)}</text>`;
     }
 
     if (isSpotRow) {
-      svg += `<circle cx="${CX}" cy="${cy}" r="12" fill="rgba(56,189,248,0.15)" class="bf-spot-pulse"/>`;
-      svg += `<polygon points="${CX-5},${cy-4} ${CX+5},${cy-4} ${CX},${cy+5}" fill="var(--accent-blue)" stroke="#0a0e17" stroke-width="1"/>`;
-      svg += `<text x="${CX + 18}" y="${cy + 4}" fill="var(--accent-blue)" font-size="10" font-weight="700">SPOT</text>`;
+      svg += `<circle cx="${CX}" cy="${cy}" r="11" fill="rgba(56,189,248,0.15)" class="bf-spot-pulse"/>`;
+      svg += `<polygon points="${CX-5},${cy-4} ${CX+5},${cy-4} ${CX},${cy+5}" fill="#38bdf8" stroke="#0a0e17" stroke-width="1"/>`;
+      svg += `<text x="${CX + 16}" y="${cy + 4}" fill="#38bdf8" font-size="10" font-weight="700">SPOT</text>`;
     }
 
     if (isKingRow) {
@@ -894,17 +943,17 @@ function renderBattlefield(data) {
       const anchor = s.netGex > 0 ? 'start' : 'end';
       const kColor = king.is_negative ? '#a855f7' : '#22c55e';
       svg += `<text x="${kingX}" y="${cy + 4}" text-anchor="${anchor}" fill="${kColor}" font-size="12" class="bf-king-glow">👑</text>`;
-      svg += `<text x="${kingX + (s.netGex > 0 ? 16 : -16)}" y="${cy + 4}" text-anchor="${anchor}" fill="${kColor}" font-size="9" font-weight="700">${king.is_negative ? 'VACUUM' : 'MAGNET'}</text>`;
+      svg += `<text x="${kingX + (s.netGex > 0 ? 16 : -16)}" y="${cy + 4}" text-anchor="${anchor}" fill="${kColor}" font-size="10" font-weight="700">${king.is_negative ? 'VACUUM' : 'MAGNET'}</text>`;
     }
 
     if (isCeil || isFloor) {
-      svg += `<rect x="${CX + MAX_BAR + 8}" y="${y + 4}" width="3" height="18" fill="var(--accent-green)" rx="1"/>`;
-      svg += `<text x="${CX + MAX_BAR + 18}" y="${cy + 4}" fill="var(--accent-green)" font-size="9" font-weight="700">${isCeil ? 'WALL' : 'FLOOR'}</text>`;
+      svg += `<rect x="${CX + MAX_BAR + 8}" y="${y + 4}" width="3" height="20" fill="#22c55e" rx="1"/>`;
+      svg += `<text x="${CX + MAX_BAR + 16}" y="${cy + 4}" fill="#22c55e" font-size="10" font-weight="700">${isCeil ? 'WALL' : 'FLOOR'}</text>`;
     }
 
     if (isVacAbove || isVacBelow) {
       const vx = CX - barW - 12;
-      svg += `<text x="${vx}" y="${cy + 4}" text-anchor="end" fill="var(--accent-purple)" font-size="11" class="bf-vacuum-glow">🌀</text>`;
+      svg += `<text x="${vx}" y="${cy + 4}" text-anchor="end" fill="#a855f7" font-size="11" class="bf-vacuum-glow">🌀</text>`;
     }
   });
 
@@ -922,16 +971,16 @@ function renderBattlefield(data) {
     const dist = Math.abs(toY - fromY);
     if (dist <= 30) return;
     const dir = toY < fromY ? -1 : 1;
-    const startY = fromY + (dir * 15);
-    const endY = toY + (dir * -15);
+    const startY = fromY + (dir * 16);
+    const endY = toY + (dir * -16);
     const ax = CX + xOffset;
-    svg += `<line class="bf-force-arrow" x1="${ax}" y1="${startY}" x2="${ax}" y2="${endY}" stroke="${color}" stroke-width="2" stroke-linecap="round"/>`;
-    const ahSize = 4;
+    svg += `<line x1="${ax}" y1="${startY}" x2="${ax}" y2="${endY}" stroke="${color}" stroke-width="2" stroke-linecap="round"/>`;
+    const ahSize = 3;
     const tipY = endY;
-    const baseY = endY + (dir * -8);
+    const baseY = endY + (dir * -7);
     svg += `<polygon points="${ax},${tipY} ${ax-ahSize},${baseY} ${ax+ahSize},${baseY}" fill="${color}"/>`;
     const midY = (startY + endY) / 2;
-    svg += `<text x="${ax + (xOffset < 0 ? -10 : 10)}" y="${midY + 3}" text-anchor="${xOffset < 0 ? 'end' : 'start'}" fill="${color}" font-size="9" font-weight="700">${label}</text>`;
+    svg += `<text x="${ax + (xOffset < 0 ? -10 : 10)}" y="${midY + 3}" text-anchor="${xOffset < 0 ? 'end' : 'start'}" fill="${color}" font-size="10" font-weight="700">${label}</text>`;
   }
 
   if (kingY) {
@@ -949,49 +998,50 @@ function renderBattlefield(data) {
     drawArrow(spotY, floorY, 40, '#22c55e', `${dist} ↓`);
   }
 
-  const gaugeY = H - 70;
-  svg += `<rect class="bf-gauge-bg" x="20" y="${gaugeY}" width="300" height="20"/>`;
-  const gaugeW = (confidence / 100) * 300;
+  const gaugeY = H - 66;
+  svg += `<rect class="bf-gauge-bg" x="20" y="${gaugeY}" width="320" height="20"/>`;
+  const gaugeW = (confidence / 100) * 320;
   svg += `<rect class="bf-gauge-fill ${biasClass}" x="20" y="${gaugeY}" width="${gaugeW}" height="20"/>`;
-  svg += `<text x="170" y="${gaugeY + 14}" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">${bias} PRESSURE: ${confidence}%</text>`;
-  svg += `<text x="20" y="${gaugeY + 40}" fill="var(--text-muted)" font-size="9">🟢 = +GEX wall  |  💜 = −GEX void  |  👑 = King  |  ▶ = Spot</text>`;
+  svg += `<text x="180" y="${gaugeY + 14}" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">${bias} PRESSURE: ${confidence}%</text>`;
+  svg += `<text x="20" y="${gaugeY + 38}" fill="#64748b" font-size="10">🟢 = +GEX wall  |  💜 = −GEX void  |  👑 = King  |  ▶ = Spot</text>`;
 
   svg += `</svg>`;
-  container.innerHTML = svg;
+
+  container.innerHTML = `<div class="battlefield-scroll">${svg}</div>`;
 
   let footerHtml = '';
   if (kingStrike) {
     const dist = Math.abs(kingStrike - spot).toFixed(2);
     const dir = kingStrike > spot ? '↑' : '↓';
-    const color = king.is_negative ? 'var(--accent-purple)' : 'var(--accent-green)';
+    const color = king.is_negative ? '#a855f7' : '#22c55e';
     footerHtml += `<div class="bf-stat"><div class="bf-stat-label">To King</div><div class="bf-stat-value" style="color:${color}">${dist} ${dir}</div></div>`;
   }
   if (ceiling) {
     const dist = Math.abs(ceiling - spot).toFixed(2);
-    footerHtml += `<div class="bf-stat"><div class="bf-stat-label">To Ceiling</div><div class="bf-stat-value" style="color:var(--accent-green)">${dist} ↑</div></div>`;
+    footerHtml += `<div class="bf-stat"><div class="bf-stat-label">To Ceiling</div><div class="bf-stat-value" style="color:#22c55e">${dist} ↑</div></div>`;
   }
   if (floor) {
     const dist = Math.abs(floor - spot).toFixed(2);
-    footerHtml += `<div class="bf-stat"><div class="bf-stat-label">To Floor</div><div class="bf-stat-value" style="color:var(--accent-green)">${dist} ↓</div></div>`;
+    footerHtml += `<div class="bf-stat"><div class="bf-stat-label">To Floor</div><div class="bf-stat-value" style="color:#22c55e">${dist} ↓</div></div>`;
   }
   if (vacAbove) {
     const dist = Math.abs(vacAbove - spot).toFixed(2);
-    footerHtml += `<div class="bf-stat"><div class="bf-stat-label">Vacuum ↑</div><div class="bf-stat-value" style="color:var(--accent-purple)">${dist}</div></div>`;
+    footerHtml += `<div class="bf-stat"><div class="bf-stat-label">Vacuum ↑</div><div class="bf-stat-value" style="color:#a855f7">${dist}</div></div>`;
   }
   if (vacBelow) {
     const dist = Math.abs(vacBelow - spot).toFixed(2);
-    footerHtml += `<div class="bf-stat"><div class="bf-stat-label">Vacuum ↓</div><div class="bf-stat-value" style="color:var(--accent-purple)">${dist}</div></div>`;
+    footerHtml += `<div class="bf-stat"><div class="bf-stat-label">Vacuum ↓</div><div class="bf-stat-value" style="color:#a855f7">${dist}</div></div>`;
   }
   footer.innerHTML = footerHtml || '<div class="bf-stat" style="grid-column:1/-1;"><div class="bf-stat-label">No key levels detected</div></div>';
 
   confEl.textContent = confidence + '% confidence';
   const briefs = {
-    'THE_RUG': `Spot (${spot}) sits under a wall at ${ceiling || '—'}. The king at ${kingStrike || '—'} is a ${king.is_negative ? 'vacuum' : 'magnet'}. Rallies hit the wall, drops accelerate through voids. Short bias.`,
-    'REVERSE_RUG': `Spot (${spot}) sits above a floor at ${floor || '—'}. The king at ${kingStrike || '—'} pulls ${king.is_negative ? 'up through vacuum' : 'down to magnet'}. Buy dips into floor. Long bias.`,
-    'PINNED': `Spot is trapped inside a positive gamma band (${bandLow || '—'}–${bandHigh || '—'}). Dealers buy dips and sell rallies. Range trade — sell straddles/iron condors.`,
-    'VACUUM_ABOVE': `Negative gamma vacuum above at ${vacAbove}. No ceiling detected. A break above spot could squeeze fast toward ${vacAbove}.`,
-    'VACUUM_BELOW': `Negative gamma vacuum below at ${vacBelow}. No floor detected. A break below spot could flush fast toward ${vacBelow}.`,
-    'NEUTRAL': `No dominant gamma structure. Mixed forces. Wait for a clearer setup or reduce size.`
+    'THE_RUG': `Spot (${spot}) sits under a wall at ${ceiling || '—'}. King at ${kingStrike || '—'} is a ${king.is_negative ? 'vacuum' : 'magnet'}. Rallies hit wall, drops accelerate through voids. Short bias.`,
+    'REVERSE_RUG': `Spot (${spot}) sits above a floor at ${floor || '—'}. King at ${kingStrike || '—'} pulls ${king.is_negative ? 'up through vacuum' : 'down to magnet'}. Buy dips. Long bias.`,
+    'PINNED': `Spot trapped inside positive gamma band (${bandLow || '—'}–${bandHigh || '—'}). Dealers buy dips and sell rallies. Range trade — sell premium.`,
+    'VACUUM_ABOVE': `Negative gamma vacuum above at ${vacAbove}. No ceiling. Break above spot squeezes fast toward ${vacAbove}.`,
+    'VACUUM_BELOW': `Negative gamma vacuum below at ${vacBelow}. No floor. Break below spot flushes fast toward ${vacBelow}.`,
+    'NEUTRAL': `No dominant gamma structure. Mixed forces. Wait for clearer setup or reduce size.`
   };
   briefEl.textContent = briefs[tp.primary_pattern] || briefs['NEUTRAL'];
 }
@@ -1059,7 +1109,7 @@ function getHeatmapColor(val, sign, maxAbs, unit) {
   if (unit === 'M') raw = raw * 1000000;
   else if (unit === 'K') raw = raw * 1000;
   else if (unit === 'B') raw = raw * 1000000000;
-  
+
   let ratio = Math.min(raw / maxAbs, 1);
   ratio = Math.pow(ratio, 0.4);
   ratio = Math.max(ratio, 0.15);
@@ -1068,19 +1118,19 @@ function getHeatmapColor(val, sign, maxAbs, unit) {
     const r = Math.round(16 + ratio * 40);
     const g = Math.round(45 + ratio * 190);
     const b = Math.round(25 + ratio * 90);
-    
+
     const r2 = Math.min(Math.round(r + 30), 255);
     const g2 = Math.min(Math.round(g + 40), 255);
     const b2 = Math.min(Math.round(b + 30), 255);
-    
+
     const tr = Math.round(120 + ratio * 135);
     const tg = Math.round(200 + ratio * 55);
     const tb = Math.round(120 + ratio * 135);
-    
+
     const glow = ratio > 0.70 
       ? `0 0 12px rgba(34,197,94,${(ratio-0.70)*3.33})` 
       : 'none';
-    
+
     return {
       bg: `linear-gradient(135deg, rgb(${r},${g},${b}), rgb(${r2},${g2},${b2}))`,
       color: `rgb(${tr},${tg},${tb})`,
@@ -1090,19 +1140,19 @@ function getHeatmapColor(val, sign, maxAbs, unit) {
     const r = Math.round(45 + ratio * 190);
     const g = Math.round(16 + ratio * 60);
     const b = Math.round(45 + ratio * 200);
-    
+
     const r2 = Math.min(Math.round(r + 35), 255);
     const g2 = Math.min(Math.round(g + 25), 255);
     const b2 = Math.min(Math.round(b + 20), 255);
-    
+
     const tr = Math.round(180 + ratio * 75);
     const tg = Math.round(140 + ratio * 115);
     const tb = Math.round(220 + ratio * 35);
-    
+
     const glow = ratio > 0.70 
       ? `0 0 12px rgba(168,85,247,${(ratio-0.70)*3.33})` 
       : 'none';
-    
+
     return {
       bg: `linear-gradient(135deg, rgb(${r},${g},${b}), rgb(${r2},${g2},${b2}))`,
       color: `rgb(${tr},${tg},${tb})`,
