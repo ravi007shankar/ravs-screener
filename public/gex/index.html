@@ -355,6 +355,162 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
 .pattern-tag-small.neutral { border-left-color: var(--accent-blue); }
 .pattern-tag-small.warning { border-left-color: var(--accent-orange); }
 
+/* ===== BATTLEFIELD MAP ===== */
+.battlefield-card {
+  background: linear-gradient(180deg, rgba(15,23,42,0.95), rgba(10,14,23,0.98));
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.battlefield-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+  opacity: 0.3;
+}
+
+.battlefield-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.battlefield-title {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.battlefield-title::before {
+  content: "⚔";
+  font-size: 14px;
+}
+
+.battlefield-bias {
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.battlefield-bias.bullish { background: rgba(34,197,94,0.15); color: var(--accent-green); border: 1px solid rgba(34,197,94,0.3); }
+.battlefield-bias.bearish { background: rgba(239,68,68,0.15); color: var(--accent-red); border: 1px solid rgba(239,68,68,0.3); }
+.battlefield-bias.neutral { background: rgba(56,189,248,0.15); color: var(--accent-blue); border: 1px solid rgba(56,189,248,0.3); }
+
+.battlefield-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  font-family: var(--font-mono);
+}
+
+.battlefield-terrain-pos {
+  fill: url(#posTerrain);
+  opacity: 0.85;
+  rx: 3;
+}
+.battlefield-terrain-neg {
+  fill: url(#negTerrain);
+  opacity: 0.85;
+  rx: 3;
+}
+
+.bf-label {
+  fill: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+.bf-value {
+  font-size: 9px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+.bf-value.pos { fill: #86efac; }
+.bf-value.neg { fill: #d8b4fe; }
+
+.bf-spot-pulse {
+  animation: bfPulse 2s ease-in-out infinite;
+}
+@keyframes bfPulse {
+  0%, 100% { opacity: 0.4; r: 8; }
+  50% { opacity: 0.8; r: 12; }
+}
+
+.bf-king-glow {
+  filter: drop-shadow(0 0 6px rgba(251,191,36,0.5));
+}
+.bf-vacuum-glow {
+  filter: drop-shadow(0 0 6px rgba(168,85,247,0.5));
+}
+
+.bf-force-arrow {
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+}
+.bf-force-arrow.bullish { stroke: var(--accent-green); }
+.bf-force-arrow.bearish { stroke: var(--accent-red); }
+.bf-force-arrow.neutral { stroke: var(--accent-blue); }
+
+.bf-distance-line {
+  stroke: var(--text-muted);
+  stroke-width: 1;
+  stroke-dasharray: 3,3;
+  opacity: 0.5;
+}
+
+.bf-gauge-bg {
+  fill: rgba(30,41,59,0.6);
+  stroke: var(--border);
+  stroke-width: 1;
+  rx: 4;
+}
+.bf-gauge-fill {
+  rx: 4;
+  transition: width 0.5s ease;
+}
+.bf-gauge-fill.bullish { fill: var(--accent-green); }
+.bf-gauge-fill.bearish { fill: var(--accent-red); }
+
+.battlefield-footer {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.bf-stat {
+  text-align: center;
+  padding: 8px;
+  background: rgba(10,14,23,0.5);
+  border-radius: 6px;
+  border: 1px solid rgba(30,41,59,0.5);
+}
+.bf-stat-label {
+  font-size: 9px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+}
+.bf-stat-value {
+  font-size: 14px;
+  font-weight: 800;
+  margin-top: 4px;
+  font-family: var(--font-mono);
+}
+
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
@@ -445,29 +601,23 @@ body { font-family: var(--font-main); background: var(--bg-primary); color: var(
       </div>
 
       <div>
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">Primary Pattern</span>
-            <span style="font-size:11px;color:var(--text-muted);" id="primaryPatternMeta">—</span>
+        <!-- BATTLEFIELD MAP -->
+        <div class="battlefield-card" id="battlefieldCard">
+          <div class="battlefield-header">
+            <div class="battlefield-title">Gamma Battlefield</div>
+            <div class="battlefield-bias" id="bfBias">NEUTRAL</div>
           </div>
-          <div id="primaryPattern"></div>
+          <div id="battlefieldSvgContainer"></div>
+          <div class="battlefield-footer" id="battlefieldFooter"></div>
         </div>
 
+        <!-- MINI TRADE BRIEF -->
         <div class="card" style="margin-top:12px;">
-          <div class="card-header" style="cursor:pointer;" onclick="toggleSupporting()">
-            <span class="card-title">Supporting Signals</span>
-            <span style="font-size:11px;color:var(--text-muted);" id="supportingCount">0 signals</span>
+          <div class="card-header">
+            <span class="card-title">Tactical Brief</span>
+            <span style="font-size:11px;color:var(--accent-gold);font-weight:700;" id="bfConfidence">—</span>
           </div>
-          <div class="pattern-list" id="patternList" style="display:none;"></div>
-        </div>
-
-        <div class="trade-plan">
-          <div class="trade-plan-header">
-            <span class="trade-bias" id="tradeBias">NEUTRAL</span>
-            <span class="trade-confidence" id="tradeConfidence">Confidence: —%</span>
-          </div>
-          <div id="tradePlanBody"></div>
-          <div class="trade-note" id="tradeNote"></div>
+          <div id="bfBrief" style="font-size:12px;color:var(--text-secondary);line-height:1.6;padding:4px 0;"></div>
         </div>
       </div>
     </div>
@@ -608,6 +758,252 @@ function renderStructureMap(data) {
   container.innerHTML = html;
 }
 
+// ===== BATTLEFIELD MAP =====
+function renderBattlefield(data) {
+  const container = document.getElementById('battlefieldSvgContainer');
+  const footer = document.getElementById('battlefieldFooter');
+  const biasEl = document.getElementById('bfBias');
+  const briefEl = document.getElementById('bfBrief');
+  const confEl = document.getElementById('bfConfidence');
+  if (!container) return;
+
+  const spot = data.spot || 0;
+  const p = data.patterns || {};
+  const tp = data.trade_plan || {};
+  const expiries = data.expiries || [];
+  const bias = tp.bias || 'NEUTRAL';
+  const confidence = ((tp.confidence || 0) * 100).toFixed(0);
+
+  const biasClass = bias === 'BULLISH' ? 'bullish' : bias === 'BEARISH' ? 'bearish' : 'neutral';
+  biasEl.className = 'battlefield-bias ' + biasClass;
+  biasEl.textContent = bias;
+
+  const isIndex = ['SPX', 'SPY', 'QQQ', 'IWM', 'DIA'].includes(data.ticker);
+  const strikeRange = isIndex ? 0.04 : 0.20;
+  const kingStrike = p.KING?.strike;
+
+  const strikes = (data.heatmap || []).filter(row => {
+    if (!row.strike) return false;
+    const inRange = Math.abs(row.strike - spot) / spot <= strikeRange;
+    const isKing = kingStrike && Math.abs(row.strike - kingStrike) < 0.01;
+    return inRange || isKing;
+  }).sort((a, b) => b.strike - a.strike).map(row => {
+    let netGex = 0;
+    expiries.forEach(exp => {
+      const val = row[exp] || 0;
+      const sign = row[exp + '_sign'];
+      const unit = row[exp + '_unit'] || '';
+      let raw = Math.abs(val);
+      if (unit === 'M') raw = val * 1000000;
+      else if (unit === 'K') raw = val * 1000;
+      else if (unit === 'B') raw = val * 1000000000;
+      else raw = val;
+      if (sign === 'negative') raw = -raw;
+      netGex += raw;
+    });
+    return {
+      strike: row.strike,
+      netGex: netGex,
+      isSpot: row.is_spot,
+      isKing: kingStrike && Math.abs(row.strike - kingStrike) < 0.01
+    };
+  });
+
+  const king = p.KING || {};
+  const ceiling = tp.ceiling || p.THE_RUG?.ceiling || p.CEILING?.strike;
+  const floor = tp.floor || p.REVERSE_RUG?.floor || p.FLOOR?.strike;
+  const vacAbove = tp.vacuum_above || p.VACUUM_ABOVE?.strike;
+  const vacBelow = tp.vacuum_below || p.VACUUM_BELOW?.strike;
+  const bandLow = tp.band_low;
+  const bandHigh = tp.band_high;
+
+  const W = 340;
+  const CX = 170;
+  const ROW_H = 26;
+  const PAD_TOP = 10;
+  const PAD_BOT = 90;
+  const H = strikes.length * ROW_H + PAD_TOP + PAD_BOT;
+  const MAX_BAR = 110;
+
+  const maxAbs = Math.max(...strikes.map(s => Math.abs(s.netGex)), 1);
+
+  let svg = `<svg class="battlefield-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="posTerrain" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#14532d"/>
+        <stop offset="100%" stop-color="#22c55e"/>
+      </linearGradient>
+      <linearGradient id="negTerrain" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#581c87"/>
+        <stop offset="100%" stop-color="#a855f7"/>
+      </linearGradient>
+      <filter id="glow"><feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+        <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>`;
+
+  strikes.forEach((s, i) => {
+    const y = PAD_TOP + i * ROW_H;
+    const cy = y + ROW_H / 2;
+    const isKingRow = s.isKing;
+    const isSpotRow = s.isSpot;
+    const isCeil = ceiling && Math.abs(s.strike - ceiling) < 0.01;
+    const isFloor = floor && Math.abs(s.strike - floor) < 0.01;
+    const isVacAbove = vacAbove && Math.abs(s.strike - vacAbove) < 0.01;
+    const isVacBelow = vacBelow && Math.abs(s.strike - vacBelow) < 0.01;
+    const inBand = bandLow && bandHigh && s.strike >= bandLow && s.strike <= bandHigh;
+
+    if (isSpotRow) {
+      svg += `<rect x="0" y="${y}" width="${W}" height="${ROW_H}" fill="rgba(56,189,248,0.06)" rx="4"/>`;
+    } else if (isKingRow) {
+      svg += `<rect x="0" y="${y}" width="${W}" height="${ROW_H}" fill="rgba(251,191,36,0.06)" rx="4"/>`;
+    } else if (inBand) {
+      svg += `<rect x="0" y="${y}" width="${W}" height="${ROW_H}" fill="rgba(34,197,94,0.04)" rx="4"/>`;
+    }
+
+    const labelColor = isSpotRow ? 'var(--accent-blue)' : isKingRow ? 'var(--accent-gold)' : 'var(--text-muted)';
+    const labelWeight = isSpotRow || isKingRow ? '800' : '600';
+    svg += `<text x="50" y="${cy + 4}" text-anchor="end" fill="${labelColor}" font-size="11" font-weight="${labelWeight}" font-family="var(--font-mono)">${s.strike.toLocaleString()}</text>`;
+
+    svg += `<line x1="${CX}" y1="${y + 2}" x2="${CX}" y2="${y + ROW_H - 2}" stroke="#1e293b" stroke-width="1"/>`;
+
+    const ratio = Math.sqrt(Math.abs(s.netGex) / maxAbs);
+    const barW = Math.max(ratio * MAX_BAR, 0);
+    const absGex = Math.abs(s.netGex);
+
+    if (s.netGex > 0 && barW > 2) {
+      svg += `<rect class="battlefield-terrain-pos" x="${CX}" y="${y + 6}" width="${barW}" height="14" />`;
+      const labelX = barW > 40 ? CX + barW - 4 : CX + barW + 4;
+      const anchor = barW > 40 ? 'end' : 'start';
+      svg += `<text x="${labelX}" y="${cy + 4}" text-anchor="${anchor}" fill="#86efac" class="bf-value pos">${formatGexMini(absGex)}</text>`;
+    } else if (s.netGex < 0 && barW > 2) {
+      svg += `<rect class="battlefield-terrain-neg" x="${CX - barW}" y="${y + 6}" width="${barW}" height="14" />`;
+      const labelX = barW > 40 ? CX - barW + 4 : CX - barW - 4;
+      const anchor = barW > 40 ? 'start' : 'end';
+      svg += `<text x="${labelX}" y="${cy + 4}" text-anchor="${anchor}" fill="#d8b4fe" class="bf-value neg">${formatGexMini(absGex)}</text>`;
+    }
+
+    if (isSpotRow) {
+      svg += `<circle cx="${CX}" cy="${cy}" r="12" fill="rgba(56,189,248,0.15)" class="bf-spot-pulse"/>`;
+      svg += `<polygon points="${CX-5},${cy-4} ${CX+5},${cy-4} ${CX},${cy+5}" fill="var(--accent-blue)" stroke="#0a0e17" stroke-width="1"/>`;
+      svg += `<text x="${CX + 18}" y="${cy + 4}" fill="var(--accent-blue)" font-size="10" font-weight="700">SPOT</text>`;
+    }
+
+    if (isKingRow) {
+      const kingX = CX + (s.netGex > 0 ? barW + 16 : -16);
+      const anchor = s.netGex > 0 ? 'start' : 'end';
+      const kColor = king.is_negative ? '#a855f7' : '#22c55e';
+      svg += `<text x="${kingX}" y="${cy + 4}" text-anchor="${anchor}" fill="${kColor}" font-size="12" class="bf-king-glow">👑</text>`;
+      svg += `<text x="${kingX + (s.netGex > 0 ? 16 : -16)}" y="${cy + 4}" text-anchor="${anchor}" fill="${kColor}" font-size="9" font-weight="700">${king.is_negative ? 'VACUUM' : 'MAGNET'}</text>`;
+    }
+
+    if (isCeil || isFloor) {
+      svg += `<rect x="${CX + MAX_BAR + 8}" y="${y + 4}" width="3" height="18" fill="var(--accent-green)" rx="1"/>`;
+      svg += `<text x="${CX + MAX_BAR + 18}" y="${cy + 4}" fill="var(--accent-green)" font-size="9" font-weight="700">${isCeil ? 'WALL' : 'FLOOR'}</text>`;
+    }
+
+    if (isVacAbove || isVacBelow) {
+      const vx = CX - barW - 12;
+      svg += `<text x="${vx}" y="${cy + 4}" text-anchor="end" fill="var(--accent-purple)" font-size="11" class="bf-vacuum-glow">🌀</text>`;
+    }
+  });
+
+  const spotIndex = strikes.findIndex(s => s.isSpot);
+  const spotY = spotIndex >= 0 ? PAD_TOP + spotIndex * ROW_H + ROW_H/2 : PAD_TOP + (strikes.length * ROW_H / 2);
+  const kingIndex = strikes.findIndex(s => s.isKing);
+  const kingY = kingIndex >= 0 ? PAD_TOP + kingIndex * ROW_H + ROW_H/2 : null;
+  const ceilIndex = ceiling ? strikes.findIndex(s => Math.abs(s.strike - ceiling) < 0.01) : -1;
+  const ceilY = ceilIndex >= 0 ? PAD_TOP + ceilIndex * ROW_H + ROW_H/2 : null;
+  const floorIndex = floor ? strikes.findIndex(s => Math.abs(s.strike - floor) < 0.01) : -1;
+  const floorY = floorIndex >= 0 ? PAD_TOP + floorIndex * ROW_H + ROW_H/2 : null;
+
+  function drawArrow(fromY, toY, xOffset, color, label) {
+    if (fromY === null || toY === null) return;
+    const dist = Math.abs(toY - fromY);
+    if (dist <= 30) return;
+    const dir = toY < fromY ? -1 : 1;
+    const startY = fromY + (dir * 15);
+    const endY = toY + (dir * -15);
+    const ax = CX + xOffset;
+    svg += `<line class="bf-force-arrow" x1="${ax}" y1="${startY}" x2="${ax}" y2="${endY}" stroke="${color}" stroke-width="2" stroke-linecap="round"/>`;
+    const ahSize = 4;
+    const tipY = endY;
+    const baseY = endY + (dir * -8);
+    svg += `<polygon points="${ax},${tipY} ${ax-ahSize},${baseY} ${ax+ahSize},${baseY}" fill="${color}"/>`;
+    const midY = (startY + endY) / 2;
+    svg += `<text x="${ax + (xOffset < 0 ? -10 : 10)}" y="${midY + 3}" text-anchor="${xOffset < 0 ? 'end' : 'start'}" fill="${color}" font-size="9" font-weight="700">${label}</text>`;
+  }
+
+  if (kingY) {
+    const kColor = king.is_negative ? '#a855f7' : '#22c55e';
+    const dist = Math.abs(kingStrike - spot).toFixed(2);
+    const arrowDir = kingStrike > spot ? '↑' : '↓';
+    drawArrow(spotY, kingY, -40, kColor, `${dist} ${arrowDir}`);
+  }
+  if (ceilY) {
+    const dist = Math.abs(ceiling - spot).toFixed(2);
+    drawArrow(spotY, ceilY, 40, '#22c55e', `${dist} ↑`);
+  }
+  if (floorY) {
+    const dist = Math.abs(floor - spot).toFixed(2);
+    drawArrow(spotY, floorY, 40, '#22c55e', `${dist} ↓`);
+  }
+
+  const gaugeY = H - 70;
+  svg += `<rect class="bf-gauge-bg" x="20" y="${gaugeY}" width="300" height="20"/>`;
+  const gaugeW = (confidence / 100) * 300;
+  svg += `<rect class="bf-gauge-fill ${biasClass}" x="20" y="${gaugeY}" width="${gaugeW}" height="20"/>`;
+  svg += `<text x="170" y="${gaugeY + 14}" text-anchor="middle" fill="#fff" font-size="10" font-weight="700">${bias} PRESSURE: ${confidence}%</text>`;
+  svg += `<text x="20" y="${gaugeY + 40}" fill="var(--text-muted)" font-size="9">🟢 = +GEX wall  |  💜 = −GEX void  |  👑 = King  |  ▶ = Spot</text>`;
+
+  svg += `</svg>`;
+  container.innerHTML = svg;
+
+  let footerHtml = '';
+  if (kingStrike) {
+    const dist = Math.abs(kingStrike - spot).toFixed(2);
+    const dir = kingStrike > spot ? '↑' : '↓';
+    const color = king.is_negative ? 'var(--accent-purple)' : 'var(--accent-green)';
+    footerHtml += `<div class="bf-stat"><div class="bf-stat-label">To King</div><div class="bf-stat-value" style="color:${color}">${dist} ${dir}</div></div>`;
+  }
+  if (ceiling) {
+    const dist = Math.abs(ceiling - spot).toFixed(2);
+    footerHtml += `<div class="bf-stat"><div class="bf-stat-label">To Ceiling</div><div class="bf-stat-value" style="color:var(--accent-green)">${dist} ↑</div></div>`;
+  }
+  if (floor) {
+    const dist = Math.abs(floor - spot).toFixed(2);
+    footerHtml += `<div class="bf-stat"><div class="bf-stat-label">To Floor</div><div class="bf-stat-value" style="color:var(--accent-green)">${dist} ↓</div></div>`;
+  }
+  if (vacAbove) {
+    const dist = Math.abs(vacAbove - spot).toFixed(2);
+    footerHtml += `<div class="bf-stat"><div class="bf-stat-label">Vacuum ↑</div><div class="bf-stat-value" style="color:var(--accent-purple)">${dist}</div></div>`;
+  }
+  if (vacBelow) {
+    const dist = Math.abs(vacBelow - spot).toFixed(2);
+    footerHtml += `<div class="bf-stat"><div class="bf-stat-label">Vacuum ↓</div><div class="bf-stat-value" style="color:var(--accent-purple)">${dist}</div></div>`;
+  }
+  footer.innerHTML = footerHtml || '<div class="bf-stat" style="grid-column:1/-1;"><div class="bf-stat-label">No key levels detected</div></div>';
+
+  confEl.textContent = confidence + '% confidence';
+  const briefs = {
+    'THE_RUG': `Spot (${spot}) sits under a wall at ${ceiling || '—'}. The king at ${kingStrike || '—'} is a ${king.is_negative ? 'vacuum' : 'magnet'}. Rallies hit the wall, drops accelerate through voids. Short bias.`,
+    'REVERSE_RUG': `Spot (${spot}) sits above a floor at ${floor || '—'}. The king at ${kingStrike || '—'} pulls ${king.is_negative ? 'up through vacuum' : 'down to magnet'}. Buy dips into floor. Long bias.`,
+    'PINNED': `Spot is trapped inside a positive gamma band (${bandLow || '—'}–${bandHigh || '—'}). Dealers buy dips and sell rallies. Range trade — sell straddles/iron condors.`,
+    'VACUUM_ABOVE': `Negative gamma vacuum above at ${vacAbove}. No ceiling detected. A break above spot could squeeze fast toward ${vacAbove}.`,
+    'VACUUM_BELOW': `Negative gamma vacuum below at ${vacBelow}. No floor detected. A break below spot could flush fast toward ${vacBelow}.`,
+    'NEUTRAL': `No dominant gamma structure. Mixed forces. Wait for a clearer setup or reduce size.`
+  };
+  briefEl.textContent = briefs[tp.primary_pattern] || briefs['NEUTRAL'];
+}
+
+function formatGexMini(val) {
+  const abs = Math.abs(val);
+  if (abs >= 1e9) return (abs/1e9).toFixed(1) + 'B';
+  if (abs >= 1e6) return (abs/1e6).toFixed(1) + 'M';
+  if (abs >= 1e3) return (abs/1e3).toFixed(1) + 'K';
+  return abs.toFixed(0);
+}
+
 function getFallbackData(ticker) {
   if (ticker === 'SPX') return {
     ticker: 'SPX', spot: 5520.45, change_percent: -0.15, change: -8.28, vix: 14.82, odte_vol: '2.1M',
@@ -665,13 +1061,10 @@ function getHeatmapColor(val, sign, maxAbs, unit) {
   else if (unit === 'B') raw = raw * 1000000000;
   
   let ratio = Math.min(raw / maxAbs, 1);
-  // Aggressive power curve: mid-range values pop, high values get very bright
   ratio = Math.pow(ratio, 0.4);
-  // Floor so tiny values are visible but clearly dimmer than heavy ones
   ratio = Math.max(ratio, 0.15);
 
   if (sign === 'positive') {
-    // Dark muted green → Bright electric neon green
     const r = Math.round(16 + ratio * 40);
     const g = Math.round(45 + ratio * 190);
     const b = Math.round(25 + ratio * 90);
@@ -694,7 +1087,6 @@ function getHeatmapColor(val, sign, maxAbs, unit) {
       glow: glow
     };
   } else {
-    // Dark muted purple → Bright electric magenta
     const r = Math.round(45 + ratio * 190);
     const g = Math.round(16 + ratio * 60);
     const b = Math.round(45 + ratio * 200);
@@ -759,7 +1151,6 @@ function renderGEX(data) {
 
   document.getElementById('spotLabel').textContent = data.ticker + ' Spot';
 
-  // Spot price with real daily change
   const changePct = data.change_percent;
   const changeVal = data.change;
   let changeHtml = '';
@@ -783,10 +1174,8 @@ function renderGEX(data) {
   document.getElementById('netGex').textContent = data.patterns && data.patterns.SPOT ? formatGex(data.patterns.SPOT.gex) : '—';
   document.getElementById('spotPattern').textContent = data.trade_plan ? data.trade_plan.primary_pattern || '—' : '—';
 
-  // Render structure map
   renderStructureMap(data);
 
-  // Build annotation map for strikes
   const annotations = {};
   const p = data.patterns || {};
   const tp = data.trade_plan || {};
@@ -798,33 +1187,22 @@ function renderGEX(data) {
     if (!annotations[key].includes(type)) annotations[key].push(type);
   }
 
-  // Spot
   if (data.spot) {
     const spotStrike = Math.round(data.spot * 2) / 2;
     addAnn(spotStrike, 'spot');
   }
 
-  // King
   if (p.KING?.strike) addAnn(p.KING.strike, 'king');
-
-  // Ceiling
   if (p.CEILING?.strike) addAnn(p.CEILING.strike, 'ceiling');
   if (p.THE_RUG?.ceiling) addAnn(p.THE_RUG.ceiling, 'ceiling');
-
-  // Floor
   if (p.FLOOR?.strike) addAnn(p.FLOOR.strike, 'floor');
   if (p.REVERSE_RUG?.floor) addAnn(p.REVERSE_RUG.floor, 'floor');
   if (tp.floor) addAnn(tp.floor, 'floor');
-
-  // Vacuum Above
   if (p.VACUUM_ABOVE?.strike) addAnn(p.VACUUM_ABOVE.strike, 'vacuum');
   if (tp.vacuum_above) addAnn(tp.vacuum_above, 'vacuum');
-
-  // Vacuum Below
   if (p.VACUUM_BELOW?.strike) addAnn(p.VACUUM_BELOW.strike, 'vacuum');
   if (tp.vacuum_below) addAnn(tp.vacuum_below, 'vacuum');
 
-  // Band
   if (tp.band_low && tp.band_high) {
     for (let s = parseFloat(tp.band_low); s <= parseFloat(tp.band_high); s += 2.5) {
       addAnn(s, 'band');
@@ -848,7 +1226,6 @@ function renderGEX(data) {
     const isKing = data.patterns && data.patterns.KING && data.patterns.KING.strike === row.strike;
     const rowAnns = annotations[row.strike] || [];
 
-    // Build strike label with badges
     let badges = '';
     if (rowAnns.includes('king')) badges += '<span class="annotation-badge annotation-king">King</span>';
     if (rowAnns.includes('spot')) badges += '<span class="annotation-badge annotation-spot">Spot</span>';
@@ -868,7 +1245,6 @@ function renderGEX(data) {
         html += `<div class="heatmap-cell cell-empty">—</div>`;
       } else {
         const unit = row[exp + '_unit'] || '';
-        // FIX: pass unit so $1.5M is treated as 1,500,000 not 1.5
         const colors = getHeatmapColor(val, sign, maxAbs, unit);
         const display = formatCellValue(val, unit);
         let cellClasses = [];
@@ -903,7 +1279,6 @@ function renderGEX(data) {
   });
   strip.innerHTML = stripHtml;
 
-  // LEVELS GRID
   const levels = document.getElementById('levelsGrid');
   const spotPat = p.SPOT || {};
 
@@ -911,7 +1286,6 @@ function renderGEX(data) {
   const regimeColor = spotPat.regime === 'VOLATILE' ? 'var(--accent-purple)' : spotPat.regime === 'PINNED' ? 'var(--accent-green)' : 'var(--accent-blue)';
   levelsHtml += `<div class="level-card"><div class="level-label">Spot Regime</div><div class="level-value" style="color:${regimeColor}">${spotPat.regime || 'NEUTRAL'}</div><div class="level-desc">${formatGex(spotPat.gex)} at ${spotPat.strike}</div></div>`;
 
-  // Ceiling
   const ceiling = data.levels?.ceiling || p.CEILING?.strike || p.THE_RUG?.ceiling;
   if (ceiling) {
     levelsHtml += `<div class="level-card highlight"><div class="level-label" style="color:var(--accent-green)">Ceiling</div><div class="level-value" style="color:var(--accent-green)">${ceiling}</div><div class="level-desc">+GEX rejects price</div></div>`;
@@ -919,13 +1293,11 @@ function renderGEX(data) {
     levelsHtml += `<div class="level-card"><div class="level-label">Ceiling</div><div class="level-value" style="color:var(--text-muted)">—</div><div class="level-desc">No cap detected</div></div>`;
   }
 
-  // King
   const king = p.KING || {};
   const kingColor = king.is_negative ? 'var(--accent-purple)' : 'var(--accent-green)';
   const kingLabel = king.is_negative ? 'VACUUM' : 'MAGNET';
   levelsHtml += `<div class="level-card"><div class="level-label" style="color:${kingColor}">King (${kingLabel})</div><div class="level-value" style="color:${kingColor}">${king.strike || '—'}</div><div class="level-desc">${king.type || ''}</div></div>`;
 
-  // Floor
   const floor = data.levels?.floor || p.FLOOR?.strike || p.REVERSE_RUG?.floor || tp.floor;
   if (floor) {
     levelsHtml += `<div class="level-card"><div class="level-label" style="color:var(--accent-green)">Floor</div><div class="level-value" style="color:var(--accent-green)">${floor}</div><div class="level-desc">+GEX supports price</div></div>`;
@@ -933,19 +1305,16 @@ function renderGEX(data) {
     levelsHtml += `<div class="level-card"><div class="level-label">Floor</div><div class="level-value" style="color:var(--text-muted)">—</div><div class="level-desc">No floor detected</div></div>`;
   }
 
-  // Vacuum Above
   const vacAbove = p.VACUUM_ABOVE?.strike || tp.vacuum_above;
   if (vacAbove) {
     levelsHtml += `<div class="level-card"><div class="level-label" style="color:var(--accent-purple)">Vacuum ↑</div><div class="level-value" style="color:var(--accent-purple)">${vacAbove}</div><div class="level-desc">Pulls price UP</div></div>`;
   }
 
-  // Vacuum Below
   const vacBelow = p.VACUUM_BELOW?.strike || tp.vacuum_below;
   if (vacBelow) {
     levelsHtml += `<div class="level-card"><div class="level-label" style="color:var(--accent-purple)">Vacuum ↓</div><div class="level-value" style="color:var(--accent-purple)">${vacBelow}</div><div class="level-desc">Pulls price DOWN</div></div>`;
   }
 
-  // Band
   const bandLow = tp.band_low || p.POSITIVE_BAND?.low;
   const bandHigh = tp.band_high || p.POSITIVE_BAND?.high;
   if (bandLow && bandHigh) {
@@ -954,131 +1323,7 @@ function renderGEX(data) {
 
   levels.innerHTML = levelsHtml;
 
-  // ===== PRIMARY PATTERN (prominent) =====
-  const primaryContainer = document.getElementById('primaryPattern');
-  // tp already declared above
-  const primaryKey = tp.primary_pattern || 'NEUTRAL';
-  const primaryBias = tp.bias || 'NEUTRAL';
-  const primaryConf = ((tp.confidence || 0) * 100).toFixed(0);
-
-  // Explanation text based on pattern type
-  const explanations = {
-    'THE_RUG': 'Price sits under a positive gamma ceiling with negative vacuum below. Rallies get rejected at the ceiling, then price accelerates down through the vacuum.',
-    'REVERSE_RUG': 'Price sits above a positive gamma floor with negative vacuum above. Dips get bought at the floor, then price accelerates up toward the vacuum.',
-    'PINNED': 'Spot is inside a continuous positive gamma band. Dealers buy dips and sell rallies, keeping price range-bound. Sell premium, dont pick direction.',
-    'FLOOR': 'A strong positive gamma floor sits below spot. Any pullback toward this level gets absorbed by dealer buying. Buy dips into the floor.',
-    'CEILING': 'A strong positive gamma ceiling sits above spot. Any rally toward this level gets sold by dealers. Sell rallies into the ceiling.',
-    'VACUUM_ABOVE': 'A negative gamma vacuum above spot pulls price upward like a magnet. No structural resistance above means rallies can extend fast.',
-    'VACUUM_BELOW': 'A negative gamma vacuum below spot pulls price downward like a drain. No structural support below means breakdowns can accelerate.',
-    'PIKA_CLOUD': 'A cluster of positive gamma strikes creates a cloud that stalls price. Breakouts into the cloud tend to fail. Fade the edges.',
-    'AIR_POCKET': 'A gap between strikes with no gamma exposure. Price can move fast through this zone with no dealer friction. Watch for gaps.',
-    'WHIPSAW': 'Mixed gamma signs on both sides of spot create choppy, directionless price action. No clear edge — stand aside or sell volatility.',
-    'NEUTRAL': 'No dominant gamma structure detected. Wait for a clearer setup before trading.'
-  };
-
-  const iconMap = {'BULLISH':'↗','BEARISH':'↘','NEUTRAL':'→','NO_TRADE':'⊘'};
-  const icon = iconMap[primaryBias] || '→';
-  const biasCls = primaryBias === 'BULLISH' ? 'bullish' : primaryBias === 'BEARISH' ? 'bearish' : 'neutral';
-
-  const primaryName = primaryKey.replace(/_/g, ' ');
-  const primaryExplain = explanations[primaryKey] || explanations['NEUTRAL'];
-
-  primaryContainer.innerHTML = `
-    <div class="primary-pattern-card ${biasCls}">
-      <div class="primary-header">
-        <div class="primary-icon ${biasCls}">${icon}</div>
-        <div>
-          <div class="primary-name ${biasCls}">${primaryName}</div>
-          <div class="primary-meta">${primaryBias} · ${primaryConf}% confidence · ${tp.setup || ''}</div>
-        </div>
-      </div>
-      <div class="primary-explanation ${biasCls}">${primaryExplain}</div>
-    </div>
-  `;
-
-  document.getElementById('primaryPatternMeta').textContent = primaryBias + ' · ' + primaryConf + '%';
-
-  // ===== SUPPORTING SIGNALS (smaller, collapsible) =====
-  const patList = document.getElementById('patternList');
-  let patHtml = '';
-  let supportingCount = 0;
-
-  const patternMap = {
-    'KING': {cls: 'warning', color: 'var(--accent-purple)', label: 'KING'},
-    'SPOT': {cls: 'neutral', color: 'var(--accent-blue)', label: 'SPOT REGIME'},
-    'PIKA_CLOUD': {cls: 'neutral', color: 'var(--accent-blue)', label: 'PIKA CLOUD'},
-    'SHELF_ABOVE': {cls: 'neutral', color: 'var(--accent-blue)', label: 'SHELF ABOVE'},
-    'SHELF_BELOW': {cls: 'neutral', color: 'var(--accent-blue)', label: 'SHELF BELOW'},
-    'POSITIVE_BAND': {cls: 'neutral', color: 'var(--accent-green)', label: 'POSITIVE BAND'},
-    'CROSS_EXPIRY': {cls: 'neutral', color: 'var(--text-secondary)', label: 'CROSS-EXPIRY'},
-    'GATEKEEPERS': {cls: 'neutral', color: 'var(--accent-gold)', label: 'GATEKEEPERS'},
-    'AIR_POCKET': {cls: 'warning', color: 'var(--accent-orange)', label: 'AIR POCKET'},
-    'WHIPSAW': {cls: 'warning', color: 'var(--accent-orange)', label: 'WHIPSAW'}
-  };
-
-  // Skip primary pattern and stale/contradictory patterns in supporting list
-  const skipPatterns = [primaryKey, 'THE_RUG', 'REVERSE_RUG', 'CEILING', 'FLOOR', 'VACUUM_ABOVE', 'VACUUM_BELOW', 'PINNED'];
-
-  function buildPatternDesc(key, pat) {
-    if (!pat || typeof pat !== 'object') return null;
-    if (key === 'KING') {
-      const typeStr = pat.type || (pat.is_negative ? 'VACUUM' : 'MAGNET');
-      return `${pat.strike || '—'} · ${typeStr} · ${formatGex(pat.gex)}`;
-    }
-    if (key === 'SPOT') return `${pat.regime || 'NEUTRAL'} at ${pat.strike || '—'} · ${formatGex(pat.gex)}`;
-    if (key === 'CROSS_EXPIRY') return pat.note || 'Cross-expiry check';
-    if (key === 'GATEKEEPERS') return `${pat.count || 0} gatekeepers block path to King`;
-    if (key === 'PIKA_CLOUD') return pat.note || 'Cloud detected';
-    if (key === 'SHELF_ABOVE' || key === 'SHELF_BELOW') return pat.note || 'Shelf detected';
-    if (key === 'AIR_POCKET') return pat.note || 'Air pocket detected';
-    return pat.note || '';
-  }
-
-  Object.keys(p).forEach(key => {
-    if (skipPatterns.includes(key)) return;
-    if (key === 'ticker' || key === 'spot' || key === 'spot_strike' || key === 'timestamp' || key === 'total_gex') return;
-    const pat = p[key];
-    if (!pat || typeof pat !== 'object') return;
-
-    const meta = patternMap[key];
-    if (!meta) return; // Skip unknown patterns
-
-    const note = buildPatternDesc(key, pat);
-    if (!note) return;
-
-    supportingCount++;
-    patHtml += `<div class="pattern-tag-small ${meta.cls}"><span style="color:${meta.color};font-weight:700;">${meta.label}</span> · ${note}</div>`;
-  });
-
-  patList.innerHTML = patHtml || '<div style="color:var(--text-muted); font-size:11px; padding:8px;">No supporting signals</div>';
-  document.getElementById('supportingCount').textContent = supportingCount + ' signal' + (supportingCount !== 1 ? 's' : '');
-
-  // TRADE PLAN
-  const biasEl = document.getElementById('tradeBias');
-  biasEl.className = 'trade-bias ' + (tp.bias === 'BULLISH' ? 'bullish' : tp.bias === 'BEARISH' ? 'bearish' : tp.bias === 'NO_TRADE' ? 'notrade' : 'neutral');
-  biasEl.textContent = tp.bias || 'NEUTRAL';
-  document.getElementById('tradeConfidence').textContent = 'Confidence: ' + ((tp.confidence || 0) * 100).toFixed(0) + '%';
-
-  const planBody = document.getElementById('tradePlanBody');
-  const rows = [
-    tp.setup ? ['Setup', tp.setup] : null,
-    tp.entry ? ['Entry', tp.entry] : null,
-    tp.stop_loss ? ['Stop Loss', tp.stop_loss] : null,
-    tp.target_1 ? ['Target 1', tp.target_1] : null,
-    tp.target_2 ? ['Target 2', tp.target_2] : null,
-    tp.king_level ? ['King Level', tp.king_level] : null,
-    tp.ceiling ? ['Ceiling', tp.ceiling] : null,
-    tp.floor ? ['Floor', tp.floor] : null,
-    tp.vacuum_above ? ['Vacuum ↑', tp.vacuum_above] : null,
-    tp.vacuum_below ? ['Vacuum ↓', tp.vacuum_below] : null,
-    tp.band_low && tp.band_high ? ['Pin Band', tp.band_low + ' – ' + tp.band_high] : null,
-    tp.expiry ? ['Expiry', tp.expiry] : null,
-    tp.instrument ? ['Instrument', tp.instrument] : null,
-    tp.risk_note ? ['Risk', '2% account / spread'] : null
-  ].filter(Boolean);
-
-  planBody.innerHTML = rows.map(r => `<div class="trade-row"><span class="trade-label">${r[0]}</span><span class="trade-value">${r[1]}</span></div>`).join('');
-  document.getElementById('tradeNote').textContent = tp.risk_note || 'No trade recommendation available.';
+  renderBattlefield(data);
 }
 
 function formatGex(val) {
@@ -1088,15 +1333,6 @@ function formatGex(val) {
   if (abs >= 1e9) return sign + '$' + (abs/1e9).toFixed(2) + 'B';
   if (abs >= 1e6) return sign + '$' + (abs/1e6).toFixed(1) + 'M';
   return sign + '$' + (abs/1e3).toFixed(1) + 'K';
-}
-
-function toggleSupporting() {
-  const list = document.getElementById('patternList');
-  if (list.style.display === 'none') {
-    list.style.display = 'flex';
-  } else {
-    list.style.display = 'none';
-  }
 }
 
 function startAutoRefresh() {
